@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Require-Bundle: org.nuxeo.runtime
+Bundle-Vendor: Athento
+Bundle-Version: 1.0.0
+Bundle-Name: Athento NX Automation Extended
+Nuxeo-Component: OSGI-INF/Automation/Automation-chains/chains-contrib.xml,
+ OSGI-INF/Content-model/Documents/doctype-contrib.xml, 
+ OSGI-INF/Content-model/Life-cycle/lifecycle-contrib.xml,
+ OSGI-INF/Content-model/Schemas/schemas-contrib.xml,
+ OSGI-INF/Content-model/Structure-Templates/structure-templates-contrib.xml,
+ OSGI-INF/Listing-Views/Form-layout/formlayout-automationExtended-contrib.xml
+Bundle-ManifestVersion: 2
+Created-By: Athento
+Bundle-SymbolicName: athento-nx-automation-extended
+
