@@ -8,8 +8,7 @@ Nuxeo-Component: OSGI-INF/Automation/Automation-chains/chains-contrib.xml,
  OSGI-INF/Content-model/Life-cycle/lifecycle-contrib.xml,
  OSGI-INF/Content-model/Schemas/schemas-contrib.xml,
  OSGI-INF/Content-model/Structure-Templates/structure-templates-contrib.xml,
- OSGI-INF/Listing-Views/Form-layout/formlayout-automationExtended-contrib.xml,
- OSGI-INF/Automation/Automation-chains/chains-tmp-contrib.xml
+ OSGI-INF/Listing-Views/Form-layout/formlayout-automationExtended-contrib.xml
 Bundle-ManifestVersion: 2
 Created-By: Athento
 Bundle-SymbolicName: athento-nx-automation-extended
