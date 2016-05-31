@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="org.athento.nuxeo.athento-nx-automation-extended.chains.tmp"
+	version="1.0.0">
+	<require>org.nuxeo.runtime.started</require>
+
+	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+		point="chains">
+
+		<chain id="Athento.Preview">
+			<documentation>
+				Extended document preview.
+			</documentation>
+			<param type="string" name="docId" />
+			<param type="string" name="token" />
+			<operation id="Document.Fetch">
+				<param type="document" name="value">expr:docId</param>
+			</operation>
+			<!--operation id="Athento.CheckACE">
+				<param type="string" name="acl">preview-acl</param>
+				<param type="string" name="principal">expr:token</param>
+			</operation-->
+			<operation id="Blob.Get" />
+		</chain>
+
+	</extension>
+
+</component>
