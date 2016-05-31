@@ -7,11 +7,225 @@
 	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
 		point="chains">
 
+		
+		<chain id="Athento.DocumentCreate">
+
+			<documentation>
+				Extended document creation.
+			</documentation>
+
+			<param type="string" name="type" />
+			<param type="string" name="name" />
+			<param type="properties" name="properties" />
+			<param type="string" name="destination" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">type</param>
+				<param type="string" name="value">expr:@{ChainParameters['type']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">name</param>
+				<param type="string" name="value">expr:@{ChainParameters['name']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">properties_var</param>
+				<param type="string" name="value">expr:new
+					org.nuxeo.ecm.automation.core.util.Properties(ChainParameters['properties'])
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">destination</param>
+				<param type="string" name="value">expr:@{ChainParameters['destination']}
+				</param>
+			</operation>
+			<operation id="Context.RunOperation">
+				<param type="string" name="id">Athento.ReadConfig</param>
+				<param type="boolean" name="isolate">false</param>
+			</operation>
+			<operation id="Document.Fetch">
+				<param type="document" name="value">expr:destination == empty ?
+					defaultDestination : destination</param>
+			</operation>
+			<operation id="Document.Create">
+				<param type="string" name="type">expr:type</param>
+				<param type="string" name="name">expr:name</param>
+				<param type="properties" name="properties">expr:properties_var</param>
+			</operation>
+
+		</chain>
+		
+		<chain id="Athento.DocumentDelete">
+
+			<documentation>
+				Extended document delete.
+			</documentation>
+
+			<operation id="Context.FetchDocument" />
+			<operation id="Document.SetLifeCycle">
+				<param type="string" name="value">delete</param>
+			</operation>
+
+		</chain>
+		
+		<chain id="Athento.DocumentQueryDirectory">
+
+			<documentation>
+				Extended document delete.
+			</documentation>
+
+			<param type="string" name="directory" />
+			<param type="string" name="parent" />
+			<param type="string" name="grandParent" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">directory</param>
+				<param type="string" name="value">expr:@{ChainParameters['directory']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">parent</param>
+				<param type="string" name="value">expr:@{ChainParameters['parent']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">grandParent</param>
+				<param type="string" name="value">expr:@{ChainParameters['grandParent']}
+				</param>
+			</operation>
+			<operation id="Context.FetchDocument" />
+			
+
+		</chain>
+		
+		<chain id="Athento.DocumentQuery">
+
+			<documentation>
+				Extended document Query.
+			</documentation>
+
+			<param type="string" name="query" />
+			<param type="integer" name="currentPageIndex" />
+			<param type="integer" name="pageSize" />
+			<param type="string" name="sortOrder" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">query</param>
+				<param type="string" name="value">expr:@{ChainParameters['query']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">currentPageIndex</param>
+				<param type="string" name="value">expr:@{ChainParameters['currentPageIndex']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">pageSize</param>
+				<param type="string" name="value">expr:@{ChainParameters['pageSize']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">sortOrder</param>
+				<param type="string" name="value">expr:@{ChainParameters['sortOrder']}
+				</param>
+			</operation>
+			<operation id="Document.Query">
+				<param type="string" name="query">expr:query</param>
+				<param type="integer" name="currentPageIndex">expr:currentPageIndex</param>
+				<param type="string" name="query">expr:sortOrder</param>
+				<param type="integer" name="pageSize">expr:pageSize</param>
+			</operation>
+
+		</chain>
+		
+		<chain id="Athento.DocumentResultSet">
+
+			<documentation>
+				Extended document ResultSet operation.
+			</documentation>
+
+			<param type="string" name="query" />
+			<param type="integer" name="page" />
+			<param type="integer" name="pageSize" />
+			<param type="string" name="sortOrder" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">query</param>
+				<param type="string" name="value">expr:@{ChainParameters['query']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">page</param>
+				<param type="string" name="value">expr:@{ChainParameters['page']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">pageSize</param>
+				<param type="string" name="value">expr:@{ChainParameters['pageSize']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">sortOrder</param>
+				<param type="string" name="value">expr:@{ChainParameters['sortOrder']}
+				</param>
+			</operation>
+			<operation id="Resultset.PageProvider">
+				<param type="string" name="query">expr:query</param>
+				<param type="integer" name="page">expr:page</param>
+				<param type="string" name="query">expr:sortOrder</param>
+				<param type="integer" name="pageSize">expr:pageSize</param>
+			</operation>
+
+		</chain>
+		
+		<chain id="Athento.DocumentUpdate">
+
+			<documentation>
+				Extended document creation.
+			</documentation>
+
+			<param type="properties" name="properties" />
+			<param type="boolean" name="updateParent" />
+			<param type="boolean" name="save" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">properties_var</param>
+				<param type="string" name="value">expr:new
+					org.nuxeo.ecm.automation.core.util.Properties(ChainParameters['properties'])
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">save</param>
+				<param type="string" name="value">expr:@{ChainParameters['save']}
+				</param>
+			</operation>
+			<operation id="Context.FetchDocument" />
+			<operation id="Document.Update">
+				<param type="boolean" name="save">expr:save</param>
+				<param type="properties" name="properties">expr:properties_var</param>
+			</operation>
+
+		</chain>
+
+		<chain id="Athento.ReadConfig">
+
+			<documentation>
+				Reads Extended Config.
+			</documentation>
+
+			<operation id="Document.Fetch">
+				<param type="document" name="value">/ExtendedConfig</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">defaultDestination</param>
+				<param type="string" name="value">expr:@{Document["automationExtendedConfig:defaultDestination"]}
+				</param>
+			</operation>
+
+		</chain>
+
 		<chain id="Document.CreateComment">
 
 			<documentation>
 				Creates a new comment to the input document.
-				Accepts to parameters, "comment" and "user", given as string.
+				Accepts to
+				parameters, "comment" and "user", given as string.
 			</documentation>
 
 			<param type="string" name="comment" />
@@ -40,13 +254,14 @@
 				</param>
 			</operation>
 		</chain>
-		
+
 		<chain id="Document.DeleteComment">
 
 			<documentation>
-				Delete a Comment given the docid comment via parameter and docid document via input.
+				Delete a Comment given the docid comment via parameter
+				and docid document via input.
 			</documentation>
-			
+
 			<param type="string" name="commentToDelete" />
 			<operation id="Context.FetchDocument" />
 			<operation id="Context.SetInputAsVar">
@@ -69,20 +284,23 @@
 				</param>
 			</operation>
 			<operation id="Context.RunScript">
-				<param type="string" name="script">cm.deleteComment(commentableDoc,commentToDeleteDoc);commentableDoc.name;</param>
+				<param type="string" name="script">cm.deleteComment(commentableDoc,commentToDeleteDoc);commentableDoc.name;
+				</param>
 			</operation>
 			<operation id="Context.RestoreDocumentsInputFromScript">
-				<param type="string" name="script">new org.nuxeo.ecm.core.api.impl.DocumentModelListImpl(cm.getComments(commentableDoc));</param>
+				<param type="string" name="script">new
+					org.nuxeo.ecm.core.api.impl.DocumentModelListImpl(cm.getComments(commentableDoc));
+				</param>
 			</operation>
-			
+
 		</chain>
-		
+
 		<chain id="Document.GetAllComments">
 
 			<documentation>
 				Get All Comments from a given (input) document.
 			</documentation>
-			
+
 			<operation id="Context.FetchDocument" />
 			<operation id="Context.SetInputAsVar">
 				<param type="string" name="name">commentableDoc</param>
@@ -93,10 +311,12 @@
 				</param>
 			</operation>
 			<operation id="Context.RestoreDocumentsInputFromScript">
-				<param type="string" name="script">new org.nuxeo.ecm.core.api.impl.DocumentModelListImpl(cm.getComments(commentableDoc));</param>
+				<param type="string" name="script">new
+					org.nuxeo.ecm.core.api.impl.DocumentModelListImpl(cm.getComments(commentableDoc));
+				</param>
 			</operation>
 		</chain>
-		
+
 		<chain id="Group.CreateGroup">
 
 			<documentation>
@@ -116,11 +336,12 @@
 				</param>
 			</operation>
 			<operation id="Context.RunScript">
-				<param type="string" name="script">um.createGroup(new org.nuxeo.ecm.core.api.impl.NuxeoGroupImpl(name));name;
+				<param type="string" name="script">um.createGroup(new
+					org.nuxeo.ecm.core.api.impl.NuxeoGroupImpl(name));name;
 				</param>
 			</operation>
 		</chain>
-		
+
 		<chain id="Group.CreateGroupWithLabel">
 
 			<documentation>
@@ -147,71 +368,10 @@
 				</param>
 			</operation>
 			<operation id="Context.RunScript">
-				<param type="string" name="script">um.createGroup(new org.nuxeo.ecm.core.api.impl.NuxeoGroupImpl(name,label));name;
+				<param type="string" name="script">um.createGroup(new
+					org.nuxeo.ecm.core.api.impl.NuxeoGroupImpl(name,label));name;
 				</param>
 			</operation>
-		</chain>
-		
-		<chain id="Athento.DocumentCreate">
-
-			<documentation>
-				Extended document creation.
-			</documentation>
-
-			<param type="string" name="type" />
-			<param type="string" name="name" />
-			<param type="properties" name="properties" />
-			<param type="string" name="destination" />
-			<operation id="Context.SetVar">
-				<param type="string" name="name">type</param>
-				<param type="string" name="value">expr:@{ChainParameters['type']}
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">name</param>
-				<param type="string" name="value">expr:@{ChainParameters['name']}
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">properties_var</param>
-				<param type="string" name="value">expr:new org.nuxeo.ecm.automation.core.util.Properties(ChainParameters['properties'])
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">destination</param>
-				<param type="string" name="value">expr:@{ChainParameters['destination']}
-				</param>
-			</operation>
-			<operation id="Context.RunOperation">
-				<param type="string" name="id">Athento.ReadConfig</param>
-				<param type="boolean" name="isolate">false</param>
-			</operation>
-			<operation id="Document.Fetch">
-				<param type="document" name="value">expr:destination == empty ? defaultDestination : destination</param>
-			</operation>
-			<operation id="Document.Create">
-				<param type="string" name="type">expr:type</param>
-				<param type="string" name="name">expr:name</param>
-				<param type="string" name="properties">expr:properties_var</param>
-			</operation>
-			
-		</chain>
-		
-		<chain id="Athento.ReadConfig">
-
-			<documentation>
-				Reads Extended Config.
-			</documentation>
-
-			<operation id="Document.Fetch">
-				<param type="document" name="value">/ExtendedConfig</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">defaultDestination</param>
-				<param type="string" name="value">expr:@{Document["automationExtendedConfig:defaultDestination"]}
-				</param>
-			</operation>
-			
 		</chain>
 
 	</extension>
