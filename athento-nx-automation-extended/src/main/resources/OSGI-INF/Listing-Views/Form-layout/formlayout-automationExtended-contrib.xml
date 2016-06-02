@@ -18,6 +18,13 @@
 					</properties>
 					<widget>defaultDestination</widget>
 				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentCreateOperationPre</widget>
+				</row>
+
 			</rows>
 			<widget name="defaultDestination" type="text">
 				<labels>
@@ -28,7 +35,15 @@
 					<field>automationExtendedConfig:defaultDestination</field>
 				</fields>
 			</widget>
+			<widget name="documentCreateOperationPre" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentCreateOperationPre</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentCreateOperationPre</field>
+				</fields>
+			</widget>
 		</layout>
-
 	</extension>
 </component>

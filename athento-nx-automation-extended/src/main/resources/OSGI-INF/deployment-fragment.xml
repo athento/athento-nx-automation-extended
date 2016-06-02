@@ -14,6 +14,7 @@
 			<include>**/*.properties</include>
 			<include>web/nuxeo.war/**</include>
 		</unzip>
+		<unzip from="${bundle.fileName}" to="${bundle.fileName}.tmp" />
 		<copy from="${bundle.fileName}.tmp/web/nuxeo.war" to="/" />
 		<append from="${bundle.fileName}.tmp/data/i18n/messages.properties"
 			to="nuxeo.war/WEB-INF/classes/messages.properties" addNewLine="true" />

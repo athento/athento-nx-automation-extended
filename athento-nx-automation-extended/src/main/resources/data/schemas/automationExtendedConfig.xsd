@@ -40,5 +40,6 @@
 	
 	<!-- defaultDestinationPath -->
 	<xs:element name="defaultDestination" type="xs:string" default="/default-domain/workspaces/"/>
+	<xs:element name="documentCreateOperationPre" type="xs:string" default="voidChain"/>
 
 </xs:schema>

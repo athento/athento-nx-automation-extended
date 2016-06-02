@@ -4,6 +4,8 @@
 	<!-- Contributing a new operation to be used for import some files -->
 	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
 		point="operations">
+		<operation class="org.athento.nuxeo.operations.DocumentFetchOrCreateOperation" />
 		<operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
+		<operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
 	</extension>
 </component>

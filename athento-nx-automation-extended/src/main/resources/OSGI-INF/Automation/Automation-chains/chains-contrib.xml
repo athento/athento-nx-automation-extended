@@ -42,9 +42,20 @@
 				<param type="string" name="id">Athento.ReadConfig</param>
 				<param type="boolean" name="isolate">false</param>
 			</operation>
-			<operation id="Document.Fetch">
-				<param type="document" name="value">expr:destination == empty ?
+			<operation id="Context.SetVar">
+				<param type="string" name="name">destination</param>
+				<param type="string" name="value">expr:destination == empty ?
 					defaultDestination : destination
+				</param>
+			</operation>
+			<operation id="Context.RunOperation">
+				<param type="string" name="id">expr:documentCreateOperationPre ==
+					empty?
+					'void':documentCreateOperationPre
+				</param>
+				<param type="boolean" name="isolate">true</param>
+				<param type="properties" name="parameters">
+					expr:properties=@{properties_var}
 				</param>
 			</operation>
 			<operation id="Document.Create">
@@ -52,11 +63,9 @@
 				<param type="string" name="name">expr:name</param>
 				<param type="properties" name="properties">expr:properties_var</param>
 			</operation>
-
 		</chain>
 
 		<chain id="Athento.DocumentDelete">
-
 			<documentation>
 				Extended document delete.
 			</documentation>
@@ -109,11 +118,13 @@
 			<operation id="Document.Query">
 				<param type="string" name="query">expr:query</param>
 				<param type="integer" name="currentPageIndex">expr:currentPageIndex == empty ? 0
-					: currentPageIndex</param>
+					: currentPageIndex
+				</param>
 				<param type="string" name="sortOrder">expr:sortOrder</param>
 				<param type="string" name="sortBy">expr:sortBy</param>
 				<param type="integer" name="pageSize">expr:pageSize == empty ? 20 :
-					pageSize</param>
+					pageSize
+				</param>
 			</operation>
 
 		</chain>
@@ -191,7 +202,8 @@
 				<param type="string" name="sortOrder">expr:sortOrder</param>
 				<param type="string" name="sortBy">expr:sortBy</param>
 				<param type="integer" name="pageSize">expr:pageSize == empty ? 20 :
-					pageSize</param>
+					pageSize
+				</param>
 			</operation>
 
 		</chain>
@@ -251,7 +263,11 @@
 				<param type="string" name="value">expr:@{Document["automationExtendedConfig:defaultDestination"]}
 				</param>
 			</operation>
-
+			<operation id="Context.SetVar">
+				<param type="string" name="name">documentCreateOperationPre</param>
+				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentCreateOperationPre"]}
+				</param>
+			</operation>
 		</chain>
 
 		<chain id="Document.CreateComment">
@@ -404,6 +420,13 @@
 			<operation id="Context.RunScript">
 				<param type="string" name="script">um.createGroup(new
 					org.nuxeo.ecm.core.api.impl.NuxeoGroupImpl(name,label));name;
+				</param>
+			</operation>
+		</chain>
+		<chain id="voidChain">
+			<operation id="LogOperation">
+				<param type="string" name="level">debug</param>
+				<param type="string" name="message">voidChain invoked
 				</param>
 			</operation>
 		</chain>
