@@ -57,6 +57,9 @@
 				<param type="properties" name="parameters">
 					expr:properties=@{properties_var}
 				</param>
+				<param type="string" name="basePath">
+					expr:properties=@{destination}
+				</param>
 			</operation>
 			<operation id="Document.Create">
 				<param type="string" name="type">expr:type</param>
