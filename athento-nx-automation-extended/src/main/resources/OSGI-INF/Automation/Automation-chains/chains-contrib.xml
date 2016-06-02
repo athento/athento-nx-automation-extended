@@ -51,14 +51,12 @@
 			<operation id="Context.RunOperation">
 				<param type="string" name="id">expr:documentCreateOperationPre ==
 					empty?
-					'void':documentCreateOperationPre
+					'voidChain':documentCreateOperationPre
 				</param>
 				<param type="boolean" name="isolate">true</param>
 				<param type="properties" name="parameters">
 					expr:properties=@{properties_var}
-				</param>
-				<param type="string" name="basePath">
-					expr:properties=@{destination}
+					basePath=@{destination}
 				</param>
 			</operation>
 			<operation id="Document.Create">
