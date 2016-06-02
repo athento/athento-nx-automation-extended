@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component
+	name="org.athento.nuxeo.athento-nx-automation-extended.lifecycle"
+	version="1.0.0">
+	<require>org.nuxeo.runtime.started</require>
+
+	<extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService"
+		point="types">
+		<types>
+			<type name="ExtendedConfig">default</type>
+		</types>
+	</extension>
+
+</component>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="org.athento.nuxeo.automation.extended.chains"
+	version="1.0.0">
+	<require>org.nuxeo.runtime.started</require>
+	
+
+	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+		point="chains">
+		
+		<chain id="TEST_RunOperationAsWorker">
+			<operation id="Athento.RunOperationAsWorker">
+				<param type="string" name="id">Notification.SendMail</param>
+				<param type="boolean" name="isolate">false</param>
+				<param type="properties" name="parameters">
+					from=example@example.com
+					to=example@example.com
+					message=Example message body
+					subject=Example subject
+				</param>
+			</operation>
+		</chain>
+	</extension>
+</component>
