@@ -90,7 +90,7 @@ public class VocabularyGetChildrenOperation {
 				_log.debug("- entry Title: " + entry.getTitle());
 			}
 
-			String label = entry.getTitle();
+			String label = (String) entry.getPropertyValue("xvocabulary:label");
 			if (locale != null) {
 				if (label != null) {
 					label = I18NUtils.getMessageString(
