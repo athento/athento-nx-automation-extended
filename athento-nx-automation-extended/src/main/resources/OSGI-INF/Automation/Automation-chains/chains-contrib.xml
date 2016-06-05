@@ -34,6 +34,12 @@
 				</param>
 			</operation>
 			<operation id="Context.SetVar">
+				<param type="string" name="name">_properties</param>
+				<param type="string" name="value">expr:ChainParameters['properties']
+				</param>
+			</operation>
+
+			<operation id="Context.SetVar">
 				<param type="string" name="name">destination</param>
 				<param type="string" name="value">expr:@{ChainParameters['destination']}
 				</param>
@@ -48,22 +54,57 @@
 					defaultDestination : destination
 				</param>
 			</operation>
+			<!--  TEMPORAL TO DELETE -->
+			<operation id="Context.SetVar">
+				<param type="string" name="name">param1</param>
+				<param type="object" name="value">expr:properties_var["reo:real_estate_code"]
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">param2</param>
+				<param type="object" name="value">expr:properties_var["npl:contract"]
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">param3</param>
+				<param type="object" name="value">expr:properties_var["npl:expedient"]
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">param4</param>
+				<param type="object" name="value">expr:properties_var["npl:warranty_code"]
+				</param>
+			</operation>
+<!-- 
 			<operation id="Context.RunOperation">
+				<param type="boolean" name="isolate">true</param>
 				<param type="string" name="id">expr:documentCreateOperationPre ==
 					empty?
 					'voidChain':documentCreateOperationPre
 				</param>
-				<param type="boolean" name="isolate">true</param>
 				<param type="properties" name="parameters">
-					expr:properties=@{properties_var}
+					expr:properties_1=@{param1}
+					properties_2=@{param2}
+					properties_3=@{param3}
+					properties_4=@{param4}
 					basePath=@{destination}
 				</param>
 			</operation>
+-->
+			<operation id="Aktua.DocumentFetchOrCreateDestinationFolder">
+				<param type="string" name="properties_1">expr:param1</param>
+				<param type="string" name="properties_2">expr:param2</param>
+				<param type="string" name="properties_3">expr:param3</param>
+				<param type="string" name="properties_4">expr:param4</param>
+				<param type="string" name="basePath">expr:destination</param>
+			</operation>
+
 			<operation id="Document.Create">
 				<param type="string" name="type">expr:type</param>
 				<param type="string" name="name">expr:name</param>
 				<param type="properties" name="properties">expr:properties_var</param>
 			</operation>
+
 		</chain>
 
 		<chain id="Athento.DocumentDelete">
@@ -75,7 +116,6 @@
 			<operation id="Document.SetLifeCycle">
 				<param type="string" name="value">delete</param>
 			</operation>
-
 		</chain>
 
 		<chain id="Athento.DocumentQuery">
@@ -424,6 +464,27 @@
 				</param>
 			</operation>
 		</chain>
+		
+		<chain id="Athento.Vocabulary.GetChildren">
+			<param type="string" name="vocabularyName" />
+			<param type="string" name="parentValue" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">vocabularyName</param>
+				<param type="string" name="value">expr:@{ChainParameters['vocabularyName']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">parentValue</param>
+				<param type="string" name="value">expr:@{ChainParameters['parentValue']}
+				</param>
+			</operation>
+
+			<operation id="Athento.VocabularyGetChildrenOperation">
+				<param type="string" name="vocabularyName">expr:vocabularyName</param>
+				<param type="string" name="parentValue">expr:parentValue</param>
+			</operation>
+		</chain>
+		
 		<chain id="voidChain">
 			<operation id="LogOperation">
 				<param type="string" name="level">debug</param>

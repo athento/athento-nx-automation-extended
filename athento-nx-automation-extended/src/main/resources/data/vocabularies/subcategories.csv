@@ -1,0 +1,9 @@
+id,label,parent,obsolete
+football,Football,sports,0
+rugby,Rugby,sports,0
+golf,Golf,sports,0
+basket,Basket,sports,0
+politics,Politics,news,0
+economy,Economy,news,0
+comedy,Comedy,film,0
+thriller,Thriller,film,0

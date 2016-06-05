@@ -21,7 +21,7 @@ import org.nuxeo.ecm.core.api.PathRef;
  * @author victorsanchez
  * 
  */
-@Operation(id = DocumentFetchOrCreateOperation.ID, category = "Athento", label = "Document", description = "Fetch or create a document from the repository given its reference (path or UID). The document will become the input of the next operation.")
+@Operation(id = DocumentFetchOrCreateOperation.ID, category = "Athento", label = "Fetch or Create Document", description = "Fetch or create a document from the repository given its reference (path or UID). The document will become the input of the next operation.")
 public class DocumentFetchOrCreateOperation {
 
 	public static final String ID = "Athento.Document.FetchOrCreate";

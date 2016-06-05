@@ -7,5 +7,6 @@
 		<operation class="org.athento.nuxeo.operations.DocumentFetchOrCreateOperation" />
 		<operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
 		<operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
+		<operation class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
 	</extension>
 </component>
