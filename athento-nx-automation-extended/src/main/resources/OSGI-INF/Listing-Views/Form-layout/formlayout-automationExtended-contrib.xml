@@ -18,6 +18,25 @@
 					</properties>
 					<widget>defaultDestination</widget>
 				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentCreateOperationId</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentUpdateOperationId</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentUpdateWatchedDocumentType</widget>
+				</row>
+
 			</rows>
 			<widget name="defaultDestination" type="text">
 				<labels>
@@ -28,7 +47,34 @@
 					<field>automationExtendedConfig:defaultDestination</field>
 				</fields>
 			</widget>
-		</layout>
+			<widget name="documentCreateOperationId" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentCreateOperationId</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentCreateOperationId</field>
+				</fields>
+			</widget>
+			<widget name="documentUpdateOperationId" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentUpdateOperationId</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentUpdateOperationId</field>
+				</fields>
+			</widget>
+			<widget name="documentUpdateWatchedDocumentType" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentUpdateWatchedDocumentType</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentUpdateWatchedDocumentType</field>
+				</fields>
+			</widget>
 
+		</layout>
 	</extension>
 </component>
