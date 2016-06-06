@@ -1,64 +1,122 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.athento.nuxeo</groupId>
-	<artifactId>athento-nx-automation-extended</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<name>Athento NX Automation Extended</name>
-	<description>Athento NX Automation Extended</description>
+        <groupId>org.athento.nuxeo</groupId>
+        <artifactId>athento-nx-automation-extended-project</artifactId>
+        <version>1.1</version>
 
-	<dependencyManagement>
+	<packaging>pom</packaging>
+	<name>Athento NX automation extended Project</name>
+	<description>Athento NX automation extended Project</description>
 
-		<dependencies>
-			<dependency>
-				<groupId>org.nuxeo.ecm.distribution</groupId>
-				<artifactId>nuxeo-distribution</artifactId>
-				<scope>import</scope>
-				<type>pom</type>
-				<version>6.0-HF01</version>
-			</dependency>
-		</dependencies>
+	<distributionManagement>
+		<repository>
+			<id>athento-public</id>
+			<name>Athento Public</name>
+			<url>http://maven2.yerbabuena.es/artifactory/athento-public</url>
+			<layout>default</layout>
+		</repository>
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>athento-public-snapshot</id>
+			<name>Athento Public Snapshot</name>
+			<url>http://maven2.yerbabuena.es/artifactory/athento-public-snapshot</url>
+			<layout>default</layout>
+		</snapshotRepository>
+	</distributionManagement>
+	
+	<modules>
+		<!-- Add your modules here -->
+		<module>athento-nx-automation-extended</module>
+		<module>athento-nx-automation-extended-dist</module>
+	</modules>
+	<properties>
+		<nuxeo.platform.version>6.0</nuxeo.platform.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+        <dependencyManagement>
+                <dependencies>
+                        <dependency>
+                                <groupId>org.nuxeo.ecm.distribution</groupId>
+                                <artifactId>nuxeo-distribution</artifactId>
+                                <scope>import</scope>
+                                <type>pom</type>
+                                <version>${nuxeo.platform.version}</version>
+                        </dependency>
+                </dependencies>
+        </dependencyManagement>
 
-	</dependencyManagement>
 
-	<dependencies>
+	<organization>
+		<name>Athento</name>
+		<url>http://www.athento.com</url>
+	</organization>
 
-		<dependency>
-			<groupId>org.nuxeo.common</groupId>
-			<artifactId>nuxeo-common</artifactId>
-		</dependency>
+	<developers>
+		<!-- add your data here -->
+	</developers>
 
-		<dependency>
-			<groupId>org.nuxeo.runtime</groupId>
-			<artifactId>nuxeo-runtime</artifactId>
-		</dependency>
+	<repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>athento-public</id>
+			<name>Athento Releases</name>
+			<url>http://maven2.yerbabuena.es/artifactory/athento-public</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>athento-public-snapshot</id>
+			<name>Athento Artifact Snapshots</name>
+			<url>http://maven2.yerbabuena.es/artifactory/athento-public-snapshot
+			</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>ys-libs-releases</id>
+			<url>http://maven2.yerbabuena.es/artifactory/libs-releases-local
+			</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>public</id>
+			<url>http://maven.nuxeo.org/public</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>public-snapshot</id>
+			<url>http://maven.nuxeo.org/public-snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
-		<dependency>
-			<groupId>org.nuxeo.ecm.core</groupId>
-			<artifactId>nuxeo-core</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.nuxeo.ecm.core</groupId>
-			<artifactId>nuxeo-core-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.nuxeo.ecm.core</groupId>
-			<artifactId>nuxeo-core-query</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.nuxeo.ecm.core</groupId>
-			<artifactId>nuxeo-core-schema</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
-
-	</dependencies>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>athento-public</id>
+			<url>http://maven2.yerbabuena.es/artifactory/athento-public</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>plugins-releases-local</id>
+			<url>http://maven2.yerbabuena.es/artifactory/plugins-releases-local</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<build>
 		<pluginManagement>
@@ -110,70 +168,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<properties>
-		<nuxeo.platform.version>6.0</nuxeo.platform.version>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>public</id>
-			<url>http://maven.nuxeo.org/nexus/content/groups/public</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>public-snapshot</id>
-			<url>http://maven.nuxeo.org/nexus/content/groups/public-snapshot</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<updatePolicy>always</updatePolicy>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-
-	</repositories>
-
-	<pluginRepositories>
-
-		<pluginRepository>
-			<id>public</id>
-			<url>http://maven.nuxeo.org/nexus/content/groups/public</url>
-			<name>Nuxeo releases</name>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-
-	</pluginRepositories>
-
-	<distributionManagement>
-
-		<repository>
-			<id>athento-public</id>
-			<name>Athento Public</name>
-			<url>http://maven2.yerbabuena.es/artifactory/athento-public</url>
-			<layout>default</layout>
-		</repository>
-
-		<snapshotRepository>
-			<uniqueVersion>true</uniqueVersion>
-			<id>athento-public-snapshot</id>
-			<name>Athento Public Snapshot</name>
-			<url>http://maven2.yerbabuena.es/artifactory/athento-public-snapshot</url>
-			<layout>default</layout>
-		</snapshotRepository>
-
-	</distributionManagement>
-
 </project>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="org.athento.nuxeo.athento-nx-automation-extended.formlayout-automationExtended"
+	version="1.0.0">
+	<require>org.nuxeo.runtime.started</require>
+
+	<extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager"
+		point="layouts">
+		<layout name="layout@formlayout-automationExtended">
+			<templates>
+				<template mode="any">/layouts/automationExtended_widget_layout_template.xhtml
+				</template>
+			</templates>
+			<rows>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>defaultDestination</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentCreateOperationId</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentUpdateOperationId</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentUpdateWatchedDocumentType</widget>
+				</row>
+
+			</rows>
+			<widget name="defaultDestination" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.defaultDestination</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:defaultDestination</field>
+				</fields>
+			</widget>
+			<widget name="documentCreateOperationId" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentCreateOperationId</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentCreateOperationId</field>
+				</fields>
+			</widget>
+			<widget name="documentUpdateOperationId" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentUpdateOperationId</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentUpdateOperationId</field>
+				</fields>
+			</widget>
+			<widget name="documentUpdateWatchedDocumentType" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentUpdateWatchedDocumentType</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentUpdateWatchedDocumentType</field>
+				</fields>
+			</widget>
+
+		</layout>
+	</extension>
+</component>
