@@ -1,33 +1,18 @@
-/**
- * 
- */
 package org.athento.nuxeo.operations;
 
-
-import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.common.utils.StringUtils;
-import org.nuxeo.common.utils.i18n.I18NUtils;
-import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
-import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.api.IdRef;
-import org.nuxeo.ecm.directory.Session;
-import org.nuxeo.ecm.directory.api.DirectoryService;
-import org.nuxeo.runtime.api.Framework;
-
-import java.util.*;
 
 /**
- * @author athento
+ *
+ * Generate iframe with Athento Preview.
+ *
+ * @author victorsanchez
  *
  */
 @Operation(id = GetPreviewIFrameOperation.ID, category = "Athento", label = "Get iframe for document preview", description = "Return an HTML code into iframe component to show a document preview.")
@@ -38,6 +23,14 @@ public class GetPreviewIFrameOperation {
 
     /** Operation ID. */
 	public static final String ID = "Athento.Preview";
+
+    /** Default sizes. */
+    private static final int DEFAULT_WIDTH = 938;
+    private static final int DEFAULT_HEIGHT = 902;
+
+    /** Default styles. */
+    private static final String DEFAULT_STYLE = "border: 1px solid #999; ";
+
 
     /** Base url. */
     @Param(name = "url", required = true)
@@ -55,6 +48,10 @@ public class GetPreviewIFrameOperation {
     @Param(name = "height", required = false)
     protected Integer height;
 
+    /** Style. */
+    @Param(name = "style", required = false)
+    protected String style = DEFAULT_STYLE;
+
     /**
      * Operation method.
      *
@@ -69,10 +66,10 @@ public class GetPreviewIFrameOperation {
 
         // Check dimensions
         if (width == null) {
-            width = 938;
+            width = DEFAULT_WIDTH;
         }
         if (height == null) {
-            height = 900;
+            height = DEFAULT_HEIGHT;
         }
 
         // Check xpath of preview content
@@ -81,8 +78,8 @@ public class GetPreviewIFrameOperation {
         }
 
         // Make iframe
-        String iframe = String.format("<iframe style=\"border: 1px solid #777; height:%dpx; width:%dpx\" src=\"%s/nuxeo/restAPI/athpreview/default/%s/%s/?token=%s\"></iframe>",
-                height, width, baseUrl, doc.getId(), xpath, token);
+        String iframe = String.format("<iframe style=\"%s; height:%dpx; width:%dpx\" src=\"%s/nuxeo/restAPI/athpreview/default/%s/%s/?token=%s\"></iframe>",
+                style, height, width, baseUrl, doc.getId(), xpath, token);
 
         return iframe;
 	}
