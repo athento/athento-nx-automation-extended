@@ -8,5 +8,8 @@
 		<operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
 		<operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
 		<operation class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
+
+		<!--Operation for generate Athento Preview iFrame-->
+		<operation class="org.athento.nuxeo.operations.GetPreviewIFrameOperation" />
 	</extension>
 </component>

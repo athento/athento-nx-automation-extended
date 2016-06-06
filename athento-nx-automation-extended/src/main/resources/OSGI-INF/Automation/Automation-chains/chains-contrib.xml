@@ -277,19 +277,6 @@
 
 		</chain>
 
-		<chain id="Athento.Preview">
-
-			<documentation>
-				Extended document preview.
-			</documentation>
-
-			<param type="string" name="token" />
-			<operation id="Context.FetchDocument" />
-			<!--operation id="Athento.CheckACE"> <param type="string" name="acl">preview-acl</param> 
-				<param type="string" name="principal">expr:token</param> </operation -->
-			<operation id="Blob.Get" />
-		</chain>
-
 		<chain id="Athento.ReadConfig">
 
 			<documentation>
