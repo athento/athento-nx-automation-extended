@@ -12,51 +12,19 @@
 			<documentation>
 				Extended document creation.
 			</documentation>
-
-			<param type="string" name="type" />
+			<param type="string" name="destination" />
 			<param type="string" name="name" />
 			<param type="properties" name="properties" />
-			<param type="string" name="destination" />
-			<operation id="Context.SetVar">
-				<param type="string" name="name">type</param>
-				<param type="string" name="value">expr:@{ChainParameters['type']}
-				</param>
+			<param type="string" name="type" />
+			<operation id="Athento.Document.Create">
+				<param type="string" name="destination">expr:@{ChainParameters['destination']}</param>
+				<param type="string" name="name">expr:@{ChainParameters['name']}</param>
+				<param type="properties" name="properties">expr:ChainParameters['properties']</param>
+				<param type="string" name="type">expr:@{ChainParameters['type']}</param>
 			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">name</param>
-				<param type="string" name="value">expr:@{ChainParameters['name']}
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">properties_var</param>
-				<param type="string" name="value">expr:new
-					org.nuxeo.ecm.automation.core.util.Properties(ChainParameters['properties'])
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">destination</param>
-				<param type="string" name="value">expr:@{ChainParameters['destination']}
-				</param>
-			</operation>
-			<operation id="Context.RunOperation">
-				<param type="string" name="id">Athento.ReadConfig</param>
-				<param type="boolean" name="isolate">false</param>
-			</operation>
-			<operation id="Document.Fetch">
-				<param type="document" name="value">expr:destination == empty ?
-					defaultDestination : destination
-				</param>
-			</operation>
-			<operation id="Document.Create">
-				<param type="string" name="type">expr:type</param>
-				<param type="string" name="name">expr:name</param>
-				<param type="properties" name="properties">expr:properties_var</param>
-			</operation>
-
 		</chain>
 
 		<chain id="Athento.DocumentDelete">
-
 			<documentation>
 				Extended document delete.
 			</documentation>
@@ -65,7 +33,6 @@
 			<operation id="Document.SetLifeCycle">
 				<param type="string" name="value">delete</param>
 			</operation>
-
 		</chain>
 
 		<chain id="Athento.DocumentQuery">
@@ -109,11 +76,13 @@
 			<operation id="Document.Query">
 				<param type="string" name="query">expr:query</param>
 				<param type="integer" name="currentPageIndex">expr:currentPageIndex == empty ? 0
-					: currentPageIndex</param>
+					: currentPageIndex
+				</param>
 				<param type="string" name="sortOrder">expr:sortOrder</param>
 				<param type="string" name="sortBy">expr:sortBy</param>
 				<param type="integer" name="pageSize">expr:pageSize == empty ? 20 :
-					pageSize</param>
+					pageSize
+				</param>
 			</operation>
 
 		</chain>
@@ -191,45 +160,32 @@
 				<param type="string" name="sortOrder">expr:sortOrder</param>
 				<param type="string" name="sortBy">expr:sortBy</param>
 				<param type="integer" name="pageSize">expr:pageSize == empty ? 20 :
-					pageSize</param>
+					pageSize
+				</param>
 			</operation>
-
 		</chain>
 
 		<chain id="Athento.DocumentUpdate">
-
 			<documentation>
-				Extended document creation.
+				Extended document update.
 			</documentation>
-
+			<param type="string" name="documentType" />
 			<param type="properties" name="properties" />
 			<param type="boolean" name="updateParent" />
 			<param type="boolean" name="save" />
-			<operation id="Context.SetVar">
-				<param type="string" name="name">properties_var</param>
-				<param type="string" name="value">expr:new
-					org.nuxeo.ecm.automation.core.util.Properties(ChainParameters['properties'])
-				</param>
+			<operation id="Athento.Document.Update">
+				<param type="string" name="documentType">expr:@{ChainParameters['documentType']}</param>
+				<param type="properties" name="properties">expr:ChainParameters['properties']</param>
+				<param type="boolean" name="save">expr:@{ChainParameters['save']}</param>
+				<param type="boolean" name="updateParent">expr:@{ChainParameters['updateParent']}</param>
 			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">save</param>
-				<param type="boolean" name="value">expr:@{ChainParameters['save']}
-				</param>
-			</operation>
-			<operation id="Context.FetchDocument" />
-			<operation id="Document.Update">
-				<param type="boolean" name="save">expr:save</param>
-				<param type="properties" name="properties">expr:properties_var</param>
-			</operation>
-
 		</chain>
 
-		<chain id="Athento.Preview">
 
+		<chain id="Athento.Preview">
 			<documentation>
 				Extended document preview.
 			</documentation>
-
 			<param type="string" name="token" />
 			<operation id="Context.FetchDocument" />
 			<!--operation id="Athento.CheckACE"> <param type="string" name="acl">preview-acl</param> 
@@ -247,8 +203,23 @@
 				<param type="document" name="value">/ExtendedConfig</param>
 			</operation>
 			<operation id="Context.SetVar">
-				<param type="string" name="name">defaultDestination</param>
+				<param type="string" name="name">cfg_defaultDestination</param>
 				<param type="string" name="value">expr:@{Document["automationExtendedConfig:defaultDestination"]}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">cfg_documentCreateOperationPre</param>
+				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentCreateOperationPre"]}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">cfg_documentUpdateOperationId</param>
+				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentUpdateOperationId"]}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">cfg_documentUpdateWatchedDocumentType</param>
+				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentUpdateWatchedDocumentType"]}
 				</param>
 			</operation>
 
@@ -404,6 +375,34 @@
 			<operation id="Context.RunScript">
 				<param type="string" name="script">um.createGroup(new
 					org.nuxeo.ecm.core.api.impl.NuxeoGroupImpl(name,label));name;
+				</param>
+			</operation>
+		</chain>
+		
+		<chain id="Athento.Vocabulary.GetChildren">
+			<param type="string" name="vocabularyName" />
+			<param type="string" name="parentValue" />
+			<operation id="Context.SetVar">
+				<param type="string" name="name">vocabularyName</param>
+				<param type="string" name="value">expr:@{ChainParameters['vocabularyName']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">parentValue</param>
+				<param type="string" name="value">expr:@{ChainParameters['parentValue']}
+				</param>
+			</operation>
+
+			<operation id="Athento.VocabularyGetChildrenOperation">
+				<param type="string" name="vocabularyName">expr:vocabularyName</param>
+				<param type="string" name="parentValue">expr:parentValue</param>
+			</operation>
+		</chain>
+		
+		<chain id="voidChain">
+			<operation id="LogOperation">
+				<param type="string" name="level">debug</param>
+				<param type="string" name="message">voidChain invoked
 				</param>
 			</operation>
 		</chain>

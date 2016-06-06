@@ -40,5 +40,9 @@
 	
 	<!-- defaultDestinationPath -->
 	<xs:element name="defaultDestination" type="xs:string" default="/default-domain/workspaces/"/>
+	<xs:element name="documentCreateOperationId" type="xs:string" default="voidChain"/>
+	
+	<xs:element name="documentUpdateOperationId" type="xs:string" default="voidChain"/>
+	<xs:element name="documentUpdateWatchedDocumentType" type="xs:string" default=""/>
 
 </xs:schema>

@@ -3,7 +3,10 @@ Bundle-Vendor: Athento
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Bundle-Version: 1.0
-Nuxeo-Component: OSGI-INF/chains-contrib.xml, OSGI-INF/operations-contrib.xml,OSGI-INF/Automation/Automation-chains/chains-contrib.xml,
+Nuxeo-Component: OSGI-INF/chains-contrib.xml, 
+ OSGI-INF/operations-contrib.xml,
+ OSGI-INF/vocabularies-contrib.xml,
+ OSGI-INF/Automation/Automation-chains/chains-contrib.xml,
  OSGI-INF/Content-model/Documents/doctype-contrib.xml, 
  OSGI-INF/Content-model/Life-cycle/lifecycle-contrib.xml,
  OSGI-INF/Content-model/Schemas/schemas-contrib.xml,
