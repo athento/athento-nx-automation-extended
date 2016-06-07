@@ -5,13 +5,16 @@
 	<parent>
 		<groupId>org.athento.nuxeo</groupId>
 		<artifactId>athento-nx-automation-extended-project</artifactId>
-		<version>1.3-SNAPSHOT</version>
+		<version>1.3</version>
 	</parent>
 	<artifactId>athento-nx-automation-extended-assembly</artifactId>
 	<name>Athento Assembly for athento-nx-automation-extended</name>
 	<description>
 		This module is intended to assemble the project as an addon
 	</description>
+	<properties>
+		<projectParentVersion>${project.parent.version}</projectParentVersion>
+	</properties>
 	<packaging>pom</packaging>
 
 	<build>
