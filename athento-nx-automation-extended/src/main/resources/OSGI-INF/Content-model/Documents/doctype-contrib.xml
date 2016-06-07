@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<component
-	name="org.athento.nuxeo.athento-nx-automation-extended.doctype"
+<component name="org.athento.nuxeo.athento-nx-automation-extended.doctype"
 	version="1.0.0">
 	<require>org.nuxeo.runtime.started</require>
 
@@ -13,14 +12,19 @@
 			<facet name="HiddenInNavigation" />
 			<prefetch>dc:title, dc:modified, uid.uid</prefetch>
 		</doctype>
-
+		<doctype name="AthentoException" extends="Document" append="false">
+			<schema name="athentoException" />
+			<schema name="common" />
+			<facet name="HiddenInNavigation" />
+		</doctype>
 	</extension>
 
 	<extension target="org.nuxeo.ecm.platform.types.TypeService"
 		point="types">
 
 		<type id="ExtendedConfig" append="true">
-			<label>label.athento-nx-athento-nx-automation-extended.ExtendedConfig</label>
+			<label>label.athento-nx-athento-nx-automation-extended.ExtendedConfig
+			</label>
 			<translated>true</translated>
 			<icon>/icons/file.gif</icon>
 			<bigIcon>/img/file_100.png</bigIcon>
