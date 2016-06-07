@@ -9,7 +9,7 @@
 		point="schema">
 
 		<schema name="automationExtendedConfig" prefix="automationExtendedConfig" src="data/schemas/automationExtendedConfig.xsd" />
-
+		<schema name="athentoException" prefix="athentoException" src="data/schemas/athentoException.xsd"/>
 	</extension>
 
 </component>

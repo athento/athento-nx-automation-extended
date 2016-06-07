@@ -76,34 +76,40 @@ public class AthentoDocumentCreateOperation {
 			.readConfig(session);
 		String operationId = String.valueOf(config
 			.get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID));
-		String basePath = String.valueOf(config
+		String defaultPath = String.valueOf(config
 			.get(AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION));
-		if (!StringUtils.isNullOrEmpty(destination)) {
-			basePath = destination; 
-		}
 		DocumentModel parentFolder = doc;
-		if (!StringUtils.isNullOrEmpty(operationId)) {
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("basePath", basePath);
-			params.put("name", name);
-			params.put("properties", properties);
-			params.put("type", type);
-			Object input = null;
-			parentFolder = (DocumentModel)AthentoOperationsHelper.runOperation(operationId,
-				input , params, session);
-			parentFolder = (DocumentModel) parentFolder;
+		if (StringUtils.isNullOrEmpty(destination)) {
+			if (!StringUtils.isNullOrEmpty(operationId)) {
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("basePath", defaultPath);
+				params.put("name", name);
+				params.put("properties", properties);
+				params.put("type", type);
+				Object input = null;
+				parentFolder = (DocumentModel)AthentoOperationsHelper.runOperation(
+					operationId, input , params, session);
+				parentFolder = (DocumentModel) parentFolder;
+				if (AthentoOperationsHelper.DOCUMENT_TYPE_ATHENTO_EXCEPTION.equals(
+					parentFolder.getType())) {
+					return parentFolder;
+				}
+			} else {
+				_log.warn("No operation to get basePath and no destination set. Using default: " + defaultPath);
+				parentFolder = session.getDocument(new PathRef(defaultPath)); 
+			}
+		} else {
+			parentFolder = session.getDocument(new PathRef(destination));
 		}
+
 		if (name == null) {
 			name = "Untitled";
 		}
-		String parentPath = basePath;
-		if (parentFolder != null) {
-			parentPath = parentFolder.getPathAsString();
-		}
+		String parentPath = parentFolder.getPathAsString();
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(AthentoDocumentCreateOperation.ID
-				+ " Creating document in the standard way. parentPath: " + parentPath);
+				+ " Creating document in parentPath: " + parentPath);
 		}
 		DocumentModel newDoc = session.createDocumentModel(parentPath, name, type);
 		if (properties != null) {

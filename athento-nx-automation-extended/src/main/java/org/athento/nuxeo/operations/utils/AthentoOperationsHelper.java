@@ -22,6 +22,9 @@ import org.nuxeo.runtime.api.Framework;
 public class AthentoOperationsHelper {
 	
 	public static final String CONFIG_PATH = "/ExtendedConfig";
+	public static final String DOCUMENT_TYPE_ATHENTO_EXCEPTION = "AthentoException";
+	public static final String KEY_ATHENTO_EXCEPTION_CODE = "athentoException:exception_code";
+	public static final String KEY_ATHENTO_EXCEPTION_MESSAGE = "athentoException:exception_message";
 	
 	public static Object runOperation(String operationId, Object input, Map<String,Object> params, CoreSession session) {
 		AutomationService automationManager = Framework.getLocalService(AutomationService.class);
@@ -40,10 +43,27 @@ public class AthentoOperationsHelper {
 				_log.debug("Result: " + o);
 			}
 		} catch (Exception e) {
-			_log.error("Unable to run operation: " + operationId, e);
+			Throwable cause = AthentoOperationsHelper.getRootCause(e);
+			String message = cause.getMessage();
+			_log.error("Unable to run operation: " + operationId + " cause: " + message, e);
+			DocumentModel athentoException = session.createDocumentModel("/", message,
+				AthentoOperationsHelper.DOCUMENT_TYPE_ATHENTO_EXCEPTION);
+			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_CODE, String.valueOf(cause.getClass()));
+			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_MESSAGE, message);
+			o = session.createDocument(athentoException);
+//			throw new AthentoException(message, cause.getClass().getName());
 		}
 		return o;
 	}
+	
+	private static Throwable getRootCause(Throwable e) {
+		Throwable cause = e.getCause();
+		if (cause != null) {
+			return AthentoOperationsHelper.getRootCause(cause);
+		}
+		return e;
+	}
+
 	public static Map<String, Object> readConfig(CoreSession session) {
 		Map<String, Object> config = new HashMap<String,Object>();
 		DocumentModel conf = session.getDocument(new PathRef(AthentoOperationsHelper.CONFIG_PATH));
@@ -67,5 +87,6 @@ public class AthentoOperationsHelper {
 
 	private static final Log _log = LogFactory
 		.getLog(AthentoOperationsHelper.class);
+
 
 }
