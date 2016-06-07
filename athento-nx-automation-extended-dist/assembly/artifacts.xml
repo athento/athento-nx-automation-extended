@@ -1,12 +1,12 @@
 <assembly>
 	<artifactSet id="project-plugins">
 		<artifacts>
+			<artifact group="org.athento.nuxeo" name="athento-nx-automation-extended"
+				version="${projectParentVersion}" />
 		</artifacts>
 	</artifactSet>
 	<artifactSet id="athento-plugins">
 		<artifacts>
-			<artifact group="org.athento.nuxeo" name="athento-nx-automation-extended"
-				version="1.0" />
 		</artifacts>
 	</artifactSet>
 </assembly>
