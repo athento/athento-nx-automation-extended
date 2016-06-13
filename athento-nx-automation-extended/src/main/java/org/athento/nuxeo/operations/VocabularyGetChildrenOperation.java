@@ -40,6 +40,8 @@ public class VocabularyGetChildrenOperation {
 	@Context
 	protected OperationContext ctx;
 
+	@Param(name = "expanded", widget = Constants.W_CHECK, required=false)
+	protected Boolean expanded = false;
 	@Param(name = "languageId", widget = Constants.W_TEXT, required=false)
 	protected String languageId;
 	@Param(name = "parentValue", widget = Constants.W_TEXT)
@@ -56,9 +58,9 @@ public class VocabularyGetChildrenOperation {
 	public Object run() throws Exception {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Getting children of vocabulary: " + vocabularyName + " for value " + parentValue);
+			_log.debug("    languageId: " + languageId + " expanded:" + expanded);
 		}
 		List<JSONObject> children = getValuesForParentValue();
-
 		if (_log.isDebugEnabled()) {
 			_log.debug("Children vocabularies of [" + vocabularyName + "]: " + children);
 		}
@@ -99,7 +101,12 @@ public class VocabularyGetChildrenOperation {
 				}
 			}
 			JSONObject val = new JSONObject();
-			val.put(entry.getId(), label);
+			if (!expanded) {
+				val.put(entry.getId(), label);
+			} else {
+				val.put("id", entry.getId());
+				val.put("label", label);
+			}
 			if (_log.isDebugEnabled()) {
 				_log.debug(">> adding value: " + val);
 			}

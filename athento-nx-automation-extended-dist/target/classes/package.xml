@@ -1,5 +1,5 @@
 <!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
-<package type="addon" name="athento-nx-automation-extended" version="1.0">
+<package type="addon" name="athento-nx-automation-extended" version="1.5">
   <title>athento-nx-automation-extended</title>
   <description>
 	This is the project package for athento-nx-automation-extended

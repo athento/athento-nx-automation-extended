@@ -371,8 +371,13 @@
 			<param type="string" name="vocabularyName" />
 			<param type="string" name="parentValue" />
 			<operation id="Context.SetVar">
-				<param type="string" name="name">vocabularyName</param>
-				<param type="string" name="value">expr:@{ChainParameters['vocabularyName']}
+				<param type="string" name="name">expanded</param>
+				<param type="string" name="value">expr:@{ChainParameters['expanded']}
+				</param>
+			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">languageId</param>
+				<param type="string" name="value">expr:@{ChainParameters['languageId']}
 				</param>
 			</operation>
 			<operation id="Context.SetVar">
@@ -380,10 +385,17 @@
 				<param type="string" name="value">expr:@{ChainParameters['parentValue']}
 				</param>
 			</operation>
+			<operation id="Context.SetVar">
+				<param type="string" name="name">vocabularyName</param>
+				<param type="string" name="value">expr:@{ChainParameters['vocabularyName']}
+				</param>
+			</operation>
 
 			<operation id="Athento.VocabularyGetChildrenOperation">
-				<param type="string" name="vocabularyName">expr:vocabularyName</param>
+				<param type="string" name="expanded">expr:expanded</param>
+				<param type="string" name="languageId">expr:languageId</param>
 				<param type="string" name="parentValue">expr:parentValue</param>
+				<param type="string" name="vocabularyName">expr:vocabularyName</param>
 			</operation>
 		</chain>
 		
