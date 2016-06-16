@@ -11,6 +11,19 @@ This project adds some useful operations for automation chains
 ### RunOperationAsWorker
 ![operation RunOperationAsWorker](/screenshots/runOperationAsWorker.png)
 
+### Athento.DocumentCreate
+
+### Athento.DocumentUpdate
+
+### Athento.DocumentDelete
+
+### Athento.Exception.Create
+Creates a custom exception for each case
+#### Uncatched exception 500
+![Internal Server Error](/screenshots/500_Unexpected_exception.png)
+#### Catched exception 500
+![Bad request](/screenshots/400_bad_request.png)
+
 
 ## Installation
 
