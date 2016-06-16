@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -72,56 +73,62 @@ public class AthentoDocumentCreateOperation {
 			_log.debug(" - name: " + name);
 			_log.debug(" - properties: " + properties);
 		}
-		Map<String, Object> config = AthentoOperationsHelper
-			.readConfig(session);
-		String operationId = String.valueOf(config
-			.get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID));
-		String defaultPath = String.valueOf(config
-			.get(AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION));
-		DocumentModel parentFolder = doc;
-		if (StringUtils.isNullOrEmpty(destination)) {
-			if (!StringUtils.isNullOrEmpty(operationId)) {
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("basePath", defaultPath);
-				params.put("name", name);
-				params.put("properties", properties);
-				params.put("type", type);
-				Object input = null;
-				parentFolder = (DocumentModel)AthentoOperationsHelper.runOperation(
-					operationId, input , params, session);
-				parentFolder = (DocumentModel) parentFolder;
-				if (AthentoOperationsHelper.DOCUMENT_TYPE_ATHENTO_EXCEPTION.equals(
-					parentFolder.getType())) {
-					return parentFolder;
+		try {
+			Map<String, Object> config = AthentoOperationsHelper
+				.readConfig(session);
+			String operationId = String.valueOf(config
+				.get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID));
+			String defaultPath = String.valueOf(config
+				.get(AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION));
+			DocumentModel parentFolder = doc;
+			if (StringUtils.isNullOrEmpty(destination)) {
+				if (!StringUtils.isNullOrEmpty(operationId)) {
+					Map<String, Object> params = new HashMap<String, Object>();
+					params.put("basePath", defaultPath);
+					params.put("name", name);
+					params.put("properties", properties);
+					params.put("type", type);
+					Object input = null;
+					parentFolder = (DocumentModel)AthentoOperationsHelper.runOperation(
+						operationId, input , params, session);
+					parentFolder = (DocumentModel) parentFolder;
+				} else {
+					_log.warn("No operation to get basePath and no destination set. Using default: " + defaultPath);
+					parentFolder = session.getDocument(new PathRef(defaultPath)); 
 				}
 			} else {
-				_log.warn("No operation to get basePath and no destination set. Using default: " + defaultPath);
-				parentFolder = session.getDocument(new PathRef(defaultPath)); 
+				parentFolder = session.getDocument(new PathRef(destination));
 			}
-		} else {
-			parentFolder = session.getDocument(new PathRef(destination));
+	
+			if (name == null) {
+				name = "Untitled";
+			}
+			String parentPath = parentFolder.getPathAsString();
+	
+			if (_log.isDebugEnabled()) {
+				_log.debug(AthentoDocumentCreateOperation.ID
+					+ " Creating document in parentPath: " + parentPath);
+			}
+			DocumentModel newDoc = session.createDocumentModel(parentPath, name, type);
+			if (properties != null) {
+				DocumentHelper.setProperties(session, newDoc, properties);
+			}
+			doc = session.createDocument(newDoc);
+	// -- END Document.Create
+			if (_log.isDebugEnabled()) {
+				_log.debug(AthentoDocumentCreateOperation.ID
+						+ " END return value: " + doc);
+			}
+			return doc;
+		} catch (Exception e) {
+			_log.error("Unable to complete operation: " 
+				+ AthentoDocumentCreateOperation.ID + " due to: " + e.getMessage(), e);
+			if (e instanceof AthentoException) {
+				throw e;
+			}
+			AthentoException exc = new AthentoException(e.getMessage(), e);
+			throw exc;
 		}
-
-		if (name == null) {
-			name = "Untitled";
-		}
-		String parentPath = parentFolder.getPathAsString();
-
-		if (_log.isDebugEnabled()) {
-			_log.debug(AthentoDocumentCreateOperation.ID
-				+ " Creating document in parentPath: " + parentPath);
-		}
-		DocumentModel newDoc = session.createDocumentModel(parentPath, name, type);
-		if (properties != null) {
-			DocumentHelper.setProperties(session, newDoc, properties);
-		}
-		doc = session.createDocument(newDoc);
-// -- END Document.Create
-		if (_log.isDebugEnabled()) {
-			_log.debug(AthentoDocumentCreateOperation.ID
-					+ " END return value: " + doc);
-		}
-		return doc;
 	}
 
 	private static final Log _log = LogFactory

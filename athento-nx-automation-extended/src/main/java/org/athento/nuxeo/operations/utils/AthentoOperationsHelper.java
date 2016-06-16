@@ -8,8 +8,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.operations.exception.AthentoException;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
+import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
@@ -22,11 +24,19 @@ import org.nuxeo.runtime.api.Framework;
 public class AthentoOperationsHelper {
 	
 	public static final String CONFIG_PATH = "/ExtendedConfig";
-	public static final String DOCUMENT_TYPE_ATHENTO_EXCEPTION = "AthentoException";
-	public static final String KEY_ATHENTO_EXCEPTION_CODE = "athentoException:exception_code";
-	public static final String KEY_ATHENTO_EXCEPTION_MESSAGE = "athentoException:exception_message";
-	
-	public static Object runOperation(String operationId, Object input, Map<String,Object> params, CoreSession session) {
+
+	public static Throwable getRootCause(Throwable e) {
+		if (e == null) return null;
+		Throwable cause = e.getCause();
+		if (cause != null) {
+			return AthentoOperationsHelper.getRootCause(cause);
+		}
+		return e;
+	}
+
+	public static Object runOperation(
+		String operationId, Object input, Map<String,Object> params, CoreSession session) 
+		throws OperationException {
 		AutomationService automationManager = Framework.getLocalService(AutomationService.class);
 		// Input setting
 		OperationContext ctx = new OperationContext(session);
@@ -43,27 +53,26 @@ public class AthentoOperationsHelper {
 				_log.debug("Result: " + o);
 			}
 		} catch (Exception e) {
-			Throwable cause = AthentoOperationsHelper.getRootCause(e);
-			String message = cause.getMessage();
-			_log.error("Unable to run operation: " + operationId + " cause: " + message, e);
-			DocumentModel athentoException = session.createDocumentModel("/", message,
-				AthentoOperationsHelper.DOCUMENT_TYPE_ATHENTO_EXCEPTION);
-			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_CODE, String.valueOf(cause.getClass()));
-			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_MESSAGE, message);
-			o = session.createDocument(athentoException);
+			_log.error("Unable to run operation: " + operationId + " Exception: " 
+				+ e.getMessage(), e);
+			Throwable cause = e;
+			if (!(e instanceof AthentoException)) {
+				cause = AthentoOperationsHelper.getRootCause(e);
+				_log.error("Retrieving cause: " + cause.getMessage());
+			}
+			AthentoException exc = new AthentoException(cause.getMessage(), cause);
+			throw exc;
+//			
+//			DocumentModel athentoException = session.createDocumentModel("/", message,
+//				AthentoOperationsHelper.DOCUMENT_TYPE_ATHENTO_EXCEPTION);
+//			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_CODE, String.valueOf(cause.getClass()));
+//			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_MESSAGE, message);
+//			o = session.createDocument(athentoException);
 //			throw new AthentoException(message, cause.getClass().getName());
 		}
 		return o;
 	}
 	
-	private static Throwable getRootCause(Throwable e) {
-		Throwable cause = e.getCause();
-		if (cause != null) {
-			return AthentoOperationsHelper.getRootCause(cause);
-		}
-		return e;
-	}
-
 	public static Map<String, Object> readConfig(CoreSession session) {
 		Map<String, Object> config = new HashMap<String,Object>();
 		DocumentModel conf = session.getDocument(new PathRef(AthentoOperationsHelper.CONFIG_PATH));

@@ -4,11 +4,54 @@
 	version="1.0.0">
 	<require>org.nuxeo.runtime.started</require>
 
+
+	<extension point="chainException"
+		target="org.nuxeo.ecm.core.operation.OperationServiceComponent">
+		<catchChain id="athentoExceptionCatchDocumentCreate" onChainId="Athento.DocumentCreate">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchDocumentDelete" onChainId="Athento.DocumentDelete">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchDocumentQuery" onChainId="Athento.DocumentQuery">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchDocumentQueryDirectory" onChainId="Athento.DocumentQueryDirectory">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchDocumentResultSet" onChainId="Athento.DocumentResultSet">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchDocumentUpdate" onChainId="Athento.DocumentUpdate">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchCreateComment" onChainId="Document.CreateComment">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchDeleteComment" onChainId="Document.DeleteComment">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchGetAllComments" onChainId="Document.GetAllComments">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchCreateGroup" onChainId="Group.CreateGroup">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchCreateGroupWithLabel" onChainId="Group.CreateGroupWithLabel">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+		<catchChain id="athentoExceptionCatchVocabularyGetChildren" onChainId="Athento.Vocabulary.GetChildren">
+			<run chainId="athentoExceptionReturn" priority="0" rollBack="true" />
+		</catchChain>
+	</extension>
+
 	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
 		point="chains">
 
+		<chain id="athentoExceptionReturn">
+			<operation id="Athento.Exception.Create" />
+		</chain>
 		<chain id="Athento.DocumentCreate">
-
 			<documentation>
 				Extended document creation.
 			</documentation>
@@ -17,10 +60,14 @@
 			<param type="properties" name="properties" />
 			<param type="string" name="type" />
 			<operation id="Athento.Document.Create">
-				<param type="string" name="destination">expr:@{ChainParameters['destination']}</param>
-				<param type="string" name="name">expr:@{ChainParameters['name']}</param>
-				<param type="properties" name="properties">expr:ChainParameters['properties']</param>
-				<param type="string" name="type">expr:@{ChainParameters['type']}</param>
+				<param type="string" name="destination">expr:@{ChainParameters['destination']}
+				</param>
+				<param type="string" name="name">expr:@{ChainParameters['name']}
+				</param>
+				<param type="properties" name="properties">expr:ChainParameters['properties']
+				</param>
+				<param type="string" name="type">expr:@{ChainParameters['type']}
+				</param>
 			</operation>
 		</chain>
 
@@ -174,10 +221,14 @@
 			<param type="boolean" name="updateParent" />
 			<param type="boolean" name="save" />
 			<operation id="Athento.Document.Update">
-				<param type="string" name="documentType">expr:@{ChainParameters['documentType']}</param>
-				<param type="properties" name="properties">expr:ChainParameters['properties']</param>
-				<param type="boolean" name="save">expr:@{ChainParameters['save']}</param>
-				<param type="boolean" name="updateParent">expr:@{ChainParameters['updateParent']}</param>
+				<param type="string" name="documentType">expr:@{ChainParameters['documentType']}
+				</param>
+				<param type="properties" name="properties">expr:ChainParameters['properties']
+				</param>
+				<param type="boolean" name="save">expr:@{ChainParameters['save']}
+				</param>
+				<param type="boolean" name="updateParent">expr:@{ChainParameters['updateParent']}
+				</param>
 			</operation>
 		</chain>
 
@@ -196,17 +247,20 @@
 				</param>
 			</operation>
 			<operation id="Context.SetVar">
-				<param type="string" name="name">cfg_documentCreateOperationPre</param>
+				<param type="string" name="name">cfg_documentCreateOperationPre
+				</param>
 				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentCreateOperationPre"]}
 				</param>
 			</operation>
 			<operation id="Context.SetVar">
-				<param type="string" name="name">cfg_documentUpdateOperationId</param>
+				<param type="string" name="name">cfg_documentUpdateOperationId
+				</param>
 				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentUpdateOperationId"]}
 				</param>
 			</operation>
 			<operation id="Context.SetVar">
-				<param type="string" name="name">cfg_documentUpdateWatchedDocumentType</param>
+				<param type="string" name="name">cfg_documentUpdateWatchedDocumentType
+				</param>
 				<param type="string" name="value">expr:@{Document["automationExtendedConfig:documentUpdateWatchedDocumentType"]}
 				</param>
 			</operation>
@@ -366,7 +420,7 @@
 				</param>
 			</operation>
 		</chain>
-		
+
 		<chain id="Athento.Vocabulary.GetChildren">
 			<param type="string" name="vocabularyName" />
 			<param type="string" name="parentValue" />
@@ -398,7 +452,7 @@
 				<param type="string" name="vocabularyName">expr:vocabularyName</param>
 			</operation>
 		</chain>
-		
+
 		<chain id="voidChain">
 			<operation id="LogOperation">
 				<param type="string" name="level">debug</param>
