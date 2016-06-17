@@ -1,27 +1,37 @@
 package org.athento.nuxeo.operations.exception;
 
-public class AthentoException extends Exception {
-	private String message;
-	private String code;
-	
-	
-	
-	public AthentoException(String message, String code) {
-		super();
-		this.message = message;
-		this.code = code;
+import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.nuxeo.ecm.automation.server.jaxrs.RestOperationException;
+
+public class AthentoException extends RestOperationException {
+
+
+	public AthentoException(String message, Throwable cause) {
+		super(message, cause);
+		AthentoException.setEmptyStackTrace(this);
 	}
-	public String getCode() {
-		return code;
+
+	public AthentoException(String message) {
+		super(message, null);
+		AthentoException.setEmptyStackTrace(this);
 	}
-	public void setCode(String code) {
-		this.code = code;
+
+	public AthentoException(Throwable cause) {
+		super(cause);
+		AthentoException.setEmptyStackTrace(cause);
 	}
-	public String getMessage() {
-		return message;
+
+	public static void setEmptyStackTrace(Throwable e) {
+		if (e != null) {
+			Throwable cause = AthentoOperationsHelper.getRootCause(e);
+			e.setStackTrace(AthentoException.EMPTY_TRACE);
+			if (!e.equals(cause)) {
+				AthentoException.setEmptyStackTrace(cause);
+			}
+		}
 	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	
+
+	private static final StackTraceElement[] EMPTY_TRACE = new StackTraceElement[] {};
+
+	private static final long serialVersionUID = -8048219282223604748L;
 }
