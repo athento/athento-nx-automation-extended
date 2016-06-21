@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.ConflictOperationException;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -58,35 +59,37 @@ public class AthentoDocumentUpdateOperation {
     public DocumentModel run(DocumentModel doc) throws Exception {
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentUpdateOperation.ID
-                    + " BEGIN with params:");
+                + " BEGIN with params:");
             _log.debug(" documentType: " + documentType);
+            _log.debug(" input: " + doc);
             _log.debug(" save: " + save);
             _log.debug(" changeToken: " + changeToken);
             _log.debug(" properties: " + properties);
         }
         try {
             Map<String, Object> config = AthentoOperationsHelper
-                    .readConfig(session);
-            String watchedDocumentType = String
-                    .valueOf(config
-                            .get(AthentoDocumentUpdateOperation.CONFIG_WATCHED_DOCTYPE));
+                .readConfig(session);
+            String watchedDocumentTypes = String.valueOf(config
+                .get(AthentoDocumentUpdateOperation.CONFIG_WATCHED_DOCTYPE));
             String operationId = String.valueOf(config
-                    .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID));
-            if (doc == null && watchedDocumentType != null
-                    && watchedDocumentType.equals(documentType)) {
+                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID));
+            if (isWatchedDocumentType(doc, watchedDocumentTypes)) {
                 Object input = null;
+                if (doc != null) {
+                    input = doc;
+                }
                 Map<String, Object> params = new HashMap<String, Object>();
                 params.put("documentType", documentType);
                 params.put("save", save);
                 params.put("changeToken", changeToken);
                 params.put("properties", properties);
                 Object retValue = AthentoOperationsHelper.runOperation(
-                        operationId, input, params, session);
+                    operationId, input, params, session);
                 doc = (DocumentModel) retValue;
             } else {
                 if (_log.isDebugEnabled()) {
                     _log.debug(AthentoDocumentUpdateOperation.ID
-                            + " Updating document in the standard way");
+                        + " Updating document in the standard way");
                 }
                 if (changeToken != null) {
                     // Check for dirty update
@@ -102,14 +105,14 @@ public class AthentoDocumentUpdateOperation {
             }
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentUpdateOperation.ID
-                        + " END return value: " + doc);
+                    + " END return value: " + doc);
             }
             return doc;
         } catch (Exception e) {
             _log.error(
-                    "Unable to complete operation: "
-                            + AthentoDocumentUpdateOperation.ID + " due to: "
-                            + e.getMessage(), e);
+                "Unable to complete operation: "
+                    + AthentoDocumentUpdateOperation.ID + " due to: "
+                    + e.getMessage(), e);
             if (e instanceof AthentoException) {
                 throw e;
             }
@@ -118,7 +121,19 @@ public class AthentoDocumentUpdateOperation {
         }
     }
 
+    private boolean isWatchedDocumentType(DocumentModel doc, String watchedDocumentTypes) {
+        if (StringUtils.isNullOrEmpty(watchedDocumentTypes)) {
+            return false;
+        }
+        String docType = documentType;
+        if (StringUtils.isNullOrEmpty(documentType)) {
+            docType = doc.getType();
+        }
+        return StringUtils.isIncludedIn(docType, watchedDocumentTypes,
+            StringUtils.COMMA);
+    }
+
     private static final Log _log = LogFactory
-            .getLog(AthentoDocumentUpdateOperation.class);
+        .getLog(AthentoDocumentUpdateOperation.class);
 
 }
