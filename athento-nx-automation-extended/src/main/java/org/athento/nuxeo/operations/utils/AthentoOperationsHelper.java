@@ -62,13 +62,6 @@ public class AthentoOperationsHelper {
 			}
 			AthentoException exc = new AthentoException(cause.getMessage(), cause);
 			throw exc;
-//			
-//			DocumentModel athentoException = session.createDocumentModel("/", message,
-//				AthentoOperationsHelper.DOCUMENT_TYPE_ATHENTO_EXCEPTION);
-//			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_CODE, String.valueOf(cause.getClass()));
-//			athentoException.setPropertyValue(KEY_ATHENTO_EXCEPTION_MESSAGE, message);
-//			o = session.createDocument(athentoException);
-//			throw new AthentoException(message, cause.getClass().getName());
 		}
 		return o;
 	}
@@ -81,9 +74,6 @@ public class AthentoOperationsHelper {
 			for (String keyName : metadata.keySet()) {
 				String key = keyName;
 				Object val = conf.getPropertyValue(key);
-				if (_log.isDebugEnabled()) {
-					_log.debug("key ["+key+"] : " + val);
-				}
 				config.put(key,val);
 			}
 		}
