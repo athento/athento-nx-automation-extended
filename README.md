@@ -3,6 +3,9 @@
 ## For versions
 6.0
 
+## Download
+You can download [latest release from here](https://github.com/athento/athento-nx-automation-extended/raw/master/athento-nx-automation-extended-dist/target/athento-nx-automation-extended-project-1.8.zip)
+
 ## Synopsis
 
 This project adds some useful operations for automation chains
