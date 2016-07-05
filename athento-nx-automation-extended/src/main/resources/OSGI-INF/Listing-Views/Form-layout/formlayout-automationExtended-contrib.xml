@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<component name="org.athento.nuxeo.athento-nx-automation-extended.formlayout-automationExtended"
+<component
+	name="org.athento.nuxeo.athento-nx-automation-extended.formlayout-automationExtended"
 	version="1.0.0">
 	<require>org.nuxeo.runtime.started</require>
 
@@ -36,11 +37,23 @@
 					</properties>
 					<widget>documentUpdateWatchedDocumentType</widget>
 				</row>
-
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentResultSetOperationId</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentResultSetWatchedDocumentType</widget>
+				</row>
 			</rows>
 			<widget name="defaultDestination" type="text">
 				<labels>
-					<label mode="any">label.automationExtendedConfig.defaultDestination</label>
+					<label mode="any">label.automationExtendedConfig.defaultDestination
+					</label>
 				</labels>
 				<translated>true</translated>
 				<fields>
@@ -49,7 +62,8 @@
 			</widget>
 			<widget name="documentCreateOperationId" type="text">
 				<labels>
-					<label mode="any">label.automationExtendedConfig.documentCreateOperationId</label>
+					<label mode="any">label.automationExtendedConfig.documentCreateOperationId
+					</label>
 				</labels>
 				<translated>true</translated>
 				<fields>
@@ -58,7 +72,8 @@
 			</widget>
 			<widget name="documentUpdateOperationId" type="text">
 				<labels>
-					<label mode="any">label.automationExtendedConfig.documentUpdateOperationId</label>
+					<label mode="any">label.automationExtendedConfig.documentUpdateOperationId
+					</label>
 				</labels>
 				<translated>true</translated>
 				<fields>
@@ -67,14 +82,37 @@
 			</widget>
 			<widget name="documentUpdateWatchedDocumentType" type="text">
 				<labels>
-					<label mode="any">label.automationExtendedConfig.documentUpdateWatchedDocumentType</label>
+					<label mode="any">label.automationExtendedConfig.documentUpdateWatchedDocumentType
+					</label>
 				</labels>
 				<translated>true</translated>
 				<fields>
-					<field>automationExtendedConfig:documentUpdateWatchedDocumentType</field>
+					<field>automationExtendedConfig:documentUpdateWatchedDocumentType
+					</field>
 				</fields>
 			</widget>
-
+			<widget name="documentResultSetOperationId" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentResultSetOperationId
+					</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentResultSetOperationId
+					</field>
+				</fields>
+			</widget>
+			<widget name="documentResultSetWatchedDocumentType" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentResultSetWatchedDocumentType
+					</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentResultSetWatchedDocumentType
+					</field>
+				</fields>
+			</widget>
 		</layout>
 	</extension>
 </component>

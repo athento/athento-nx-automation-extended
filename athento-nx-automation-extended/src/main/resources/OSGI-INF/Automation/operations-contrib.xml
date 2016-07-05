@@ -1,19 +1,28 @@
 <?xml version="1.0"?>
-<component 	name="org.athento.nuxeo.automation.extended.OperationContrib"
+<component name="org.athento.nuxeo.automation.extended.OperationContrib"
 	version="1.0.0">
 	<!-- Contributing a new operation to be used for import some files -->
 	<extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
 		point="operations">
-		<operation class="org.athento.nuxeo.operations.AthentoDocumentCreateOperation" />
-		<operation class="org.athento.nuxeo.operations.AthentoDocumentUpdateOperation" />
-		<operation class="org.athento.nuxeo.operations.AthentoExceptionCreateOperation" />
-		<operation class="org.athento.nuxeo.operations.DocumentFetchOrCreateOperation" />
-		<operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
+		<operation
+			class="org.athento.nuxeo.operations.AthentoDocumentCreateOperation" />
+		<operation
+			class="org.athento.nuxeo.operations.AthentoDocumentResultSetOperation" />
+		<operation
+			class="org.athento.nuxeo.operations.AthentoDocumentUpdateOperation" />
+		<operation
+			class="org.athento.nuxeo.operations.AthentoExceptionCreateOperation" />
+		<operation
+			class="org.athento.nuxeo.operations.DocumentFetchOrCreateOperation" />
+		<operation
+			class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
 		<operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
-		<operation class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
-		<!--Operation for generate Athento Preview iFrame-->
+		<operation
+			class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
+		<!--Operation for generate Athento Preview iFrame -->
 		<operation class="org.athento.nuxeo.operations.GetPreviewIFrameOperation" />
 		<!--Attach blob -->
-		<operation class="org.athento.nuxeo.operations.AthentoAttachBlobOperation" replace="true"/>
+		<operation class="org.athento.nuxeo.operations.AthentoAttachBlobOperation"
+			replace="true" />
 	</extension>
 </component>
