@@ -54,10 +54,10 @@ public class AthentoDocumentResultSetOperation {
     protected String maxResults = "20";
 
     @Param(name = "page", required = false)
-    protected Integer page;
+    protected Integer page = 0;
 
     @Param(name = "pageSize", required = false)
-    protected Integer pageSize;
+    protected Integer pageSize = 20;
 
     @Param(name = "providerName", required = false)
     protected String providerName;
@@ -108,8 +108,12 @@ public class AthentoDocumentResultSetOperation {
             params.put("query", modifiedQuery);
             params.put("page", page);
             params.put("pageSize", pageSize);
-            params.put("sortBy", sortBy);
-            params.put("sortOrder", sortOrder);
+            if (!StringUtils.isNullOrEmpty(sortBy)) {
+                params.put("sortBy", sortBy);
+                if (!StringUtils.isNullOrEmpty(sortOrder)) {
+                    params.put("sortOrder", sortOrder);
+                }
+            }
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
                 input, params, session);
             if (_log.isDebugEnabled()) {
