@@ -46,11 +46,12 @@ public class AthentoOperationsHelper {
 		try {
 			// Run Automation service
 			if (_log.isDebugEnabled()) {
-				_log.debug("Running operation: " + operationId);
+				_log.debug("## Running operation: " + operationId);
+				_log.debug(" params: " + params);
 			}
 			o = automationManager.run(ctx,operationId, params);
 			if (_log.isDebugEnabled()) {
-				_log.debug("Result: " + o);
+				_log.debug("## Result: " + o);
 			}
 		} catch (Exception e) {
 			_log.error("Unable to run operation: " + operationId + " Exception: " 

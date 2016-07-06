@@ -185,9 +185,9 @@
 			<param type="string" name="sortBy" />
 			<param type="string" name="sortOrder" />
 			<operation id="Athento.Document.ResultSet">
-				<param type="string" name="page">expr:@{ChainParameters['page']}
+				<param type="integer" name="page">expr:ChainParameters['page']
 				</param>
-				<param type="string" name="pageSize">expr:@{ChainParameters['pageSize']}
+				<param type="integer" name="pageSize">expr:ChainParameters['pageSize']
 				</param>
 				<param type="string" name="query">expr:@{ChainParameters['query']}
 				</param>
@@ -196,11 +196,6 @@
 				<param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
 				</param>
 			</operation>
-			<!-- <operation id="Resultset.PageProvider"> <param type="string" name="query">expr:query</param> 
-				<param type="integer" name="page">expr:page == empty ? 0 : page </param> 
-				<param type="string" name="sortOrder">expr:sortOrder</param> <param type="string" 
-				name="sortBy">expr:sortBy</param> <param type="integer" name="pageSize">expr:pageSize 
-				== empty ? 20 : pageSize </param> </operation> -->
 		</chain>
 
 		<chain id="Athento.DocumentUpdate">
