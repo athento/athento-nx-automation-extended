@@ -105,45 +105,18 @@
 			<param type="integer" name="pageSize" />
 			<param type="string" name="sortOrder" />
 			<param type="string" name="sortBy" />
-			<operation id="Context.SetVar">
-				<param type="string" name="name">query</param>
-				<param type="string" name="value">expr:@{ChainParameters['query']}
+			<operation id="Athento.Document.Query">
+				<param type="integer" name="currentPageIndex">expr:ChainParameters['currentPageIndex']
+				</param>
+				<param type="integer" name="pageSize">expr:ChainParameters['pageSize']
+				</param>
+				<param type="string" name="query">expr:@{ChainParameters['query']}
+				</param>
+				<param type="string" name="sortBy">expr:@{ChainParameters['sortBy']}
+				</param>
+				<param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
 				</param>
 			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">currentPageIndex</param>
-				<param type="integer" name="value">expr:ChainParameters['currentPageIndex']
-					== empty ? empty : ChainParameters['currentPageIndex']
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">pageSize</param>
-				<param type="integer" name="value">expr:ChainParameters['pageSize'] ==
-					empty ? empty : ChainParameters['pageSize']
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">sortOrder</param>
-				<param type="string" name="value">expr:@{ChainParameters['sortOrder']}
-				</param>
-			</operation>
-			<operation id="Context.SetVar">
-				<param type="string" name="name">sortBy</param>
-				<param type="string" name="value">expr:@{ChainParameters['sortBy']}
-				</param>
-			</operation>
-			<operation id="Document.Query">
-				<param type="string" name="query">expr:query</param>
-				<param type="integer" name="currentPageIndex">expr:currentPageIndex == empty ? 0
-					: currentPageIndex
-				</param>
-				<param type="string" name="sortOrder">expr:sortOrder</param>
-				<param type="string" name="sortBy">expr:sortBy</param>
-				<param type="integer" name="pageSize">expr:pageSize == empty ? 20 :
-					pageSize
-				</param>
-			</operation>
-
 		</chain>
 
 		<chain id="Athento.DocumentQueryDirectory">
