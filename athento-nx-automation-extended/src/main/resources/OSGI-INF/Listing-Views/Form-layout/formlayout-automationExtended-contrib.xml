@@ -29,13 +29,13 @@
 					<properties mode="any">
 						<property name="nxl_colspan_0">1</property>
 					</properties>
-					<widget>documentUpdateOperationId</widget>
+					<widget>documentQueryOperationId</widget>
 				</row>
 				<row>
 					<properties mode="any">
 						<property name="nxl_colspan_0">1</property>
 					</properties>
-					<widget>documentUpdateWatchedDocumentType</widget>
+					<widget>documentQueryWatchedDocumentType</widget>
 				</row>
 				<row>
 					<properties mode="any">
@@ -49,6 +49,19 @@
 					</properties>
 					<widget>documentResultSetWatchedDocumentType</widget>
 				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentUpdateOperationId</widget>
+				</row>
+				<row>
+					<properties mode="any">
+						<property name="nxl_colspan_0">1</property>
+					</properties>
+					<widget>documentUpdateWatchedDocumentType</widget>
+				</row>
+
 			</rows>
 			<widget name="defaultDestination" type="text">
 				<labels>
@@ -70,24 +83,25 @@
 					<field>automationExtendedConfig:documentCreateOperationId</field>
 				</fields>
 			</widget>
-			<widget name="documentUpdateOperationId" type="text">
+			<widget name="documentQueryOperationId" type="text">
 				<labels>
-					<label mode="any">label.automationExtendedConfig.documentUpdateOperationId
+					<label mode="any">label.automationExtendedConfig.documentQueryOperationId
 					</label>
 				</labels>
 				<translated>true</translated>
 				<fields>
-					<field>automationExtendedConfig:documentUpdateOperationId</field>
+					<field>automationExtendedConfig:documentQueryOperationId
+					</field>
 				</fields>
 			</widget>
-			<widget name="documentUpdateWatchedDocumentType" type="text">
+			<widget name="documentQueryWatchedDocumentType" type="text">
 				<labels>
-					<label mode="any">label.automationExtendedConfig.documentUpdateWatchedDocumentType
+					<label mode="any">label.automationExtendedConfig.documentQueryWatchedDocumentType
 					</label>
 				</labels>
 				<translated>true</translated>
 				<fields>
-					<field>automationExtendedConfig:documentUpdateWatchedDocumentType
+					<field>automationExtendedConfig:documentQueryWatchedDocumentType
 					</field>
 				</fields>
 			</widget>
@@ -110,6 +124,27 @@
 				<translated>true</translated>
 				<fields>
 					<field>automationExtendedConfig:documentResultSetWatchedDocumentType
+					</field>
+				</fields>
+			</widget>
+			<widget name="documentUpdateOperationId" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentUpdateOperationId
+					</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentUpdateOperationId</field>
+				</fields>
+			</widget>
+			<widget name="documentUpdateWatchedDocumentType" type="text">
+				<labels>
+					<label mode="any">label.automationExtendedConfig.documentUpdateWatchedDocumentType
+					</label>
+				</labels>
+				<translated>true</translated>
+				<fields>
+					<field>automationExtendedConfig:documentUpdateWatchedDocumentType
 					</field>
 				</fields>
 			</widget>

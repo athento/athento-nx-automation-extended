@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
         <groupId>org.athento.nuxeo</groupId>
         <artifactId>athento-nx-automation-extended-project</artifactId>
-        <version>1.9</version>
+        <version>1.10</version>
 
 	<packaging>pom</packaging>
 	<name>Athento NX automation extended Project</name>
@@ -156,6 +156,7 @@
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.3.1</version>
 					<configuration>
+						<finalName>${project.artifactId}-${project.version}-${maven.build.timestamp}</finalName>
 						<archive>
 							<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 							<manifestEntries>
