@@ -38,7 +38,7 @@ public class AthentoDocumentResultSetOperation {
 
     public static final String ID = "Athento.Document.ResultSet";
 
-    public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentResultSetWatchedDocumentType";
+    public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentResultSetWatchedDocumentTypes";
     public static final String CONFIG_OPERATION_ID = "automationExtendedConfig:documentResultSetOperationId";
     public static final String DESC = "DESC";
 

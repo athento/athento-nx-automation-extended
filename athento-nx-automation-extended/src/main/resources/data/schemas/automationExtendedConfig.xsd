@@ -1,61 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:nxs="http://www.athento.com/ecm/schemas/athento/automationExtendedConfig"
-	targetNamespace="http://www.athento.com/ecm/schemas/athento/automationExtendedConfig">
-	<!-- helper XSD definitions for list types -->
-	<xs:complexType name="content">
-		<xs:sequence>
-			<xs:element name="encoding" type="xs:string" />
-			<xs:element name="mime-type" type="xs:string" />
-			<xs:element name="data" type="xs:base64Binary" />
-			<xs:element name="name" type="xs:string" />
-			<xs:element name="length" type="xs:long" />
-			<xs:element name="digest" type="xs:string" />
-		</xs:sequence>
-	</xs:complexType>
-	<xs:simpleType name="stringList">
-		<xs:list itemType="xs:string" />
-	</xs:simpleType>
-	<xs:simpleType name="doubleList">
-		<xs:list itemType="xs:double" />
-	</xs:simpleType>
-	<xs:simpleType name="dateList">
-		<xs:list itemType="xs:date" />
-	</xs:simpleType>
-	<xs:simpleType name="integerList">
-		<xs:list itemType="xs:integer" />
-	</xs:simpleType>
-	<xs:simpleType name="booleanList">
-		<xs:list itemType="xs:boolean" />
-	</xs:simpleType>
-	<xs:complexType name="blobList">
-		<xs:sequence>
-			<xs:element name="item" type="nxs:content" minOccurs="0"
-				maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:nxs="http://www.athento.com/ecm/schemas/athento/automationExtendedConfig"
+    targetNamespace="http://www.athento.com/ecm/schemas/athento/automationExtendedConfig">
+    <!-- helper XSD definitions for list types -->
+    <xs:complexType name="content">
+        <xs:sequence>
+            <xs:element name="encoding" type="xs:string" />
+            <xs:element name="mime-type" type="xs:string" />
+            <xs:element name="data" type="xs:base64Binary" />
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="length" type="xs:long" />
+            <xs:element name="digest" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="stringList">
+        <xs:list itemType="xs:string" />
+    </xs:simpleType>
+    <xs:simpleType name="doubleList">
+        <xs:list itemType="xs:double" />
+    </xs:simpleType>
+    <xs:simpleType name="dateList">
+        <xs:list itemType="xs:date" />
+    </xs:simpleType>
+    <xs:simpleType name="integerList">
+        <xs:list itemType="xs:integer" />
+    </xs:simpleType>
+    <xs:simpleType name="booleanList">
+        <xs:list itemType="xs:boolean" />
+    </xs:simpleType>
+    <xs:complexType name="blobList">
+        <xs:sequence>
+            <xs:element name="item" type="nxs:content" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
 
-	<!-- Extended Config: Automation Extended Config -->
+    <!-- Extended Config: Automation Extended Config -->
 
-	<xs:element name="defaultDestination" type="xs:string"
-		default="/default-domain/workspaces/" />
-	<xs:element name="documentCreateOperationId" type="xs:string"
-		default="voidChain" />
+    <xs:element name="defaultDestination" type="xs:string" default="/default-domain/workspaces/" />
+    <xs:element name="documentCreateOperationIdPre" type="xs:string" default="voidChain" />
+    <xs:element name="documentCreateOperationIdPost" type="xs:string" default="voidChain" />
+    <xs:element name="documentCreateWatchedDocumentTypes" type="xs:string" default="" />
 
-	<xs:element name="documentUpdateOperationId" type="xs:string"
-		default="voidChain" />
-	<xs:element name="documentUpdateWatchedDocumentType" type="xs:string"
-		default="" />
+    <xs:element name="documentQueryWatchedDocumentTypes" type="xs:string" default="" />
+    <xs:element name="documentQueryOperationId" type="xs:string" default="voidChain" />
 
-	<xs:element name="documentResultSetWatchedDocumentType"
-		type="xs:string" default="" />
-	<xs:element name="documentResultSetOperationId" type="xs:string"
-		default="voidChain" />
+    <xs:element name="documentResultSetWatchedDocumentTypes" type="xs:string" default="" />
+    <xs:element name="documentResultSetOperationId" type="xs:string" default="voidChain" />
 
-	<xs:element name="documentQueryWatchedDocumentType"
-		type="xs:string" default="" />
-	<xs:element name="documentQueryOperationId" type="xs:string"
-		default="voidChain" />
+    <xs:element name="documentUpdateOperationIdPre" type="xs:string" default="voidChain" />
+    <xs:element name="documentUpdateOperationIdPost" type="xs:string" default="voidChain" />
+    <xs:element name="documentUpdateWatchedDocumentTypes" type="xs:string" default="" />
 
 </xs:schema>

@@ -30,7 +30,7 @@ public class AthentoDocumentQueryOperation {
 
     public static final String ID = "Athento.Document.Query";
 
-    public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentQueryWatchedDocumentType";
+    public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentQueryWatchedDocumentTypes";
     public static final String CONFIG_OPERATION_ID = "automationExtendedConfig:documentQueryOperationId";
     public static final String DESC = "DESC";
 

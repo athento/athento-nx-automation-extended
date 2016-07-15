@@ -33,8 +33,10 @@ public class AthentoDocumentCreateOperation {
 
     public static final String ID = "Athento.Document.Create";
 
-    public static final String CONFIG_OPERATION_ID = "automationExtendedConfig:documentCreateOperationId";
     public static final String CONFIG_DEFAULT_DESTINATION = "automationExtendedConfig:defaultDestination";
+    public static final String CONFIG_OPERATION_ID_PRE = "automationExtendedConfig:documentCreateOperationIdPre";
+    public static final String CONFIG_OPERATION_ID_POST = "automationExtendedConfig:documentCreateOperationIdPost";
+    public static final String CONFIG_OPERATION_ID_WATCHED_DOCUMENT_TYPES = "automationExtendedConfig:documentCreateWatchedDocumentTypes";
 
     @Context
     protected CoreSession session;
@@ -78,38 +80,47 @@ public class AthentoDocumentCreateOperation {
         try {
             Map<String, Object> config = AthentoOperationsHelper
                 .readConfig(session);
+            String watchedDocumentTypes = String
+                .valueOf(config
+                    .get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID_WATCHED_DOCUMENT_TYPES));
             String operationId = String.valueOf(config
-                .get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID));
+                .get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID_PRE));
             String defaultPath = String
                 .valueOf(config
                     .get(AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION));
-            DocumentModel parentFolder = doc;
-            if (StringUtils.isNullOrEmpty(destination)) {
-                if (!StringUtils.isNullOrEmpty(operationId)) {
-                    Map<String, Object> params = new HashMap<String, Object>();
-                    params.put("basePath", defaultPath);
-                    params.put("name", name);
-                    params.put("properties", properties);
-                    params.put("type", type);
-                    Object input = null;
-                    parentFolder = (DocumentModel) AthentoOperationsHelper
-                        .runOperation(operationId, input, params, session);
-                    parentFolder = (DocumentModel) parentFolder;
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("basePath", defaultPath);
+            params.put("name", name);
+            params.put("properties", properties);
+            params.put("type", type);
+            DocumentModel parentFolder = null;
+            if (AthentoOperationsHelper.isWatchedDocumentType(doc, type,
+                watchedDocumentTypes)) {
+                if (StringUtils.isNullOrEmpty(destination)) {
+                    if (!StringUtils.isNullOrEmpty(operationId)) {
+                        Object input = null;
+                        parentFolder = (DocumentModel) AthentoOperationsHelper
+                            .runOperation(operationId, input, params, session);
+                        parentFolder = (DocumentModel) parentFolder;
+                    } else {
+                        _log.warn("No operation to get basePath and no destination set. Using default: "
+                            + defaultPath);
+                        parentFolder = session.getDocument(new PathRef(
+                            defaultPath));
+                    }
                 } else {
-                    _log.warn("No operation to get basePath and no destination set. Using default: "
-                        + defaultPath);
                     parentFolder = session
-                        .getDocument(new PathRef(defaultPath));
+                        .getDocument(new PathRef(destination));
                 }
             } else {
-                parentFolder = session.getDocument(new PathRef(destination));
+                _log.info("Document not watched: " + type
+                    + ". Watched doctypes are: " + watchedDocumentTypes);
+                parentFolder = doc;
             }
-
             if (name == null) {
                 name = "Untitled";
             }
             String parentPath = parentFolder.getPathAsString();
-
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentCreateOperation.ID
                     + " Creating document in parentPath: " + parentPath);
@@ -120,6 +131,28 @@ public class AthentoDocumentCreateOperation {
                 DocumentHelper.setProperties(session, newDoc, properties);
             }
             doc = session.createDocument(newDoc);
+            if (AthentoOperationsHelper.isWatchedDocumentType(doc, type,
+                watchedDocumentTypes)) {
+                String postOperationId = String
+                    .valueOf(config
+                        .get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID_POST));
+                if (!StringUtils.isNullOrEmpty(postOperationId)) {
+                    Object input = doc;
+                    Object result = AthentoOperationsHelper.runOperation(
+                        postOperationId, input, params, session);
+                    if (_log.isInfoEnabled()) {
+                        _log.info(AthentoDocumentCreateOperation.ID
+                            + " Post operation [: " + postOperationId
+                            + "] executed with result: " + result);
+                    }
+                } else {
+                    _log.warn("No operation to execute Post Document Creation for doctype: "
+                        + type);
+                }
+            } else {
+                _log.info("Document not watched: " + type
+                    + ". Watched doctypes are: " + watchedDocumentTypes);
+            }
             // -- END Document.Create
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentCreateOperation.ID
