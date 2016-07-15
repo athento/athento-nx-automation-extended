@@ -32,8 +32,9 @@ public class AthentoDocumentUpdateOperation {
 
     public static final String ID = "Athento.Document.Update";
 
-    public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentUpdateWatchedDocumentType";
-    public static final String CONFIG_OPERATION_ID = "automationExtendedConfig:documentUpdateOperationId";
+    public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentUpdateWatchedDocumentTypes";
+    public static final String CONFIG_OPERATION_ID_PRE = "automationExtendedConfig:documentUpdateOperationIdPre";
+    public static final String CONFIG_OPERATION_ID_POST = "automationExtendedConfig:documentUpdateOperationIdPost";
 
     @Context
     protected CoreSession session;
@@ -71,9 +72,12 @@ public class AthentoDocumentUpdateOperation {
                 .readConfig(session);
             String watchedDocumentTypes = String.valueOf(config
                 .get(AthentoDocumentUpdateOperation.CONFIG_WATCHED_DOCTYPE));
-            String operationId = String.valueOf(config
-                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID));
-            if (isWatchedDocumentType(doc, watchedDocumentTypes)) {
+            String operationIdPre = String.valueOf(config
+                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_PRE));
+            String operationIdPost = String.valueOf(config
+                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_POST));
+            if (AthentoOperationsHelper.isWatchedDocumentType(doc,
+                documentType, watchedDocumentTypes)) {
                 Object input = null;
                 if (doc != null) {
                     input = doc;
@@ -83,13 +87,22 @@ public class AthentoDocumentUpdateOperation {
                 params.put("save", save);
                 params.put("changeToken", changeToken);
                 params.put("properties", properties);
-                Object retValue = AthentoOperationsHelper.runOperation(
-                    operationId, input, params, session);
-                doc = (DocumentModel) retValue;
+
+                if (!StringUtils.isNullOrEmpty(operationIdPre)) {
+                    Object retValue = AthentoOperationsHelper.runOperation(
+                        operationIdPre, input, params, session);
+                    doc = (DocumentModel) retValue;
+                    input = doc;
+                }
+                if (!StringUtils.isNullOrEmpty(operationIdPost)) {
+                    Object retValue = AthentoOperationsHelper.runOperation(
+                        operationIdPost, input, params, session);
+                    doc = (DocumentModel) retValue;
+                }
             } else {
                 if (_log.isDebugEnabled()) {
-                    _log.debug(AthentoDocumentUpdateOperation.ID
-                        + " Updating document in the standard way");
+                    _log.info("Document not watched: " + documentType
+                        + ". Watched doctypes are: " + watchedDocumentTypes);
                 }
                 if (changeToken != null) {
                     // Check for dirty update
@@ -119,18 +132,6 @@ public class AthentoDocumentUpdateOperation {
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
         }
-    }
-
-    private boolean isWatchedDocumentType(DocumentModel doc, String watchedDocumentTypes) {
-        if (StringUtils.isNullOrEmpty(watchedDocumentTypes)) {
-            return false;
-        }
-        String docType = documentType;
-        if (StringUtils.isNullOrEmpty(documentType)) {
-            docType = doc.getType();
-        }
-        return StringUtils.isIncludedIn(docType, watchedDocumentTypes,
-            StringUtils.COMMA);
     }
 
     private static final Log _log = LogFactory

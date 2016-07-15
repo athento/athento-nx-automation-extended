@@ -4,7 +4,7 @@
 6.0
 
 ## Download
-You can download [latest release from here](https://github.com/athento/athento-nx-automation-extended/raw/master/athento-nx-automation-extended-dist/target/athento-nx-automation-extended-project-1.10.zip)
+You can download [latest release from here](https://github.com/athento/athento-nx-automation-extended/raw/master/athento-nx-automation-extended-dist/target/athento-nx-automation-extended-project-2.0.zip)
 
 ## Synopsis
 
