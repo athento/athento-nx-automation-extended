@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="org.athento.nuxeo.automation.extended.ResourcesContrib"
+           version="1.0.0">
+    <require>org.nuxeo.runtime.started</require>
+
+    <extension target="org.nuxeo.runtime.services.resource.ResourceService" point="resources">
+        <resource name="csv.ftl">data/templates/csv.ftl</resource>
+    </extension>
+
+</component>

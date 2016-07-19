@@ -16,5 +16,7 @@
         <!--Attach blob -->
         <operation class="org.athento.nuxeo.operations.AthentoAttachBlobOperation"
             replace="true" />
+        <!-- Documents feed -->
+        <operation class="org.athento.nuxeo.operations.DocumentsFeedOperation" />
     </extension>
 </component>
