@@ -18,5 +18,7 @@
             replace="true" />
         <!-- Documents feed -->
         <operation class="org.athento.nuxeo.operations.DocumentsFeedOperation" />
+        <!-- Push list -->
+        <operation class="org.athento.nuxeo.operations.PushListOperation" />
     </extension>
 </component>

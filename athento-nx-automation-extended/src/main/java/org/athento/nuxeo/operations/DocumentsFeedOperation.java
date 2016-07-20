@@ -88,7 +88,6 @@ public class DocumentsFeedOperation {
         blob.setMimeType(mimeType);
         blob.setEncoding(charset);
         return blob;
-
     }
 
     /**
