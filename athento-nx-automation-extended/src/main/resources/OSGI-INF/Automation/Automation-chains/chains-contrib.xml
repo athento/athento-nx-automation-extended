@@ -428,10 +428,39 @@
             </operation>
         </chain>
 
-        <chain id="Athento.ExportDocumentsToCSVFile">
+        <chain id="Athento.ExportQueryToCSVFile">
+            <documentation>Export the query document list result to CSV File</documentation>
+            <param type="string" name="query"/>
+            <param type="string" name="headers" />
+            <param type="string" name="columns" />
+            <param type="string" name="template" />
+            <param type="string" name="outputFile" />
+            <param type="string" name="outputDir" />
             <operation id="Document.ElasticQuery">
                 <param type="string" name="query">expr:@{ChainParameters['query']}</param>
+                <param type="integer" name="limit">expr:ChainParameters['limit']</param>
+                <param type="integer" name="offset">expr:ChainParameters['offset']</param>
             </operation>
+            <operation id="Athento.DocumentsFeedOperation">
+                <param type="string" name="headers">expr:@{ChainParameters['headers']}</param>
+                <param type="string" name="columns">expr:@{ChainParameters['columns']}</param>
+                <param type="string" name="template">expr:@{ChainParameters['template'] == null ? 'template:csv.ftl' :
+                    ChainParameters['template']}
+                </param>
+                <param type="string" name="filename">expr:@{ChainParameters['outputFile']}</param>
+            </operation>
+            <operation id="Blob.ToFile">
+                <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
+            </operation>
+        </chain>
+
+        <chain id="Athento.ExportDocumentsToCSVFile">
+            <docmentation>Receive a document list to export the CSV file.</docmentation>
+            <param type="string" name="headers" />
+            <param type="string" name="columns" />
+            <param type="string" name="template" />
+            <param type="string" name="outputFile" />
+            <param type="string" name="outputDir" />
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="headers">expr:@{ChainParameters['headers']}</param>
                 <param type="string" name="columns">expr:@{ChainParameters['columns']}</param>
