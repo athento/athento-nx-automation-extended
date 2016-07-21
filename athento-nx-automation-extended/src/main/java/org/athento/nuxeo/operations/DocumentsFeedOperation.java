@@ -64,6 +64,10 @@ public class DocumentsFeedOperation {
     @Param(name = "columns", required = false)
     protected String columns;
 
+    /** Separator. */
+    @Param(name = "separator", required = false, values = ",")
+    protected String separator = ",";
+
     /**
      * Operation method.
      *
@@ -78,9 +82,8 @@ public class DocumentsFeedOperation {
         ctx.put("columns", getSplittedString(columns, false));
         // Set function util
         ctx.put("Func", new DocumentFunctions());
-        LOG.info("Headers " + ctx.get("headers"));
-        LOG.info("Columns " + ctx.get("columns"));
-        LOG.info("Template " + template);
+        // Separator
+        ctx.put("separator", separator);
         // Render template
         String content = RenderingService.getInstance().render(type, template, ctx);
         StringBlob blob = new StringBlob(content);

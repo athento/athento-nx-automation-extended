@@ -20,5 +20,13 @@
         <operation class="org.athento.nuxeo.operations.DocumentsFeedOperation" />
         <!-- Push list -->
         <operation class="org.athento.nuxeo.operations.PushListOperation" />
+        <!-- Transform list to provider -->
+        <operation class="org.athento.nuxeo.operations.ListToProviderOperation" />
+        <!-- Run operation and set var -->
+        <operation class="org.athento.nuxeo.operations.RunOperationAsVar" />
+        <!-- Push provider -->
+        <operation class="org.athento.nuxeo.operations.PushPaginableProviderOperation" />
+        <!-- Package provider to ZIP -->
+        <operation class="org.athento.nuxeo.operations.PackageToZipOperation" />
     </extension>
 </component>
