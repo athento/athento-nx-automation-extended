@@ -436,6 +436,7 @@
             <param type="string" name="template" />
             <param type="string" name="outputFile" />
             <param type="string" name="outputDir" />
+            <param type="string" name="separator" />
             <operation id="Document.ElasticQuery">
                 <param type="string" name="query">expr:@{ChainParameters['query']}</param>
                 <param type="integer" name="limit">expr:ChainParameters['limit']</param>
@@ -444,6 +445,8 @@
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="headers">expr:@{ChainParameters['headers']}</param>
                 <param type="string" name="columns">expr:@{ChainParameters['columns']}</param>
+                <param type="string" name="separator">expr:@{ChainParameters['separator'] == null ? ',' :
+                    ChainParameters['separator']}</param>
                 <param type="string" name="template">expr:@{ChainParameters['template'] == null ? 'template:csv.ftl' :
                     ChainParameters['template']}
                 </param>
@@ -461,9 +464,12 @@
             <param type="string" name="template" />
             <param type="string" name="outputFile" />
             <param type="string" name="outputDir" />
+            <param type="string" name="separator" />
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="headers">expr:@{ChainParameters['headers']}</param>
                 <param type="string" name="columns">expr:@{ChainParameters['columns']}</param>
+                <param type="string" name="separator">expr:@{ChainParameters['separator'] == null ? ',' :
+                    ChainParameters['separator']}</param>
                 <param type="string" name="template">expr:@{ChainParameters['template'] == null ? 'template:csv.ftl' :
                     ChainParameters['template']}
                 </param>
