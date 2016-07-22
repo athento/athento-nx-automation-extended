@@ -56,7 +56,6 @@ public class PackageToZipOperation {
     @Param(name = "filename", required = false, description = "It is the filename or filename format.")
     protected String filename;
 
-    long totalDocuments = 0;
 
     /*
      * Filter documents.
@@ -74,7 +73,6 @@ public class PackageToZipOperation {
             provider.setMaxPageSize(packageSize);
             provider.setPageSize(packageSize);
         }
-        this.totalDocuments = docs.size();
         BlobList blobs = new BlobList();
         long totalPages = provider.getNumberOfPages();
         for (int i = 0; i < totalPages; i++) {
@@ -95,7 +93,7 @@ public class PackageToZipOperation {
                 // Generate zip with blobs
                 zip(blobList, out);
                 FileBlob fileBlob = new FileBlob(file);
-                fileBlob.setFilename(getZipFilename(i + 1));
+                fileBlob.setFilename(getZipFilename(i + 1, docList.size()));
                 fileBlob.setMimeType("application/zip");
                 blobs.add(fileBlob);
             } catch (Exception e) {
@@ -115,14 +113,15 @@ public class PackageToZipOperation {
      * Get filename for Zip given a page index.
      *
      * @param pageIndex
+     * @param totalDocsPerPage for page
      * @return
      */
-    private String getZipFilename(int pageIndex) {
+    private String getZipFilename(int pageIndex, long totalDocsPerPage) {
         String filenameResult = "zipAthento";
         if (filename != null) {
             String filename = new String(this.filename);
             filename = expandParam(filename, "page", pageIndex);
-            filename = expandParam(filename, "total", totalDocuments);
+            filename = expandParam(filename, "total", totalDocsPerPage);
             filename = expandParam(filename, "date", Calendar.getInstance().getTime());
             // FIXME: Complete with more params
             filenameResult = filename;
