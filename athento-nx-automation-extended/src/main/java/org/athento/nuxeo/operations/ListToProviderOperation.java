@@ -27,6 +27,9 @@ public class ListToProviderOperation {
     @Param(name = "pageSize", required = false)
     protected int pageSize = 20;
 
+    @Param(name = "page", required = false)
+    protected Integer page;
+
     /**
      * Run method.
      *
@@ -37,6 +40,9 @@ public class ListToProviderOperation {
     public PaginableDocumentModelListImpl run(DocumentModelList docList) throws Exception {
         DocumentModelListPageProvider provider = new DocumentModelListPageProvider();
         provider.setPageSize(this.pageSize);
+        if (page != null) {
+            provider.setCurrentPageIndex(page);
+        }
         provider.setDocumentModelList(docList);
         return new PaginableDocumentModelListImpl(provider);
     }

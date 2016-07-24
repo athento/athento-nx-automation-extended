@@ -93,7 +93,7 @@ public class PackageToZipOperation {
                 // Generate zip with blobs
                 zip(blobList, out);
                 FileBlob fileBlob = new FileBlob(file);
-                fileBlob.setFilename(getZipFilename(i + 1, docList.size()));
+                fileBlob.setFilename(getZipFilename(i + 1, blobList.size()));
                 fileBlob.setMimeType("application/zip");
                 blobs.add(fileBlob);
             } catch (Exception e) {

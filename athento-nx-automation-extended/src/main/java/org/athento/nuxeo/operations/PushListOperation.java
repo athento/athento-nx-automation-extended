@@ -31,6 +31,9 @@ public class PushListOperation {
     @OperationMethod
     public DocumentModelList run() throws Exception {
         DocumentModelList list = (DocumentModelList) ctx.get(name);
+        if (list == null) {
+            throw new Exception("List " + name + " is not found as context param.");
+        }
         ctx.push(name, list);
         return list;
     }

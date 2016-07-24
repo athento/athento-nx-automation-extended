@@ -431,6 +431,8 @@
         <chain id="Athento.ExportQueryToCSVFile">
             <documentation>Export the query document list result to CSV File</documentation>
             <param type="string" name="query"/>
+            <param type="integer" name="offsetForQuery" />
+            <param type="integer" name="limitForQuery" />
             <param type="string" name="headers" />
             <param type="string" name="columns" />
             <param type="string" name="template" />
@@ -440,8 +442,18 @@
             <param type="string" name="encoding" />
             <operation id="Document.ElasticQuery">
                 <param type="string" name="query">expr:@{ChainParameters['query']}</param>
-                <param type="integer" name="limit">expr:ChainParameters['limit']</param>
-                <param type="integer" name="offset">expr:ChainParameters['offset']</param>
+                <param type="integer" name="limit">expr:ChainParameters['limitForQuery']</param>
+                <param type="integer" name="offset">expr:ChainParameters['offsetForQuery']</param>
+            </operation>
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">queryResultList</param>
+            </operation>
+            <operation id="Athento.ListToPaginableProvider" />
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">csvQueryProvider</param>
+            </operation>
+            <operation id="Athento.PushList">
+                <param type="string" name="name">queryResultList</param>
             </operation>
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="mimetype">application/csv</param>
@@ -458,10 +470,14 @@
             <operation id="Blob.ToFile">
                 <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
             </operation>
+            <!-- Only for response (ingore download (a big) CSV file)-->
+            <operation id="Athento.PushProvider">
+                <param type="string" name="name">csvQueryProvider</param>
+            </operation>
         </chain>
 
         <chain id="Athento.ExportDocumentsToCSVFile">
-            <docmentation>Receive a document list to export the CSV file.</docmentation>
+            <documentation>Receive a document list to export the CSV file.</documentation>
             <param type="string" name="headers" />
             <param type="string" name="columns" />
             <param type="string" name="template" />
@@ -469,6 +485,16 @@
             <param type="string" name="outputDir" />
             <param type="string" name="separator" />
             <param type="string" name="encoding" />
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">documentList</param>
+            </operation>
+            <operation id="Athento.ListToPaginableProvider" />
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">csvProvider</param>
+            </operation>
+            <operation id="Athento.PushList">
+                <param type="string" name="name">documentList</param>
+            </operation>
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="mimetype">application/csv</param>
                 <param type="string" name="charset">expr:@{ChainParameters['encoding'] == null ? 'UTF-8' : ChainParameters['encoding']}</param>
@@ -483,6 +509,11 @@
             </operation>
             <operation id="Blob.ToFile">
                 <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
+            </operation>
+            <!-- Only for response (ingore download (a big) CSV file)-->
+            <operation id="Athento.PushProvider">
+                <param type="string" name="name">csvProvider</param>
+                <param type="integer" name="page">0</param>
             </operation>
         </chain>
 
