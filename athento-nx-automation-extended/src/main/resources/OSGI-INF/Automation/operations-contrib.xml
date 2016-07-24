@@ -28,5 +28,9 @@
         <operation class="org.athento.nuxeo.operations.PushPaginableProviderOperation" />
         <!-- Package provider to ZIP -->
         <operation class="org.athento.nuxeo.operations.PackageToZipOperation" />
+        <!-- Get attribute of JSON result -->
+        <operation class="org.athento.nuxeo.operations.utils.GetJSONAttributeOperation" />
+        <!-- Clear context -->
+        <operation class="org.athento.nuxeo.operations.utils.ClearContextOperation" />
     </extension>
 </component>
