@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
         <groupId>org.athento.nuxeo</groupId>
         <artifactId>athento-nx-automation-extended-project</artifactId>
-        <version>2.4-SNAPSHOT</version>
+        <version>2.5</version>
 
 	<packaging>pom</packaging>
 	<name>Athento NX automation extended Project</name>
@@ -64,13 +64,28 @@
 			<layout>default</layout>
 		</repository>
 		<repository>
+			<id>athento-private</id>
+			<name>Athento Private Releases</name>
+			<url>http://maven2.yerbabuena.es/artifactory/athento-private</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
 			<id>athento-public</id>
 			<name>Athento Releases</name>
 			<url>http://maven2.yerbabuena.es/artifactory/athento-public</url>
 			<layout>default</layout>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>athento-public-snapshot</id>
@@ -81,6 +96,9 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>ys-libs-releases</id>
@@ -88,15 +106,21 @@
 			</url>
 			<layout>default</layout>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>public</id>
 			<url>http://maven.nuxeo.org/public</url>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>public-snapshot</id>
@@ -104,6 +128,9 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
 

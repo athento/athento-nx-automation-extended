@@ -55,10 +55,7 @@ public class AthentoDocumentCreateOperation {
 
     @OperationMethod()
     public DocumentModel run() throws Exception {
-        Map<String, Object> config = AthentoOperationsHelper
-            .readConfig(session);
-        String parentFolderPath = String.valueOf(config
-            .get(AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION));
+        String parentFolderPath = getDestinationPath();
         return run(new PathRef(parentFolderPath));
     }
 
@@ -85,32 +82,25 @@ public class AthentoDocumentCreateOperation {
                     .get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID_WATCHED_DOCUMENT_TYPES));
             String operationId = String.valueOf(config
                 .get(AthentoDocumentCreateOperation.CONFIG_OPERATION_ID_PRE));
-            String defaultPath = String
-                .valueOf(config
-                    .get(AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION));
+            String basePath = getDestinationPath();
             Map<String, Object> params = new HashMap<String, Object>();
-            params.put("basePath", defaultPath);
+            params.put("basePath", basePath);
             params.put("name", name);
             params.put("properties", properties);
             params.put("type", type);
             DocumentModel parentFolder = null;
             if (AthentoOperationsHelper.isWatchedDocumentType(doc, type,
                 watchedDocumentTypes)) {
-                if (StringUtils.isNullOrEmpty(destination)) {
-                    if (!StringUtils.isNullOrEmpty(operationId)) {
-                        Object input = null;
-                        parentFolder = (DocumentModel) AthentoOperationsHelper
-                            .runOperation(operationId, input, params, session);
-                        parentFolder = (DocumentModel) parentFolder;
-                    } else {
-                        _log.warn("No operation to get basePath and no destination set. Using default: "
-                            + defaultPath);
-                        parentFolder = session.getDocument(new PathRef(
-                            defaultPath));
-                    }
+                if (!StringUtils.isNullOrEmpty(operationId)) {
+                    Object input = null;
+                    parentFolder = (DocumentModel) AthentoOperationsHelper
+                        .runOperation(operationId, input, params, session);
+                    parentFolder = (DocumentModel) parentFolder;
                 } else {
-                    parentFolder = session
-                        .getDocument(new PathRef(destination));
+                    _log.warn("No operation to get basePath and no destination set. Using default basePath: "
+                        + basePath);
+                    parentFolder = session.getDocument(new PathRef(
+                        basePath));
                 }
             } else {
                 _log.info("Document not watched: " + type
@@ -170,6 +160,15 @@ public class AthentoDocumentCreateOperation {
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
         }
+    }
+
+    private String getDestinationPath() {
+        String val = destination;
+        if (StringUtils.isNullOrEmpty(destination)) {
+            val = AthentoOperationsHelper.readConfigValue(session,
+                AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION);
+        }
+        return val;
     }
 
     private static final Log _log = LogFactory
