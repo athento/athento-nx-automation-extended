@@ -32,5 +32,11 @@
         <operation class="org.athento.nuxeo.operations.utils.GetJSONAttributeOperation" />
         <!-- Clear context -->
         <operation class="org.athento.nuxeo.operations.utils.ClearContextOperation" />
+        <!-- Copy file -->
+        <operation class="org.athento.nuxeo.operations.CopyFileOperation" />
+        <!-- Extract lines from blob -->
+        <operation class="org.athento.nuxeo.operations.ExtractLinesOperation" />
+        <!-- Push blob -->
+        <operation class="org.athento.nuxeo.operations.utils.PushObjectOperation" />
     </extension>
 </component>
