@@ -89,9 +89,11 @@ public class PackageToZipOperation {
             }
             long totalSize = 0L;
             for (DocumentModel doc : docList) {
+                StorageBlob blob = (StorageBlob) doc.getPropertyValue("file:content");
                 // Check content and limit size for zip
-                if (hasContent(doc) && limitSizeIsValid(totalSize, doc)) {
-                    blobList.add((StorageBlob) doc.getPropertyValue("file:content"));
+                if (hasContent(blob) && limitSizeIsValid(totalSize, blob)) {
+                    blobList.add(blob);
+                    totalSize += blob.getLength();
                 }
             }
             File file = File.createTempFile("athento-createzip-", ".tmp");
@@ -121,14 +123,13 @@ public class PackageToZipOperation {
      * Check limit size for ZIP.
      *
      * @param totalSize
-     * @param doc
+     * @param blob
      * @return
      */
-    private boolean limitSizeIsValid(long totalSize, DocumentModel doc) {
+    private boolean limitSizeIsValid(long totalSize, Blob blob) {
         if (fileMaxSize == -1) {
             return true;
         } else {
-            StorageBlob blob = (StorageBlob) doc.getPropertyValue("file:content");
             if (blob != null) {
                 long totalWithDocContentSize = totalSize + blob.getLength();
                 return totalWithDocContentSize <= this.fileMaxSize;
@@ -196,13 +197,13 @@ public class PackageToZipOperation {
     }
 
     /**
-     * Check content for a document.
+     * Check valid content.
      *
-     * @param doc
+     * @param blob
      * @return
      */
-    private boolean hasContent(DocumentModel doc) {
-        return doc.getPropertyValue("file:content") != null;
+    private boolean hasContent(Blob blob) {
+        return blob != null;
     }
 
     /**
