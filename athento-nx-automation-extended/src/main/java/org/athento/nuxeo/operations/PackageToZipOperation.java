@@ -47,8 +47,14 @@ public class PackageToZipOperation {
     /**
      * Package size.
      */
-    @Param(name = "packageSize", required = false)
+    @Param(name = "packageSize", required = false, description = "Number of items per ZIP package")
     protected int packageSize = -1;
+
+    /**
+     * Limit file size (in bytes)
+     */
+    @Param(name = "fileMaxSize", required = false, description = "File max size per ZIP")
+    protected int fileMaxSize = -1;
 
     /**
      * File name format.
@@ -81,9 +87,13 @@ public class PackageToZipOperation {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating ZIP for page " + (i + 1));
             }
+            long totalSize = 0L;
             for (DocumentModel doc : docList) {
-                if (hasContent(doc)) {
-                    blobList.add((StorageBlob) doc.getPropertyValue("file:content"));
+                StorageBlob blob = (StorageBlob) doc.getPropertyValue("file:content");
+                // Check content and limit size for zip
+                if (hasContent(blob) && limitSizeIsValid(totalSize, blob)) {
+                    blobList.add(blob);
+                    totalSize += blob.getLength();
                 }
             }
             File file = File.createTempFile("athento-createzip-", ".tmp");
@@ -107,6 +117,26 @@ public class PackageToZipOperation {
         // Rewind provider
         provider.setCurrentPageIndex(0);
         return blobs;
+    }
+
+    /**
+     * Check limit size for ZIP.
+     *
+     * @param totalSize
+     * @param blob
+     * @return
+     */
+    private boolean limitSizeIsValid(long totalSize, Blob blob) {
+        if (fileMaxSize == -1) {
+            return true;
+        } else {
+            if (blob != null) {
+                long totalWithDocContentSize = totalSize + blob.getLength();
+                return totalWithDocContentSize <= this.fileMaxSize;
+            } else {
+                return true;
+            }
+        }
     }
 
     /**
@@ -167,13 +197,13 @@ public class PackageToZipOperation {
     }
 
     /**
-     * Check content for a document.
+     * Check valid content.
      *
-     * @param doc
+     * @param blob
      * @return
      */
-    private boolean hasContent(DocumentModel doc) {
-        return doc.getPropertyValue("file:content") != null;
+    private boolean hasContent(Blob blob) {
+        return blob != null;
     }
 
     /**
