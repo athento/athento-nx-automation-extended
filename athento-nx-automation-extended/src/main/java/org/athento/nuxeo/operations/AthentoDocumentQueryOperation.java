@@ -93,17 +93,17 @@ public class AthentoDocumentQueryOperation {
                 modifiedQuery = String.valueOf(retValue);
             }
             Object input = null;
-            operationId = "Document.Query";
+            operationId = "Document.ElasticQuery";
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("query", modifiedQuery);
-            params.put("currentPageIndex", currentPageIndex);
-            params.put("pageSize", pageSize);
-            if (!StringUtils.isNullOrEmpty(sortBy)) {
-                params.put("sortBy", sortBy);
-                if (!StringUtils.isNullOrEmpty(sortOrder)) {
-                    params.put("sortOrder", sortOrder);
-                }
-            }
+            params.put("offset", getOffset());
+            params.put("limit", pageSize);
+//            if (!StringUtils.isNullOrEmpty(sortBy)) {
+//                params.put("sortBy", sortBy);
+//                if (!StringUtils.isNullOrEmpty(sortOrder)) {
+//                    params.put("sortOrder", sortOrder);
+//                }
+//            }
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
                 input, params, session);
             if (_log.isDebugEnabled()) {
@@ -128,6 +128,10 @@ public class AthentoDocumentQueryOperation {
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
         }
+    }
+
+    private int getOffset() {
+        return currentPageIndex * pageSize;
     }
 
     private ArrayList<String> getDocumentTypesFromQuery() {
