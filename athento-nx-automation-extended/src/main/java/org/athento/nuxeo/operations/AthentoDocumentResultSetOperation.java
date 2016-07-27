@@ -145,7 +145,13 @@ public class AthentoDocumentResultSetOperation {
         try {
             int idx1 = upperQuery.indexOf(StringUtils.FROM);
             int idx2 = upperQuery.indexOf(StringUtils.WHERE);
-            String subquery = query.substring(idx1 + StringUtils.FROM.length(), idx2);
+            String subquery = null;
+            if (idx2 > idx1) {
+                subquery = query.substring(idx1 + StringUtils.FROM.length(),
+                    idx2);
+            } else {
+                subquery = query.substring(idx1 + StringUtils.FROM.length());
+            }
             subquery = subquery.trim();
             return StringUtils.asList(subquery, StringUtils.COMMA);
         } catch (Throwable t) {
