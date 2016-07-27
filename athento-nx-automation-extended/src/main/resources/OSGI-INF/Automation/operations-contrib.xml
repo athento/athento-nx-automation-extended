@@ -38,5 +38,7 @@
         <operation class="org.athento.nuxeo.operations.ExtractLinesOperation" />
         <!-- Push blob -->
         <operation class="org.athento.nuxeo.operations.utils.PushObjectOperation" />
+        <!-- Compare vocabularies -->
+        <operation class="org.athento.nuxeo.operations.CompareVocabulariesOperation" />
     </extension>
 </component>
