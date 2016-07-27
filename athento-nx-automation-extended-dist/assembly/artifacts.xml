@@ -7,6 +7,8 @@
 	</artifactSet>
 	<artifactSet id="athento-plugins">
 		<artifacts>
+			<artifact group="org.athento.nuxeo" name="athento-nx-query"
+				version="1.2" />
 		</artifacts>
 	</artifactSet>
 </assembly>
