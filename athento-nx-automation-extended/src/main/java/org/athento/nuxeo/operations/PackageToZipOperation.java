@@ -96,21 +96,23 @@ public class PackageToZipOperation {
                     totalSize += blob.getLength();
                 }
             }
-            File file = File.createTempFile("athento-createzip-", ".tmp");
-            file.deleteOnExit();
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
-            try {
-                // Generate zip with blobs
-                zip(blobList, out);
-                FileBlob fileBlob = new FileBlob(file);
-                fileBlob.setFilename(getZipFilename(i + 1, blobList.size()));
-                fileBlob.setMimeType("application/zip");
-                blobs.add(fileBlob);
-            } catch (Exception e) {
-                throw new Exception("Unable to generate ZIP from blobs.", e);
-            } finally {
-                out.finish();
-                out.close();
+            if (!blobList.isEmpty()) {
+                File file = File.createTempFile("athento-createzip-", ".tmp");
+                file.deleteOnExit();
+                ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file));
+                try {
+                    // Generate zip with blobs
+                    zip(blobList, out);
+                    FileBlob fileBlob = new FileBlob(file);
+                    fileBlob.setFilename(getZipFilename(i + 1, blobList.size()));
+                    fileBlob.setMimeType("application/zip");
+                    blobs.add(fileBlob);
+                } catch (Exception e) {
+                    throw new Exception("Unable to generate ZIP from blobs.", e);
+                } finally {
+                    out.finish();
+                    out.close();
+                }
             }
             provider.nextPage();
         }
