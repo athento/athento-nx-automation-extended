@@ -23,6 +23,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 
 /**
  * @author athento
@@ -65,11 +66,11 @@ public class AthentoDocumentCreateOperation {
     }
 
     @OperationMethod(collector = DocumentModelCollector.class)
-    public DocumentModel run(DocumentModel doc) throws Exception {
+    public DocumentModel run(DocumentModel parentDoc) throws Exception {
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentCreateOperation.ID
                 + " BEGIN with params:");
-            _log.debug(" - parentDoc: " + doc);
+            _log.debug(" - parentDoc: " + parentDoc);
             _log.debug(" - type: " + type);
             _log.debug(" - name: " + name);
             _log.debug(" - properties: " + properties);
@@ -89,7 +90,7 @@ public class AthentoDocumentCreateOperation {
             params.put("properties", properties);
             params.put("type", type);
             DocumentModel parentFolder = null;
-            if (AthentoOperationsHelper.isWatchedDocumentType(doc, type,
+            if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 if (!StringUtils.isNullOrEmpty(operationId)) {
                     Object input = null;
@@ -99,13 +100,12 @@ public class AthentoDocumentCreateOperation {
                 } else {
                     _log.warn("No operation to get basePath and no destination set. Using default basePath: "
                         + basePath);
-                    parentFolder = session.getDocument(new PathRef(
-                        basePath));
+                    parentFolder = session.getDocument(new PathRef(basePath));
                 }
             } else {
                 _log.info("Document not watched: " + type
                     + ". Watched doctypes are: " + watchedDocumentTypes);
-                parentFolder = doc;
+                parentFolder = parentDoc;
             }
             if (name == null) {
                 name = "Untitled";
@@ -120,8 +120,23 @@ public class AthentoDocumentCreateOperation {
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
             }
-            doc = session.createDocument(newDoc);
-            if (AthentoOperationsHelper.isWatchedDocumentType(doc, type,
+            DocumentModel doc = session.createDocument(newDoc);
+            if (_log.isDebugEnabled()) {
+                _log.debug(AthentoDocumentCreateOperation.ID
+                    + " Doc created : " + doc);
+                _log.debug(AthentoDocumentCreateOperation.ID + " properties: ");
+                Map<String, Object> props = DocumentModelUtils
+                    .getProperties(doc);
+                for (String k : props.keySet()) {
+                    Object v = props.get(k);
+                    if (v != null) {
+                        _log.debug(" Prop [" + k + "] " + v);
+                    } else {
+                        _log.debug(" Prop [" + k + "] is NULL");
+                    }
+                }
+            }
+            if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 String postOperationId = String
                     .valueOf(config
