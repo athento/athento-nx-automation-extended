@@ -35,7 +35,7 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * Feed operation test.
+ * Copy file operation test.
  */
 @RunWith(FeaturesRunner.class)
 @Features(CoreFeature.class)

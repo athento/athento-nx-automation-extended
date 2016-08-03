@@ -517,6 +517,84 @@
             </operation>
         </chain>
 
+        <chain id="Athento.QueryToDir">
+            <documentation>Save the content (from xpath) of a query result into directory into filesystem.</documentation>
+            <param type="string" name="query" />
+            <param type="integer" name="offsetForQuery" />
+            <param type="integer" name="limitForQuery" />
+            <param type="string" name="xpath" />
+            <param type="string" name="outputDir" />
+            <operation id="Context.SetVar">
+                <param type="string" name="name">query</param>
+                <param type="string" name="value">expr:@{ChainParameters['query']}
+                </param>
+            </operation>
+            <operation id="Document.ElasticQuery">
+                <param type="string" name="query">expr:@{query}</param>
+                <param type="integer" name="limit">expr:@{ChainParameters['limitForQuery'] == empty || ChainParameters['limitForQuery'] == "null" ? -1 : ChainParameters['limitForQuery']}</param>
+                <param type="integer" name="offset">expr:@{ChainParameters['offsetForQuery'] == empty || ChainParameters['offsetForQuery'] == "null" ? -1 : ChainParameters['offsetForQuery']}</param>
+            </operation>
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">documentList</param>
+            </operation>
+            <operation id="Athento.ListToPaginableProvider" />
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">resultAsProvider</param>
+            </operation>
+            <operation id="Athento.PushList">
+                <param type="string" name="name">documentList</param>
+            </operation>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">documentListSize</param>
+                <param type="object" name="value">expr:documentList.size()</param>
+            </operation>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">xpath</param>
+                <param type="string" name="value">expr:@{ChainParameters['xpath']}
+                </param>
+            </operation>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">outputDir</param>
+                <param type="string" name="value">expr:@{ChainParameters['outputDir']}
+                </param>
+            </operation>
+            <operation id="Context.RunOperationOnList">
+                <param type="string" name="id">expr:documentListSize == 0 ? "voidChain" :
+                    "Athento.DocumentToFile"
+                </param>
+                <param type="string" name="list">documentList</param>
+                <param type="string" name="item">item</param>
+                <param type="boolean" name="newTx">false</param>
+                <param type="boolean" name="rollbackGlobalOnError">true</param>
+                <param type="properties" name="parameters">
+                    expr:xpath=@{xpath}
+                    outputDir=@{outputDir}
+                </param>
+            </operation>
+            <!-- Only for response -->
+            <operation id="Athento.PushProvider">
+                <param type="string" name="name">resultAsProvider</param>
+                <param type="integer" name="page">0</param>
+            </operation>
+        </chain>
+
+        <chain id="Athento.DocumentToFile">
+            <documentation>
+                Save document content into directory filesystem.
+            </documentation>
+            <param type="string" name="xpath"/>
+            <param type="string" name="outputDir"/>
+            <operation id="Document.Fetch">
+                <param type="document" name="value">expr:item.id</param>
+            </operation>
+            <operation id="Blob.Get">
+                <param type="string" name="xpath">expr:@{ChainParameters['xpath'] == empty ? "file:content" : ChainParameters['xpath']}</param>
+            </operation>
+            <operation id="Blob.ToFile">
+                <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
+            </operation>
+        </chain>
+
     </extension>
 
 </component>
