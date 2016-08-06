@@ -411,7 +411,6 @@
                 <param type="string" name="value">expr:@{ChainParameters['vocabularyName']}
                 </param>
             </operation>
-
             <operation id="Athento.VocabularyGetChildrenOperation">
                 <param type="string" name="expanded">expr:expanded</param>
                 <param type="string" name="languageId">expr:languageId</param>
