@@ -44,15 +44,19 @@ public class VocabularyGetChildrenOperation {
     @Param(name = "vocabularyName", widget = Constants.W_TEXT)
     protected String vocabularyName;
     /**
-     * Format of orderBy field:ASC|DESC.
+     * Format of orderBy "field ASC|DESC".
      */
     @Param(name = "orderBy", required = false,
-                             description = "You can use order-by incluiding several columns to order separated by comman. If you set more than one parent value you only can use one column as order.")
+            description = "You can use order-by incluiding several columns to order separated by comma. If you set more than one parent value you only can use one column to order.")
     protected String orderBy;
+    @Param(name = "groupOrder", required = false, description = "Sort all result entries.")
+    protected boolean groupOrder = false;
     @Param(name = "limit", required = false)
     protected int limit = -1;
     @Param(name = "offset", required = false)
     protected int offset = -1;
+    /** Default order. */
+    private boolean asc = true;
 
     /**
      * Run operation.
@@ -84,8 +88,10 @@ public class VocabularyGetChildrenOperation {
         List<DocumentModel> result = new ArrayList<DocumentModel>();
         List<JSONObject> jsonResult = new ArrayList<>();
         Session directorySession = getDirectoryService().open(vocabularyName);
+        boolean multipleParent = false;
         try {
             if (parentValue.contains(",")) {
+                multipleParent = true;
                 String[] parentValues = parentValue.split(",");
                 for (String parentValue : parentValues) {
                     result.addAll(filterForParentValue(directorySession, parentValue.trim()));
@@ -96,14 +102,21 @@ public class VocabularyGetChildrenOperation {
         } finally {
             directorySession.close();
         }
-        if (!orderBy.contains(",")) {
+        if (groupOrder && !orderBy.contains(",")) {
+            if (orderBy.contains(" ")) {
+                String [] orderInfoTmp = orderBy.split(" ");
+                orderBy = orderInfoTmp[0];
+                if ("DESC".equals(orderInfoTmp[1])) {
+                    asc = false;
+                }
+            }
             Collections.sort(result, new Comparator<DocumentModel>() {
                 @Override
                 public int compare(DocumentModel d1, DocumentModel d2) {
                     Object value1 = d1.getPropertyValue(orderBy);
                     if (value1 instanceof Comparable) {
                         Object value2 = d2.getPropertyValue(orderBy);
-                        return ((Comparable) value1).compareTo(value2);
+                        return (asc ? 1 : -1) * ((Comparable) value1).compareTo(value2);
                     } else {
                         return 0;
                     }
@@ -138,6 +151,9 @@ public class VocabularyGetChildrenOperation {
             } else {
                 val.put("id", entry.getId());
                 val.put("label", label);
+                if (multipleParent) {
+                    val.put("parent", entry.getPropertyValue("xvocabulary:parent"));
+                }
             }
             if (_log.isDebugEnabled()) {
                 _log.debug(">> adding value: " + val);
@@ -182,6 +198,8 @@ public class VocabularyGetChildrenOperation {
                 for (String orderBy : multipleOrderBy) {
                     getOrderByInfo(orderBy.trim(), sortInfo);
                 }
+            } else {
+                getOrderByInfo(orderBy.trim(), sortInfo);
             }
         }
         return sortInfo;
@@ -194,7 +212,7 @@ public class VocabularyGetChildrenOperation {
      * @param sortInfo
      */
     private void getOrderByInfo(String orderBy, Map<String, String> sortInfo) {
-        String[] orderByInfo = orderBy.split(":");
+        String[] orderByInfo = orderBy.split(" ");
         if (orderByInfo.length > 1) {
             sortInfo.put(orderByInfo[0].trim(), orderByInfo[1].trim());
         } else {
