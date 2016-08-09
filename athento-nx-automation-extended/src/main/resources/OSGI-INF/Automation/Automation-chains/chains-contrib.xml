@@ -177,12 +177,15 @@
             </documentation>
             <param type="string" name="documentType"/>
             <param type="properties" name="properties"/>
+            <param type="properties" name="old_properties"/>
             <param type="boolean" name="updateParent"/>
             <param type="boolean" name="save"/>
             <operation id="Athento.Document.Update">
                 <param type="string" name="documentType">expr:@{ChainParameters['documentType']}
                 </param>
                 <param type="properties" name="properties">expr:ChainParameters['properties']
+                </param>
+                <param type="properties" name="old_properties">expr:ChainParameters['old_properties']
                 </param>
                 <param type="boolean" name="save">expr:@{ChainParameters['save']}
                 </param>

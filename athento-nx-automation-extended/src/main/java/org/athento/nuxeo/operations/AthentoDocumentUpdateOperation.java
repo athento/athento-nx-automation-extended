@@ -48,6 +48,9 @@ public class AthentoDocumentUpdateOperation {
     @Param(name = "properties")
     protected Properties properties;
 
+    @Param(name = "old_properties", required = false, description = "Properties used to find the document for update")
+    protected Properties oldProperties;
+
     @Param(name = "save", required = false, values = "true")
     protected boolean save = true;
 
@@ -87,14 +90,17 @@ public class AthentoDocumentUpdateOperation {
                 params.put("save", save);
                 params.put("changeToken", changeToken);
                 params.put("properties", properties);
+                params.put("old_properties", oldProperties == null ? new Properties(0) : oldProperties);
 
                 if (!StringUtils.isNullOrEmpty(operationIdPre)) {
+                    _log.info("Executing pre operation " + operationIdPre);
                     Object retValue = AthentoOperationsHelper.runOperation(
                         operationIdPre, input, params, session);
                     doc = (DocumentModel) retValue;
                     input = doc;
                 }
                 if (!StringUtils.isNullOrEmpty(operationIdPost)) {
+                    _log.info("Executing post operation " + operationIdPost);
                     Object retValue = AthentoOperationsHelper.runOperation(
                         operationIdPost, input, params, session);
                     doc = (DocumentModel) retValue;
