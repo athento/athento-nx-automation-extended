@@ -40,5 +40,7 @@
         <operation class="org.athento.nuxeo.operations.utils.PushObjectOperation" />
         <!-- Compare vocabularies -->
         <operation class="org.athento.nuxeo.operations.CompareVocabulariesOperation" />
+        <!-- Refresh pictures of a document type-->
+        <operation class="org.athento.nuxeo.operations.RefreshPictureOperation" />
     </extension>
 </component>
