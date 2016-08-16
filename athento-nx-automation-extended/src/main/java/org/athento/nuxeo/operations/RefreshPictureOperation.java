@@ -13,13 +13,21 @@ package org.athento.nuxeo.operations;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.workers.PrepareUpdatePicturesWorker;
+import org.athento.nuxeo.workers.UpdatePicturesWorker;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.*;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.ecm.core.api.model.impl.AbstractProperty;
+import org.nuxeo.ecm.core.storage.StorageBlob;
+import org.nuxeo.ecm.core.work.api.Work;
+import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.ecm.platform.picture.api.adapters.AbstractPictureAdapter;
 import org.nuxeo.elasticsearch.api.ElasticSearchService;
 import org.nuxeo.elasticsearch.query.NxQueryBuilder;
 import org.nuxeo.runtime.api.Framework;
@@ -37,9 +45,6 @@ public class RefreshPictureOperation {
 
     private static final Log LOG = LogFactory.getLog(RefreshPictureOperation.class);
 
-    /** QUERY. */
-    private static final String QUERY = "SELECT * FROM %s WHERE ecm:mixinType != 'HiddenInNavigation' AND ecm:isProxy = 0 AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState != 'deleted'";
-
     /** Core session. */
     @Context
     protected CoreSession session;
@@ -54,60 +59,45 @@ public class RefreshPictureOperation {
     @Param(name = "blockSize", required = false)
     private int blockSize = 100;
 
-    private long updated = 0;
 
+    /**
+     * Run operation for a document.
+     *
+     * @param doc
+     * @throws Exception
+     */
     @OperationMethod
-    public void run() throws Exception {
-
-        // Making query
-        String query = String.format(QUERY, documentType);
-
-        LOG.info("Updating pictures for document type= " + documentType);
-
-        DocumentModelList docList = null;
-
-        int currentPage = 0;
-
-        // Build and execute the ES query
-        ElasticSearchService ess = Framework.getLocalService(ElasticSearchService.class);
-        try {
-            do {
-                int offset = currentPage * blockSize;
-                LOG.info("Getting block " + offset + " with size " + blockSize);
-                NxQueryBuilder nxQuery = new NxQueryBuilder(session).nxql(query)
-                        .limit(blockSize).offset(offset);
-                docList = ess.query(nxQuery);
-
-                // Update list picture
-                updatePictureForList(docList);
-
-                currentPage++;
-            } while (docList.size() > 0);
-        } catch (ClientException e) {
-            throw new ClientRuntimeException(e);
+    public void run(DocumentModel doc) throws Exception {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Update picture for only one document " + doc.getId());
         }
-
-        LOG.info("Documents picture updated " + updated);
+        DocumentModelList list = new DocumentModelListImpl();
+        list.add(doc);
+        // Init update worker
+        UpdatePicturesWorker worker = new UpdatePicturesWorker(list);
+        startWorker(worker);
     }
 
     /**
-     * Update content for document list.
+     * Run operation for document list.
      *
-     * @param docList list of documents to update
+     * @throws Exception
      */
-    private void updatePictureForList(DocumentModelList docList) {
-        for (DocumentModel doc: docList) {
-            try {
-                LOG.info("Updating picture for " + doc.getId() + "(" + updated + ")");
-                Property content = doc.getProperty("file:content");
-                ((AbstractProperty) content).setFlags(Property.IS_MODIFIED);
-                session.saveDocument(doc);
-                session.save();
-                updated++;
-            } catch (ClientException e) {
-                LOG.error("Problems updating picture for " + doc.getId());
-            }
-        }
+    @OperationMethod
+    public void run() throws Exception {
+        // Start preparing update pictures worker
+        PrepareUpdatePicturesWorker prepareUpdatePictures = new PrepareUpdatePicturesWorker(documentType, blockSize);
+        startWorker(prepareUpdatePictures);
+    }
+
+    /**
+     * Start worker.
+     *
+     * @param worker
+     */
+    private void startWorker(Work worker) {
+        WorkManager workManager = Framework.getLocalService(WorkManager.class);
+        workManager.schedule(worker, WorkManager.Scheduling.IF_NOT_RUNNING_OR_SCHEDULED);
     }
 
 }

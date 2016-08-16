@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<component name="org.athento.nuxeo.automation.worker-contrib" version="1.0">
+
+  <extension target="org.nuxeo.ecm.core.work.service" point="queues">
+    <queue id="athentoUpdatePictures">
+      <name>Athento Update Pictures</name>
+      <maxThreads>${athento.updatePictures.maxThreads:=4}</maxThreads>
+      <category>AthentoUpdatePictures</category>
+      <clearCompletedAfterSeconds>${athento.updatePictures.clearCompletedAfterSeconds:=90}</clearCompletedAfterSeconds>
+    </queue>
+  </extension>
+
+</component>
