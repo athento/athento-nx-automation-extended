@@ -19,6 +19,7 @@ import org.nuxeo.runtime.api.Framework;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -62,6 +63,10 @@ public class PackageToZipOperation {
     @Param(name = "filename", required = false, description = "It is the filename or filename format.")
     protected String filename;
 
+    /** Entry name from document metadata. */
+    @Param(name = "entryNameProperty", required = false, description = "Use a metadata of document as entry filename")
+    protected String entryNameProperty;
+
 
     /*
      * Filter documents.
@@ -92,6 +97,12 @@ public class PackageToZipOperation {
                 StorageBlob blob = (StorageBlob) doc.getPropertyValue("file:content");
                 // Check content and limit size for zip
                 if (hasContent(blob) && limitSizeIsValid(totalSize, blob)) {
+                    if (entryNameProperty != null) {
+                        Serializable value = doc.getPropertyValue(this.entryNameProperty);
+                        if (value != null) {
+                            blob.setFilename(value.toString());
+                        }
+                    }
                     blobList.add(blob);
                     totalSize += blob.getLength();
                 }
