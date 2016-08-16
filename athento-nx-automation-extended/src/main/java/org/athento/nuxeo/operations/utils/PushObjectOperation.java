@@ -31,18 +31,21 @@ public class PushObjectOperation {
     @Context
     protected OperationContext ctx;
 
-    @Param(name = "object", required = false)
+    @Param(name = "object", required = true)
     protected Serializable object;
+
+    @Param(name = "type", required = true)
+    protected String type;
 
     @OperationMethod
     public Serializable run(Serializable object) {
-        ctx.push("object", object);
+        ctx.push(type, this.object);
         return object;
     }
 
     @OperationMethod
     public Serializable run() {
-        ctx.push("object", object);
+        ctx.push(type, object);
         return object;
     }
 
