@@ -99,6 +99,11 @@ public class AthentoDocumentUpdateOperation {
                     doc = (DocumentModel) retValue;
                     input = doc;
                 }
+                if (doc != null) {
+                    // After intercept pre-operation, saving doc is mandatory.
+                    // It shouldn't delegate to pre or post operation.
+                    this.session.saveDocument(doc);
+                }
                 if (!StringUtils.isNullOrEmpty(operationIdPost)) {
                     _log.info("Executing post operation " + operationIdPost);
                     Object retValue = AthentoOperationsHelper.runOperation(
@@ -106,8 +111,12 @@ public class AthentoDocumentUpdateOperation {
                     doc = (DocumentModel) retValue;
                 }
             } else {
+                // Input is necessary here
+                if (doc == null) {
+                    throw new AthentoException("Document input is mandatory to update");
+                }
                 if (_log.isDebugEnabled()) {
-                    _log.info("Document not watched: " + documentType
+                    _log.debug("Document not watched: " + documentType
                         + ". Watched doctypes are: " + watchedDocumentTypes);
                 }
                 if (changeToken != null) {
