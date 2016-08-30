@@ -1,0 +1,108 @@
+/**
+ * 
+ */
+package org.athento.nuxeo.operations;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.StringUtils;
+import org.nuxeo.ecm.automation.core.annotations.Context;
+import org.nuxeo.ecm.automation.core.annotations.Operation;
+import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
+import org.nuxeo.ecm.automation.core.annotations.Param;
+import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
+import org.nuxeo.ecm.automation.core.util.DocumentHelper;
+import org.nuxeo.ecm.automation.core.util.Properties;
+import org.nuxeo.ecm.core.api.*;
+import org.nuxeo.ecm.core.utils.DocumentModelUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Athento document find operation.
+ *
+ * @author victorsanchez
+ *
+ */
+@Operation(id = AthentoDocumentFindOperation.ID, category = "Athento", label = "Athento Document Find", description = "Find a document given a properties")
+public class AthentoDocumentFindOperation {
+
+    /** LOG. */
+    private static final Log LOG = LogFactory
+            .getLog(AthentoDocumentFindOperation.class);
+
+    /** Operation ID. */
+    public static final String ID = "Athento.DocumentFind";
+
+    @Context
+    protected CoreSession session;
+
+    @Param(name = "properties", required = false)
+    protected Properties properties;
+
+    // Keep compatibility with Athento.DocumentUpdate
+    @Param(name = "old_properties", required = false)
+    protected Properties old_properties;
+
+    @Param(name = "onlyOne", required = false)
+    protected boolean onlyOne = true;
+
+    @Param(name = "includeDeleted", required = false)
+    protected boolean includeDeleted = false;
+
+    @OperationMethod()
+    public DocumentModel run() throws Exception {
+        // Make query
+        String findQuery = makeQuery();
+        // Params for query
+        Map<String, Object> params = new HashMap<>();
+        params.put("query", findQuery);
+        params.put("offset", -1);
+        params.put("limit", onlyOne ? 1 : -1);
+        // Execute query
+        DocumentModelList list = (DocumentModelList) AthentoOperationsHelper.runOperation(
+                "Document.ElasticQuery", null, params, session);
+        if (!list.isEmpty()) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    /**f
+     * Make the NXQL query from properties.
+     *
+     * @return query
+     */
+    private String makeQuery() {
+        String query = "SELECT * FROM Document WHERE " +
+                "ecm:mixinType != 'HiddenInNavigation' AND " +
+                "ecm:isProxy = 0 AND ecm:isCheckedInVersion = 0";
+        if (!includeDeleted) {
+            query += " AND ecm:currentLifeCycleState != 'deleted' ";
+        }
+        Properties props = (Properties) properties.clone();
+        if (old_properties != null && !old_properties.isEmpty()) {
+            props = (Properties) old_properties.clone();
+        }
+        for (Map.Entry<String, String> property : props.entrySet()) {
+            String metadata = property.getKey();
+            String value = property.getValue();
+            boolean like = false;
+            boolean ilike = false;
+            if (metadata.startsWith("%")) {
+                like = true;
+                metadata = metadata.substring(1);
+            } else if (metadata.startsWith("i%")) {
+                ilike = true;
+                metadata = metadata.substring(2);
+            }
+            query += " AND " + metadata + (like ? " LIKE " : (ilike ? " ILIKE " : " = ")) + value;
+
+        }
+        return query;
+    }
+
+}

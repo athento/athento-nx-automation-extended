@@ -93,19 +93,24 @@ public class AthentoDocumentUpdateOperation {
                 params.put("old_properties", oldProperties == null ? new Properties(0) : oldProperties);
 
                 if (!StringUtils.isNullOrEmpty(operationIdPre)) {
-                    _log.info("Executing pre operation " + operationIdPre);
+                    if (_log.isDebugEnabled()) {
+                        _log.debug("Executing pre operation " + operationIdPre);
+                    }
                     Object retValue = AthentoOperationsHelper.runOperation(
                         operationIdPre, input, params, session);
                     doc = (DocumentModel) retValue;
                     input = doc;
                 }
-                if (doc != null) {
+                if (doc != null && save) {
+                    DocumentHelper.setProperties(session, doc, properties);
                     // After intercept pre-operation, saving doc is mandatory.
                     // It shouldn't delegate to pre or post operation.
                     this.session.saveDocument(doc);
                 }
                 if (!StringUtils.isNullOrEmpty(operationIdPost)) {
-                    _log.info("Executing post operation " + operationIdPost);
+                    if (_log.isDebugEnabled()) {
+                        _log.debug("Executing post operation " + operationIdPost);
+                    }
                     Object retValue = AthentoOperationsHelper.runOperation(
                         operationIdPost, input, params, session);
                     doc = (DocumentModel) retValue;
