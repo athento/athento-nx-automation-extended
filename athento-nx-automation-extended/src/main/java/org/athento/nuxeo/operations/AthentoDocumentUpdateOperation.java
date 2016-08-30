@@ -99,7 +99,7 @@ public class AthentoDocumentUpdateOperation {
                     doc = (DocumentModel) retValue;
                     input = doc;
                 }
-                if (doc != null) {
+                if (doc != null && save) {
                     // After intercept pre-operation, saving doc is mandatory.
                     // It shouldn't delegate to pre or post operation.
                     this.session.saveDocument(doc);
