@@ -1,9 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Vendor: Athento
-Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
 Bundle-Version: 1.0
-Nuxeo-Component: OSGI-INF/chains-contrib.xml, 
+Nuxeo-Component: OSGI-INF/chains-contrib.xml,
  OSGI-INF/Automation/operations-contrib.xml,
  OSGI-INF/vocabularies-contrib.xml,
  OSGI-INF/Automation/Automation-chains/chains-contrib.xml,
@@ -13,9 +11,12 @@ Nuxeo-Component: OSGI-INF/chains-contrib.xml,
  OSGI-INF/Content-model/Structure-Templates/structure-templates-contrib.xml,
  OSGI-INF/Listing-Views/Form-layout/formlayout-automationExtended-contrib.xml,
  OSGI-INF/resources-contrib.xml,
- OSGI-INF/workmanager-contrib.xml
+ OSGI-INF/workmanager-contrib.xml,
+ OSGI-INF/marshaller-contrib.xml,
+ OSGI-INF/codec-contrib.xml
 Bundle-Name: athento-nx-automation-extended
 Bundle-ManifestVersion: 2
+Nuxeo-WebModule: org.athento.nuxeo.module.ExtendedModule;name=api;extends=automation;package=org/athento/nuxeo/module;headless=true
 Bundle-SymbolicName: org.athento.nuxeo.automation-extended;singleton:=true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 

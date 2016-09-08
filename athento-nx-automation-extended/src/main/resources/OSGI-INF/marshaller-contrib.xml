@@ -1,0 +1,11 @@
+<component name="org.athento.nuxeo.automation.extended.marshallers">
+
+  <extension target="org.nuxeo.ecm.automation.server.AutomationServer"
+    point="marshallers">
+
+    <marshaller>
+      <writer>org.athento.nuxeo.api.writer.JsonBatchResultWriter</writer>
+    </marshaller>
+  </extension>
+
+</component>

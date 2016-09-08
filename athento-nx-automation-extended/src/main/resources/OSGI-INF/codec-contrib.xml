@@ -1,0 +1,8 @@
+<component name="org.athento.nuxeo.automation.extended.IOComponent">
+
+  <extension target="org.nuxeo.ecm.automation.io.services.IOComponent"
+             point="codecs">
+    <codec class="org.athento.nuxeo.api.codec.BatchResultCodec" />
+  </extension>
+
+</component>

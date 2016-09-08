@@ -43,10 +43,6 @@ public class AthentoDocumentFindOperation {
     @Param(name = "properties", required = false)
     protected Properties properties;
 
-    // Keep compatibility with Athento.DocumentUpdate
-    @Param(name = "old_properties", required = false)
-    protected Properties old_properties;
-
     @Param(name = "onlyOne", required = false)
     protected boolean onlyOne = true;
 
@@ -84,9 +80,6 @@ public class AthentoDocumentFindOperation {
             query += " AND ecm:currentLifeCycleState != 'deleted' ";
         }
         Properties props = (Properties) properties.clone();
-        if (old_properties != null && !old_properties.isEmpty()) {
-            props = (Properties) old_properties.clone();
-        }
         for (Map.Entry<String, String> property : props.entrySet()) {
             String metadata = property.getKey();
             String value = property.getValue();
