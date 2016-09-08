@@ -433,15 +433,15 @@
         <chain id="Athento.ExportQueryToCSVFile">
             <documentation>Export the query document list result to CSV File</documentation>
             <param type="string" name="query"/>
-            <param type="integer" name="offsetForQuery" />
-            <param type="integer" name="limitForQuery" />
-            <param type="string" name="headers" />
-            <param type="string" name="columns" />
-            <param type="string" name="template" />
-            <param type="string" name="outputFile" />
-            <param type="string" name="outputDir" />
-            <param type="string" name="separator" />
-            <param type="string" name="encoding" />
+            <param type="integer" name="offsetForQuery"/>
+            <param type="integer" name="limitForQuery"/>
+            <param type="string" name="headers"/>
+            <param type="string" name="columns"/>
+            <param type="string" name="template"/>
+            <param type="string" name="outputFile"/>
+            <param type="string" name="outputDir"/>
+            <param type="string" name="separator"/>
+            <param type="string" name="encoding"/>
             <operation id="Document.ElasticQuery">
                 <param type="string" name="query">expr:@{ChainParameters['query']}</param>
                 <param type="integer" name="limit">expr:ChainParameters['limitForQuery']</param>
@@ -450,7 +450,7 @@
             <operation id="Context.SetInputAsVar">
                 <param type="string" name="name">queryResultList</param>
             </operation>
-            <operation id="Athento.ListToPaginableProvider" />
+            <operation id="Athento.ListToPaginableProvider"/>
             <operation id="Context.SetInputAsVar">
                 <param type="string" name="name">csvQueryProvider</param>
             </operation>
@@ -459,11 +459,14 @@
             </operation>
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="mimetype">application/csv</param>
-                <param type="string" name="charset">expr:@{ChainParameters['encoding'] == null ? 'UTF-8' : ChainParameters['encoding']}</param>
+                <param type="string" name="charset">expr:@{ChainParameters['encoding'] == null ? 'UTF-8' :
+                    ChainParameters['encoding']}
+                </param>
                 <param type="string" name="headers">expr:@{ChainParameters['headers']}</param>
                 <param type="string" name="columns">expr:@{ChainParameters['columns']}</param>
                 <param type="string" name="separator">expr:@{ChainParameters['separator'] == null ? ',' :
-                    ChainParameters['separator']}</param>
+                    ChainParameters['separator']}
+                </param>
                 <param type="string" name="template">expr:@{ChainParameters['template'] == null ? 'template:csv.ftl' :
                     ChainParameters['template']}
                 </param>
@@ -480,17 +483,17 @@
 
         <chain id="Athento.ExportDocumentsToCSVFile">
             <documentation>Receive a document list to export the CSV file.</documentation>
-            <param type="string" name="headers" />
-            <param type="string" name="columns" />
-            <param type="string" name="template" />
-            <param type="string" name="outputFile" />
-            <param type="string" name="outputDir" />
-            <param type="string" name="separator" />
-            <param type="string" name="encoding" />
+            <param type="string" name="headers"/>
+            <param type="string" name="columns"/>
+            <param type="string" name="template"/>
+            <param type="string" name="outputFile"/>
+            <param type="string" name="outputDir"/>
+            <param type="string" name="separator"/>
+            <param type="string" name="encoding"/>
             <operation id="Context.SetInputAsVar">
                 <param type="string" name="name">documentList</param>
             </operation>
-            <operation id="Athento.ListToPaginableProvider" />
+            <operation id="Athento.ListToPaginableProvider"/>
             <operation id="Context.SetInputAsVar">
                 <param type="string" name="name">csvProvider</param>
             </operation>
@@ -499,11 +502,14 @@
             </operation>
             <operation id="Athento.DocumentsFeedOperation">
                 <param type="string" name="mimetype">application/csv</param>
-                <param type="string" name="charset">expr:@{ChainParameters['encoding'] == null ? 'UTF-8' : ChainParameters['encoding']}</param>
+                <param type="string" name="charset">expr:@{ChainParameters['encoding'] == null ? 'UTF-8' :
+                    ChainParameters['encoding']}
+                </param>
                 <param type="string" name="headers">expr:@{ChainParameters['headers']}</param>
                 <param type="string" name="columns">expr:@{ChainParameters['columns']}</param>
                 <param type="string" name="separator">expr:@{ChainParameters['separator'] == null ? ',' :
-                    ChainParameters['separator']}</param>
+                    ChainParameters['separator']}
+                </param>
                 <param type="string" name="template">expr:@{ChainParameters['template'] == null ? 'template:csv.ftl' :
                     ChainParameters['template']}
                 </param>
@@ -520,12 +526,13 @@
         </chain>
 
         <chain id="Athento.QueryToDir">
-            <documentation>Save the content (from xpath) of a query result into directory into filesystem.</documentation>
-            <param type="string" name="query" />
-            <param type="integer" name="offsetForQuery" />
-            <param type="integer" name="limitForQuery" />
-            <param type="string" name="xpath" />
-            <param type="string" name="outputDir" />
+            <documentation>Save the content (from xpath) of a query result into directory into filesystem.
+            </documentation>
+            <param type="string" name="query"/>
+            <param type="integer" name="offsetForQuery"/>
+            <param type="integer" name="limitForQuery"/>
+            <param type="string" name="xpath"/>
+            <param type="string" name="outputDir"/>
             <operation id="Context.SetVar">
                 <param type="string" name="name">query</param>
                 <param type="string" name="value">expr:@{ChainParameters['query']}
@@ -533,13 +540,17 @@
             </operation>
             <operation id="Document.ElasticQuery">
                 <param type="string" name="query">expr:@{query}</param>
-                <param type="integer" name="limit">expr:@{ChainParameters['limitForQuery'] == empty || ChainParameters['limitForQuery'] == "null" ? -1 : ChainParameters['limitForQuery']}</param>
-                <param type="integer" name="offset">expr:@{ChainParameters['offsetForQuery'] == empty || ChainParameters['offsetForQuery'] == "null" ? -1 : ChainParameters['offsetForQuery']}</param>
+                <param type="integer" name="limit">expr:@{ChainParameters['limitForQuery'] == empty ||
+                    ChainParameters['limitForQuery'] == "null" ? -1 : ChainParameters['limitForQuery']}
+                </param>
+                <param type="integer" name="offset">expr:@{ChainParameters['offsetForQuery'] == empty ||
+                    ChainParameters['offsetForQuery'] == "null" ? -1 : ChainParameters['offsetForQuery']}
+                </param>
             </operation>
             <operation id="Context.SetInputAsVar">
                 <param type="string" name="name">documentList</param>
             </operation>
-            <operation id="Athento.ListToPaginableProvider" />
+            <operation id="Athento.ListToPaginableProvider"/>
             <operation id="Context.SetInputAsVar">
                 <param type="string" name="name">resultAsProvider</param>
             </operation>
@@ -590,7 +601,9 @@
                 <param type="document" name="value">expr:item.id</param>
             </operation>
             <operation id="Blob.Get">
-                <param type="string" name="xpath">expr:@{ChainParameters['xpath'] == empty ? "file:content" : ChainParameters['xpath']}</param>
+                <param type="string" name="xpath">expr:@{ChainParameters['xpath'] == empty ? "file:content" :
+                    ChainParameters['xpath']}
+                </param>
             </operation>
             <operation id="Blob.ToFile">
                 <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
@@ -598,5 +611,19 @@
         </chain>
 
     </extension>
+
+    <extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">
+        <register class="org.athento.nuxeo.api.writer.JsonBatchResultWriter" enable="true"/>
+    </extension>
+
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+               point="adapters">
+        <adapter
+                class="org.athento.nuxeo.api.adapter.BatchResultAdapter"
+                accept="org.athento.nuxeo.api.model.BatchResult"
+                produce="org.athento.nuxeo.api.model.BatchResult" />
+
+    </extension>
+
 
 </component>

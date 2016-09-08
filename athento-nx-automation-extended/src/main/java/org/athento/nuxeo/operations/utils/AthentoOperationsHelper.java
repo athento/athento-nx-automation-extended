@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package org.athento.nuxeo.operations.utils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -13,6 +14,7 @@ import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
+import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
@@ -20,14 +22,13 @@ import org.nuxeo.runtime.api.Framework;
 
 /**
  * @author athento
- *
  */
 public class AthentoOperationsHelper {
 
     public static final String CONFIG_PATH = "/ExtendedConfig";
 
     public static boolean isWatchedDocumentType(DocumentModel doc,
-        String documentType, String watchedDocumentTypes) {
+                                                String documentType, String watchedDocumentTypes) {
         if (StringUtils.isNullOrEmpty(watchedDocumentTypes)) {
             return false;
         }
@@ -36,7 +37,7 @@ public class AthentoOperationsHelper {
             docType = doc.getType();
         }
         return StringUtils.isIncludedIn(docType, watchedDocumentTypes,
-            StringUtils.COMMA);
+                StringUtils.COMMA);
     }
 
     public static Throwable getRootCause(Throwable e) {
@@ -50,10 +51,10 @@ public class AthentoOperationsHelper {
     }
 
     public static Object runOperation(String operationId, Object input,
-        Map<String, Object> params, CoreSession session)
-        throws OperationException {
+                                      Map<String, Object> params, CoreSession session)
+            throws OperationException {
         AutomationService automationManager = Framework
-            .getLocalService(AutomationService.class);
+                .getLocalService(AutomationService.class);
         // Input setting
         OperationContext ctx = new OperationContext(session);
         ctx.setInput(input);
@@ -71,14 +72,14 @@ public class AthentoOperationsHelper {
             }
         } catch (Exception e) {
             _log.error("Unable to run operation: " + operationId
-                + " Exception: " + e.getMessage(), e);
+                    + " Exception: " + e.getMessage(), e);
             Throwable cause = e;
             if (!(e instanceof AthentoException)) {
                 cause = AthentoOperationsHelper.getRootCause(e);
                 _log.error("Retrieving cause: " + cause.getMessage());
             }
             AthentoException exc = new AthentoException(cause.getMessage(),
-                cause);
+                    cause);
             throw exc;
         }
         return o;
@@ -87,7 +88,7 @@ public class AthentoOperationsHelper {
     public static Map<String, Object> readConfig(CoreSession session) {
         Map<String, Object> config = new HashMap<String, Object>();
         DocumentModel conf = session.getDocument(new PathRef(
-            AthentoOperationsHelper.CONFIG_PATH));
+                AthentoOperationsHelper.CONFIG_PATH));
         for (String schemaName : conf.getSchemas()) {
             Map<String, Object> metadata = conf.getProperties(schemaName);
             for (String keyName : metadata.keySet()) {
@@ -101,11 +102,38 @@ public class AthentoOperationsHelper {
 
     public static String readConfigValue(CoreSession session, String key) {
         DocumentModel conf = session.getDocument(new PathRef(
-            AthentoOperationsHelper.CONFIG_PATH));
+                AthentoOperationsHelper.CONFIG_PATH));
         return String.valueOf(conf.getPropertyValue(key));
     }
 
     private static final Log _log = LogFactory
-        .getLog(AthentoOperationsHelper.class);
+            .getLog(AthentoOperationsHelper.class);
 
+    /**
+     * Transform properties to {@link Map} of parameters.
+     *
+     * @param properties are the properties
+     * @return map
+     */
+    public static Map<String, Object> transformPropertiesToParams(Map<String, String> properties) {
+        Map<String, Object> params = new HashMap<>();
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            params.put(entry.getKey(), entry.getValue());
+        }
+        return params;
+    }
+
+    /**
+     * Transform properties as string.
+     *
+     * @param properties
+     * @return properties as string
+     */
+    public static String transformPropertiesAsString(LinkedHashMap<String, Object> properties) {
+        StringBuffer propertiesString = new StringBuffer();
+        for (Map.Entry<String, Object> props : properties.entrySet()) {
+            propertiesString.append(props.getKey()).append("=").append(props.getValue()).append("\n");
+        }
+        return propertiesString.toString();
+    }
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.athento.nuxeo.operations;
 
@@ -13,6 +13,7 @@ import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.ConflictOperationException;
+import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -25,16 +26,27 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 
 /**
  * @author athento
- *
  */
 @Operation(id = AthentoDocumentUpdateOperation.ID, category = "Athento", label = "Athento Document Update", description = "Updates a document in Athento's way")
 public class AthentoDocumentUpdateOperation {
 
+    /**
+     * Log.
+     */
+    private static final Log _log = LogFactory
+            .getLog(AthentoDocumentUpdateOperation.class);
+
+    /**
+     * Operation ID.
+     */
     public static final String ID = "Athento.Document.Update";
 
     public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentUpdateWatchedDocumentTypes";
     public static final String CONFIG_OPERATION_ID_PRE = "automationExtendedConfig:documentUpdateOperationIdPre";
     public static final String CONFIG_OPERATION_ID_POST = "automationExtendedConfig:documentUpdateOperationIdPost";
+
+    /* Default PRE operation to find document to update. */
+    private static final String FIND_DOC_OPERATION_ID_PRE = "Athento.DocumentFind";
 
     @Context
     protected CoreSession session;
@@ -63,7 +75,7 @@ public class AthentoDocumentUpdateOperation {
     public DocumentModel run(DocumentModel doc) throws Exception {
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentUpdateOperation.ID
-                + " BEGIN with params:");
+                    + " BEGIN with params:");
             _log.debug(" documentType: " + documentType);
             _log.debug(" input: " + doc);
             _log.debug(" save: " + save);
@@ -72,49 +84,32 @@ public class AthentoDocumentUpdateOperation {
         }
         try {
             Map<String, Object> config = AthentoOperationsHelper
-                .readConfig(session);
+                    .readConfig(session);
             String watchedDocumentTypes = String.valueOf(config
-                .get(AthentoDocumentUpdateOperation.CONFIG_WATCHED_DOCTYPE));
-            String operationIdPre = String.valueOf(config
-                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_PRE));
-            String operationIdPost = String.valueOf(config
-                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_POST));
+                    .get(AthentoDocumentUpdateOperation.CONFIG_WATCHED_DOCTYPE));
             if (AthentoOperationsHelper.isWatchedDocumentType(doc,
-                documentType, watchedDocumentTypes)) {
-                Object input = null;
-                if (doc != null) {
-                    input = doc;
-                }
-                Map<String, Object> params = new HashMap<String, Object>();
+                    documentType, watchedDocumentTypes)) {
+                Map<String, Object> params = new HashMap<>();
                 params.put("documentType", documentType);
                 params.put("save", save);
                 params.put("changeToken", changeToken);
                 params.put("properties", properties);
                 params.put("old_properties", oldProperties == null ? new Properties(0) : oldProperties);
 
-                if (!StringUtils.isNullOrEmpty(operationIdPre)) {
-                    if (_log.isDebugEnabled()) {
-                        _log.debug("Executing pre operation " + operationIdPre);
-                    }
-                    Object retValue = AthentoOperationsHelper.runOperation(
-                        operationIdPre, input, params, session);
-                    doc = (DocumentModel) retValue;
-                    input = doc;
-                }
+                // Execute preOperation
+                doc = executePreOperation(doc, params, config);
+
+                // Save document
                 if (doc != null && save) {
                     DocumentHelper.setProperties(session, doc, properties);
                     // After intercept pre-operation, saving doc is mandatory.
                     // It shouldn't delegate to pre or post operation.
                     this.session.saveDocument(doc);
                 }
-                if (!StringUtils.isNullOrEmpty(operationIdPost)) {
-                    if (_log.isDebugEnabled()) {
-                        _log.debug("Executing post operation " + operationIdPost);
-                    }
-                    Object retValue = AthentoOperationsHelper.runOperation(
-                        operationIdPost, input, params, session);
-                    doc = (DocumentModel) retValue;
-                }
+
+                // Execute postOperation
+                doc = executePostOperation(doc, params, config);
+
             } else {
                 // Input is necessary here
                 if (doc == null) {
@@ -122,7 +117,7 @@ public class AthentoDocumentUpdateOperation {
                 }
                 if (_log.isDebugEnabled()) {
                     _log.debug("Document not watched: " + documentType
-                        + ". Watched doctypes are: " + watchedDocumentTypes);
+                            + ". Watched doctypes are: " + watchedDocumentTypes);
                 }
                 if (changeToken != null) {
                     // Check for dirty update
@@ -138,14 +133,14 @@ public class AthentoDocumentUpdateOperation {
             }
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentUpdateOperation.ID
-                    + " END return value: " + doc);
+                        + " END return value: " + doc);
             }
             return doc;
         } catch (Exception e) {
             _log.error(
-                "Unable to complete operation: "
-                    + AthentoDocumentUpdateOperation.ID + " due to: "
-                    + e.getMessage(), e);
+                    "Unable to complete operation: "
+                            + AthentoDocumentUpdateOperation.ID + " due to: "
+                            + e.getMessage(), e);
             if (e instanceof AthentoException) {
                 throw e;
             }
@@ -154,7 +149,51 @@ public class AthentoDocumentUpdateOperation {
         }
     }
 
-    private static final Log _log = LogFactory
-        .getLog(AthentoDocumentUpdateOperation.class);
+    /**
+     * Execute pre-operation.
+     *
+     * @param doc
+     * @param params
+     * @param config
+     * @return documentModel returned from pre-operation
+     */
+    private DocumentModel executePreOperation(DocumentModel doc, Map<String, Object> params, Map<String, Object> config)
+            throws OperationException {
+        String operationIdPre = String.valueOf(config
+                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_PRE));
+        Object retValue;
+        if (StringUtils.isNullOrEmpty(operationIdPre)) {
+            Map<String, Object> findParams = new HashMap<>(params);
+            // Replace properties to old_properties to find document
+            findParams.put("properties", oldProperties);
+            retValue = AthentoOperationsHelper.runOperation(
+                    FIND_DOC_OPERATION_ID_PRE, doc, findParams, session);
+        } else {
+            retValue = AthentoOperationsHelper.runOperation(
+                    operationIdPre, doc, params, session);
+        }
+        return (DocumentModel) retValue;
+    }
+
+    /**
+     * Execute post-operation.
+     *
+     * @param doc
+     * @param config
+     * @return documentModel returned from post-operation
+     */
+    private DocumentModel executePostOperation(DocumentModel doc, Map<String, Object> params, Map<String, Object> config) throws OperationException {
+        String operationIdPost = String.valueOf(config
+                .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_POST));
+        if (!StringUtils.isNullOrEmpty(operationIdPost)) {
+            if (_log.isDebugEnabled()) {
+                _log.debug("Executing post operation " + operationIdPost);
+            }
+            Object retValue = AthentoOperationsHelper.runOperation(
+                    operationIdPost, doc, params, session);
+            doc = (DocumentModel) retValue;
+        }
+        return doc;
+    }
 
 }

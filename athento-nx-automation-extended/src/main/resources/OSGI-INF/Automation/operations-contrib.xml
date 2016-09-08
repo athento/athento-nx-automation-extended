@@ -12,6 +12,8 @@
         <operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
         <operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
         <operation class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentMultiCreateOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoMultiAttachBlobOperation" />
         <!--Operation for generate Athento Preview iFrame -->
         <operation class="org.athento.nuxeo.operations.GetPreviewIFrameOperation" />
         <!--Attach blob -->
@@ -43,5 +45,7 @@
         <operation class="org.athento.nuxeo.operations.CompareVocabulariesOperation" />
         <!-- Refresh pictures of a document type-->
         <operation class="org.athento.nuxeo.operations.RefreshPictureOperation" />
+        <!-- Run operation as batch -->
+        <operation class="org.athento.nuxeo.operations.RunOperationAsBatch" />
     </extension>
 </component>
