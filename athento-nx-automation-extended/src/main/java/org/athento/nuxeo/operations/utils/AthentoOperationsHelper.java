@@ -4,6 +4,7 @@
 package org.athento.nuxeo.operations.utils;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,6 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.utils.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -133,6 +136,25 @@ public class AthentoOperationsHelper {
         StringBuffer propertiesString = new StringBuffer();
         for (Map.Entry<String, Object> props : properties.entrySet()) {
             propertiesString.append(props.getKey()).append("=").append(props.getValue()).append("\n");
+        }
+        return propertiesString.toString();
+    }
+
+    /**
+     * Transform properties as string.
+     *
+     * @param node
+     * @return properties as string
+     */
+    public static String transformPropertiesAsString(ObjectNode node) {
+        StringBuffer propertiesString = new StringBuffer();
+        for (Iterator<JsonNode> it = node.iterator(); it.hasNext();) {
+            JsonNode n = it.next();
+            _log.info("node " + n);
+            for (Iterator<String> itFields = n.getFieldNames(); itFields.hasNext();) {
+                String fieldName = itFields.next();
+                propertiesString.append(fieldName).append("=").append(n.get(fieldName)).append("\n");
+            }
         }
         return propertiesString.toString();
     }

@@ -9,6 +9,10 @@ import org.athento.nuxeo.api.model.BatchResult;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
+import org.codehaus.jackson.type.TypeReference;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -98,14 +102,25 @@ public class AthentoDocumentMultiCreateOperation {
             // Complete properties
             for (Iterator it = this.properties.iterator(); it.hasNext();) {
                 LinkedHashMap<String, Object> props = new LinkedHashMap();
-                LinkedHashMap currentProperties = (LinkedHashMap) it.next();
+                Object obj = it.next();
+                HashMap map;
+                if (obj instanceof ObjectNode) {
+                    ObjectNode node = (ObjectNode) obj;
+                    ObjectMapper mapper = new ObjectMapper();
+                    map = mapper.readValue(node, new TypeReference<Map<String, String>>(){});
+                } else {
+                    // Compatibility minor of HF20
+                    map = (LinkedHashMap) obj;
+                }
+                // Add node properties to commonProperties
+                map.putAll(commonProperties);
                 // Add name
                 props.put("name", name);
                 props.put("type", type);
                 props.put("destination", destination);
-                // Add common properties
-                currentProperties.putAll(commonProperties);
-                props.put("properties", AthentoOperationsHelper.transformPropertiesAsString(currentProperties));
+                // Add common properties and properties;
+                String propsString = AthentoOperationsHelper.transformPropertiesAsString(new LinkedHashMap<String, Object>(map));
+                props.put("properties", propsString);
                 propertiesList.add(props);
             }
 
