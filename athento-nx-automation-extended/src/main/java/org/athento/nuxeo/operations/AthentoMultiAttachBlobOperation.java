@@ -62,11 +62,13 @@ public class AthentoMultiAttachBlobOperation {
         // Make properties for each document
         for (String document : documents) {
             try {
+                // Check if document exists
+                DocumentModel doc = session.getDocument(new IdRef(document));
                 // Prepare properties and add to list
                 LinkedHashMap<String, Object> properties = new LinkedHashMap();
                 properties.put("xpath", xpath);
                 properties.put("save", String.valueOf(save));
-                properties.put("document", document);
+                properties.put("document", doc.getId());
                 propertiesList.add(properties);
             } catch (ClientException e) {
                 LOG.error("Document '" + document + "' is not found.", e);
