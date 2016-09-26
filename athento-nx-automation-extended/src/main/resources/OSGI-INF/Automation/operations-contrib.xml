@@ -2,50 +2,34 @@
 <component name="org.athento.nuxeo.automation.extended.OperationContrib" version="1.0.0">
     <!-- Contributing a new operation to be used for import some files -->
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations">
-        <operation class="org.athento.nuxeo.operations.AthentoDocumentCreateOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoDocumentQueryOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoDocumentUpdateOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoDocumentFindOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoDocumentResultSetOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoExceptionCreateOperation" />
-        <operation class="org.athento.nuxeo.operations.DocumentFetchOrCreateOperation" />
-        <operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
-        <operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
-        <operation class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoDocumentMultiCreateOperation" />
-        <operation class="org.athento.nuxeo.operations.AthentoMultiAttachBlobOperation" />
-        <!--Operation for generate Athento Preview iFrame -->
-        <operation class="org.athento.nuxeo.operations.GetPreviewIFrameOperation" />
-        <!--Attach blob -->
         <operation class="org.athento.nuxeo.operations.AthentoAttachBlobOperation"
             replace="true" />
-        <!-- Documents feed -->
-        <operation class="org.athento.nuxeo.operations.DocumentsFeedOperation" />
-        <!-- Push list -->
-        <operation class="org.athento.nuxeo.operations.PushListOperation" />
-        <!-- Transform list to provider -->
-        <operation class="org.athento.nuxeo.operations.ListToProviderOperation" />
-        <!-- Run operation and set var -->
-        <operation class="org.athento.nuxeo.operations.RunOperationAsVar" />
-        <!-- Push provider -->
-        <operation class="org.athento.nuxeo.operations.PushPaginableProviderOperation" />
-        <!-- Package provider to ZIP -->
-        <operation class="org.athento.nuxeo.operations.PackageToZipOperation" />
-        <!-- Get attribute of JSON result -->
-        <operation class="org.athento.nuxeo.operations.utils.GetJSONAttributeOperation" />
-        <!-- Clear context -->
-        <operation class="org.athento.nuxeo.operations.utils.ClearContextOperation" />
-        <!-- Copy file -->
-        <operation class="org.athento.nuxeo.operations.CopyFileOperation" />
-        <!-- Extract lines from blob -->
-        <operation class="org.athento.nuxeo.operations.ExtractLinesOperation" />
-        <!-- Push blob -->
-        <operation class="org.athento.nuxeo.operations.utils.PushObjectOperation" />
-        <!-- Compare vocabularies -->
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentCreateOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentFindOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentMultiCreateOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentQueryOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentResultSetOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentUpdateOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoExceptionCreateOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoMultiAttachBlobOperation" />
         <operation class="org.athento.nuxeo.operations.CompareVocabulariesOperation" />
-        <!-- Refresh pictures of a document type-->
+        <operation class="org.athento.nuxeo.operations.CopyFileOperation" />
+        <operation class="org.athento.nuxeo.operations.DocumentsFeedOperation" />
+        <operation class="org.athento.nuxeo.operations.DocumentFetchOrCreateOperation" />
+        <operation class="org.athento.nuxeo.operations.ExtractLinesOperation" />
+        <operation class="org.athento.nuxeo.operations.GetPreviewIFrameOperation" />
+        <operation class="org.athento.nuxeo.operations.ListToProviderOperation" />
+        <operation class="org.athento.nuxeo.operations.PackageToZipOperation" />
+        <operation class="org.athento.nuxeo.operations.PushListOperation" />
+        <operation class="org.athento.nuxeo.operations.PushPaginableProviderOperation" />
         <operation class="org.athento.nuxeo.operations.RefreshPictureOperation" />
-        <!-- Run operation as batch -->
         <operation class="org.athento.nuxeo.operations.RunOperationAsBatch" />
+        <operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
+        <operation class="org.athento.nuxeo.operations.RunOperationAsVar" />
+        <operation class="org.athento.nuxeo.operations.RunScriptAsVarOperation" />
+        <operation class="org.athento.nuxeo.operations.VocabularyGetChildrenOperation" />
+        <operation class="org.athento.nuxeo.operations.utils.ClearContextOperation" />
+        <operation class="org.athento.nuxeo.operations.utils.GetJSONAttributeOperation" />
+        <operation class="org.athento.nuxeo.operations.utils.PushObjectOperation" />
     </extension>
 </component>
