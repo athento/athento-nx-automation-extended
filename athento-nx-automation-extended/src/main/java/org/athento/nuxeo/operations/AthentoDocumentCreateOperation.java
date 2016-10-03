@@ -3,6 +3,7 @@
  */
 package org.athento.nuxeo.operations;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +20,7 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
-import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentRef;
-import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 
 /**
@@ -54,9 +52,28 @@ public class AthentoDocumentCreateOperation {
     @Param(name = "type")
     protected String type;
 
+    /** Blob to save into new document. */
+    private Blob blob;
+
     @OperationMethod()
     public DocumentModel run() throws Exception {
         String parentFolderPath = getDestinationPath();
+        return run(new PathRef(parentFolderPath));
+    }
+
+    /**
+     * Create document with blob.
+     *
+     * @since #AT-1066
+     * @param blob is the document blob
+     * @return document created
+     * @throws Exception on error
+     */
+    @OperationMethod()
+    public DocumentModel run(Blob blob) throws Exception {
+        String parentFolderPath = getDestinationPath();
+        // Set blob
+        this.blob = blob;
         return run(new PathRef(parentFolderPath));
     }
 
@@ -96,7 +113,7 @@ public class AthentoDocumentCreateOperation {
                     Object input = null;
                     parentFolder = (DocumentModel) AthentoOperationsHelper
                         .runOperation(operationId, input, params, session);
-                    parentFolder = (DocumentModel) parentFolder;
+                    // WIT?? parentFolder = (DocumentModel) parentFolder;
                 } else {
                     _log.warn("No operation to get basePath and no destination set. Using default basePath: "
                         + basePath);
@@ -119,6 +136,13 @@ public class AthentoDocumentCreateOperation {
                 name, type);
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
+            }
+            // Check if document must have the blob #AT-1066
+            if (blob != null) {
+                // Set file:filename property
+                newDoc.setPropertyValue("file:filename", blob.getFilename());
+                // Add blob to property
+                DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
             }
             DocumentModel doc = session.createDocument(newDoc);
             if (_log.isDebugEnabled()) {
