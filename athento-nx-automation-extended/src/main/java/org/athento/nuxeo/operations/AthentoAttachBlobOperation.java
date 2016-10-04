@@ -52,6 +52,9 @@ public class AthentoAttachBlobOperation {
     public Blob run(Blob blob) throws Exception {
         DocumentHelper.addBlob(doc.getProperty(xpath), blob);
         if (save) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Attaching Blob " + blob.getFilename() + " into " + doc.getId());
+            }
             // #AT-933
             doc.setPropertyValue("file:filename", blob.getFilename());
             doc = session.saveDocument(doc);
