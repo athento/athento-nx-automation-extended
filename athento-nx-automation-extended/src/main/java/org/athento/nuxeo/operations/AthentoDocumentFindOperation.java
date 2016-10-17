@@ -6,8 +6,10 @@ package org.athento.nuxeo.operations;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -28,7 +30,7 @@ import java.util.Map;
  *
  */
 @Operation(id = AthentoDocumentFindOperation.ID, category = "Athento", label = "Athento Document Find", description = "Find a document given a properties")
-public class AthentoDocumentFindOperation {
+public class AthentoDocumentFindOperation extends AbstractAthentoOperation {
 
     /** LOG. */
     private static final Log LOG = LogFactory
@@ -40,7 +42,11 @@ public class AthentoDocumentFindOperation {
     @Context
     protected CoreSession session;
 
-    @Param(name = "properties", required = false)
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
+
+    @Param(name = "properties", required = true)
     protected Properties properties;
 
     @Param(name = "onlyOne", required = false)
@@ -51,6 +57,8 @@ public class AthentoDocumentFindOperation {
 
     @OperationMethod()
     public DocumentModel run() throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
         // Make query
         String findQuery = makeQuery();
         // Params for query

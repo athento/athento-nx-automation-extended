@@ -1,5 +1,6 @@
 package org.athento.nuxeo.operations;
 
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -14,10 +15,11 @@ import java.io.File;
  * Created by victorsanchez on 19/7/16.
  */
 @Operation(id = CopyFileOperation.ID, category = "Athento", label = "Copy a file", description = "Copy a file to destiny")
-public class CopyFileOperation {
+public class CopyFileOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Athento.CopyFile";
 
+    /** Operation context. */
     @Context
     protected OperationContext ctx;
 
@@ -37,6 +39,9 @@ public class CopyFileOperation {
      */
     @OperationMethod
     public void run() throws Exception {
+
+        // Check access
+        checkAllowedAccess(ctx);
 
         // Get source file
         File source = new File(sourceFile);

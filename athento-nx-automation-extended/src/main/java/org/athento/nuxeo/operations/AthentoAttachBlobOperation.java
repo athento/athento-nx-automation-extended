@@ -13,6 +13,8 @@ package org.athento.nuxeo.operations;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -29,12 +31,16 @@ import org.nuxeo.ecm.core.api.DocumentModel;
  * Override Blob.Attach filling file:filename metadata.
  */
 @Operation(id = AttachBlob.ID, category = Constants.CAT_BLOB, label = "Attach File", description = "Attach the input file to the document given as a parameter. If the xpath points to a blob list then the blob is appended to the list, otherwise the xpath should point to a blob property. If the save parameter is set the document modification will be automatically saved. Return the blob.")
-public class AthentoAttachBlobOperation {
+public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
 
     /** Log. */
     private static final Log LOG = LogFactory.getLog(AthentoAttachBlobOperation.class);
 
     public static final String ID = "Blob.Attach";
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Context
     protected CoreSession session;
@@ -50,6 +56,8 @@ public class AthentoAttachBlobOperation {
 
     @OperationMethod(collector = BlobCollector.class)
     public Blob run(Blob blob) throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
         DocumentHelper.addBlob(doc.getProperty(xpath), blob);
         if (save) {
             if (LOG.isInfoEnabled()) {

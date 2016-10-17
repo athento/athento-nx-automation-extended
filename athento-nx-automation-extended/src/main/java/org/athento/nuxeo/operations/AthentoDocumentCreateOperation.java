@@ -11,8 +11,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -28,7 +30,7 @@ import org.nuxeo.ecm.core.utils.DocumentModelUtils;
  *
  */
 @Operation(id = AthentoDocumentCreateOperation.ID, category = "Athento", label = "Athento Document Create", description = "Creates a document in Athento's way")
-public class AthentoDocumentCreateOperation {
+public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Athento.Document.Create";
 
@@ -39,6 +41,10 @@ public class AthentoDocumentCreateOperation {
 
     @Context
     protected CoreSession session;
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Param(name = "destination", required = false)
     protected String destination;
@@ -84,6 +90,8 @@ public class AthentoDocumentCreateOperation {
 
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel parentDoc) throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentCreateOperation.ID
                 + " BEGIN with params:");

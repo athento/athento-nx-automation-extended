@@ -10,8 +10,10 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -26,7 +28,7 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
  *
  */
 @Operation(id = AthentoDocumentQueryOperation.ID, category = "Athento", label = "Athento Document Query", description = "Query for documents in Athento's way")
-public class AthentoDocumentQueryOperation {
+public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Athento.Document.Query";
 
@@ -38,6 +40,10 @@ public class AthentoDocumentQueryOperation {
 
     @Context
     protected CoreSession session;
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Param(name = "query", required = false)
     protected String query;
@@ -64,7 +70,10 @@ public class AthentoDocumentQueryOperation {
     protected String sortOrder;
 
     @OperationMethod
-    public DocumentModelList run() throws OperationException {
+    public DocumentModelList run() throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
+
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentQueryOperation.ID + " BEGIN with params:");
             _log.debug(" query: " + query);
