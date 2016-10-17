@@ -77,7 +77,12 @@
                     </properties>
                     <widget>documentUpdateWatchedDocumentTypes</widget>
                 </row>
-
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>enabledIPs</widget>
+                </row>
             </rows>
             <widget name="defaultDestination" type="text">
                 <labels>
@@ -193,6 +198,16 @@
                 <fields>
                     <field>automationExtendedConfig:documentUpdateWatchedDocumentTypes
                     </field>
+                </fields>
+            </widget>
+            <widget name="enabledIPs" type="text">
+                <labels>
+                    <label mode="any">label.automationExtendedConfig.enabledIPs
+                    </label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>automationExtendedConfig:enabledIPs</field>
                 </fields>
             </widget>
         </layout>

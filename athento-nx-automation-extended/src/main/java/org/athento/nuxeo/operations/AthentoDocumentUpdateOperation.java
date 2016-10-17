@@ -10,9 +10,11 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.ConflictOperationException;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -28,7 +30,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
  * @author athento
  */
 @Operation(id = AthentoDocumentUpdateOperation.ID, category = "Athento", label = "Athento Document Update", description = "Updates a document in Athento's way")
-public class AthentoDocumentUpdateOperation {
+public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
 
     /**
      * Log.
@@ -50,6 +52,10 @@ public class AthentoDocumentUpdateOperation {
 
     @Context
     protected CoreSession session;
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Param(name = "changeToken", required = false)
     protected String changeToken = null;
@@ -73,6 +79,8 @@ public class AthentoDocumentUpdateOperation {
 
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentUpdateOperation.ID
                     + " BEGIN with params:");

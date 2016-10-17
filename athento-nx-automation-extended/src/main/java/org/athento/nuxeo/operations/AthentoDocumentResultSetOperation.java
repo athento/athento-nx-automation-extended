@@ -13,9 +13,11 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.ConflictOperationException;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -34,7 +36,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
  *
  */
 @Operation(id = AthentoDocumentResultSetOperation.ID, category = "Athento", label = "Athento Document ResultSet", description = "ResultSets a document in Athento's way")
-public class AthentoDocumentResultSetOperation {
+public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Athento.Document.ResultSet";
 
@@ -46,6 +48,10 @@ public class AthentoDocumentResultSetOperation {
 
     @Context
     protected CoreSession session;
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Param(name = "query", required = false)
     protected String query;
@@ -73,7 +79,10 @@ public class AthentoDocumentResultSetOperation {
     protected String sortOrder;
 
     @OperationMethod
-    public RecordSet run() throws OperationException {
+    public RecordSet run() throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
+
         if (_log.isDebugEnabled()) {
             _log.debug(AthentoDocumentResultSetOperation.ID
                 + " BEGIN with params:");

@@ -7,12 +7,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.api.model.BatchResult;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
@@ -31,7 +33,7 @@ import java.util.*;
  * @author athento
  */
 @Operation(id = AthentoDocumentMultiCreateOperation.ID, category = "Athento", label = "Athento Multi Document Create", description = "Creates multi-document in Athento's way")
-public class AthentoDocumentMultiCreateOperation {
+public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Athento.MultiDocumentCreate";
 
@@ -40,6 +42,10 @@ public class AthentoDocumentMultiCreateOperation {
 
     @Context
     protected CoreSession session;
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Param(name = "destination", required = false)
     protected String destination;
@@ -89,6 +95,8 @@ public class AthentoDocumentMultiCreateOperation {
      */
     @OperationMethod(collector = DocumentModelListCollector.class)
     public DocumentModelList run(DocumentModel parentDoc) throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
         if (LOG.isDebugEnabled()) {
             LOG.debug(AthentoDocumentMultiCreateOperation.ID
                     + " BEGIN with params:");

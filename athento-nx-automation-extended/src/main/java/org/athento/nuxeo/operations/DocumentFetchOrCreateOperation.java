@@ -3,6 +3,8 @@ package org.athento.nuxeo.operations;
 
 import java.io.IOException;
 
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -22,12 +24,16 @@ import org.nuxeo.ecm.core.api.PathRef;
  * 
  */
 @Operation(id = DocumentFetchOrCreateOperation.ID, category = "Athento", label = "Fetch or Create Document", description = "Fetch or create a document from the repository given its reference (path or UID). The document will become the input of the next operation.")
-public class DocumentFetchOrCreateOperation {
+public class DocumentFetchOrCreateOperation extends AbstractAthentoOperation {
 
 	public static final String ID = "Athento.Document.FetchOrCreate";
 
 	@Context
 	protected CoreSession session;
+
+	/** Operation context. */
+	@Context
+	protected OperationContext ctx;
 
 	@Param(name = "type")
 	protected String type;
@@ -42,7 +48,9 @@ public class DocumentFetchOrCreateOperation {
 	protected String path;
 
 	@OperationMethod
-	public DocumentModel run(DocumentModel doc) throws IOException {
+	public DocumentModel run(DocumentModel doc) throws Exception {
+		// Check access
+		checkAllowedAccess(ctx);
 		try {
 			return session.getDocument(new PathRef(path));
 		} catch (ClientException e) {

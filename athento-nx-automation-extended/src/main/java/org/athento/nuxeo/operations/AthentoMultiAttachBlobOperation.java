@@ -14,7 +14,9 @@ package org.athento.nuxeo.operations;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.api.model.BatchResult;
+import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -36,7 +38,7 @@ import java.util.*;
  * @author <a href="vs@athento.com">Victor Sanchez</a>
  */
 @Operation(id = AthentoMultiAttachBlobOperation.ID, category = Constants.CAT_BLOB, label = "Multi Attach File", description = "Multi attach the input file to the document given as a parameter. If the xpath points to a blob list then the blob is appended to the list, otherwise the xpath should point to a blob property. If the save parameter is set the document modification will be automatically saved. Return the blob.")
-public class AthentoMultiAttachBlobOperation {
+public class AthentoMultiAttachBlobOperation extends AbstractAthentoOperation {
 
     /** Log. */
     private static final Log LOG = LogFactory.getLog(AthentoMultiAttachBlobOperation.class);
@@ -45,6 +47,10 @@ public class AthentoMultiAttachBlobOperation {
 
     @Context
     protected CoreSession session;
+
+    /** Operation context. */
+    @Context
+    protected OperationContext ctx;
 
     @Param(name = "xpath", required = false, values = "file:content")
     protected String xpath = "file:content";
@@ -57,6 +63,9 @@ public class AthentoMultiAttachBlobOperation {
 
     @OperationMethod(collector = BlobListCollector.class)
     public BlobList run(Blob blob) throws Exception {
+        // Check access
+        checkAllowedAccess(ctx);
+
         List<LinkedHashMap<String, Object>> propertiesList = new ArrayList<>();
 
         // Make properties for each document
