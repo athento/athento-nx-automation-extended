@@ -180,6 +180,10 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
             retValue = AthentoOperationsHelper.runOperation(
                     operationIdPre, doc, params, session);
         }
+        // Check found doc
+        if (retValue == null) {
+            retValue = doc;
+        }
         return (DocumentModel) retValue;
     }
 

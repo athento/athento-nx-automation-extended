@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractAthentoOperation {
 
+    /** Log. */
     private static final Log LOG = LogFactory.getLog(AbstractAthentoOperation.class);
 
     /**
@@ -30,7 +31,7 @@ public abstract class AbstractAthentoOperation {
         // Get remote ip
         HttpServletRequest request = (HttpServletRequest) ctx.get("request");
         if (request == null) {
-            LOG.warn("Request info was null to manage controlled access.");
+            LOG.debug("Request info was null to manage controlled access.");
             return;
         }
         String remoteIp = request.getRemoteAddr();

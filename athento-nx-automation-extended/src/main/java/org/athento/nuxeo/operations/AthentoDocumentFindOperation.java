@@ -61,6 +61,9 @@ public class AthentoDocumentFindOperation extends AbstractAthentoOperation {
         checkAllowedAccess(ctx);
         // Make query
         String findQuery = makeQuery();
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Finding with query: " + findQuery);
+        }
         // Params for query
         Map<String, Object> params = new HashMap<>();
         params.put("query", findQuery);
