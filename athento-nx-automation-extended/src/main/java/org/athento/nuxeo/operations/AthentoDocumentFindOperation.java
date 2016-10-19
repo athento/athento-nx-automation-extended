@@ -100,6 +100,9 @@ public class AthentoDocumentFindOperation extends AbstractAthentoOperation {
                 ilike = true;
                 metadata = metadata.substring(2);
             }
+            if (value instanceof String) {
+                value = "'" + value + "'";
+            }
             query += " AND " + metadata + (like ? " LIKE " : (ilike ? " ILIKE " : " = ")) + value;
 
         }
