@@ -1,5 +1,7 @@
 package org.athento.nuxeo.operations.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -15,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractAthentoOperation {
 
+    private static final Log LOG = LogFactory.getLog(AbstractAthentoOperation.class);
+
     /**
      * Check if IP has allowed access to operation execution.
      *
@@ -25,6 +29,10 @@ public abstract class AbstractAthentoOperation {
 
         // Get remote ip
         HttpServletRequest request = (HttpServletRequest) ctx.get("request");
+        if (request == null) {
+            LOG.warn("Request info was null to manage controlled access.");
+            return;
+        }
         String remoteIp = request.getRemoteAddr();
 
         // Get extended config document
