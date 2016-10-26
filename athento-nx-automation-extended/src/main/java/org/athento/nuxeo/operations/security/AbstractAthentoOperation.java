@@ -66,7 +66,7 @@ public abstract class AbstractAthentoOperation {
      * @return true if operationId is a void chain
      */
     protected boolean isVoidChain(String operationId) {
-        return VOIDCHAIN.equals(operationId);
+        return VOIDCHAIN.equalsIgnoreCase(operationId);
     }
 
 }
