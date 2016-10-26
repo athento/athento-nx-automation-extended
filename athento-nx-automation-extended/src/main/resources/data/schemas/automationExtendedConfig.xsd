@@ -48,8 +48,8 @@
     <xs:element name="documentResultSetWatchedDocumentTypes" type="xs:string" default="" />
     <xs:element name="documentResultSetOperationId" type="xs:string" default="voidChain" />
 
-    <xs:element name="documentUpdateOperationIdPre" type="xs:string" default="voidChain" />
-    <xs:element name="documentUpdateOperationIdPost" type="xs:string" default="voidChain" />
+    <xs:element name="documentUpdateOperationIdPre" type="xs:string" default="" />
+    <xs:element name="documentUpdateOperationIdPost" type="xs:string" default="" />
     <xs:element name="documentUpdateWatchedDocumentTypes" type="xs:string" default="" />
 
 </xs:schema>
