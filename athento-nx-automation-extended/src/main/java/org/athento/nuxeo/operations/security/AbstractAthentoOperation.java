@@ -20,6 +20,9 @@ public abstract class AbstractAthentoOperation {
     /** Log. */
     private static final Log LOG = LogFactory.getLog(AbstractAthentoOperation.class);
 
+    /** Void chain id. */
+    public static final String VOIDCHAIN = "voidchain";
+
     /**
      * Check if IP has allowed access to operation execution.
      *
@@ -54,6 +57,16 @@ public abstract class AbstractAthentoOperation {
             throw new RestrictionException(remoteIp + " has not allowed access.");
         }
 
+    }
+
+    /**
+     * Check if operationId void chain.
+     *
+     * @param operationId
+     * @return true if operationId is a void chain
+     */
+    protected boolean isVoidChain(String operationId) {
+        return VOIDCHAIN.equals(operationId);
     }
 
 }

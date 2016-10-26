@@ -24,7 +24,7 @@
 			<layout>default</layout>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 	<modules>
 		<!-- Add your modules here -->
 		<module>athento-nx-automation-extended</module>
@@ -191,31 +191,6 @@
 							</manifestEntries>
 						</archive>
 					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.athento.nuxeo.plugin</groupId>
-					<artifactId>athento-nx-single-addon</artifactId>
-					<version>1.0</version>
-					<configuration>
-						<name>${project.artifactId}</name>
-						<version>${project.version}</version>
-						<properties>
-							<url>http://www.athento.com</url>
-							<title>${project.name}</title>
-							<description>${project.description}</description>
-							<platform>cap-6.0</platform>
-						</properties>
-						<outputDir>addon</outputDir>
-					</configuration>
-					<executions>
-						<execution>
-							<id>addon-generation</id>
-							<phase>package</phase>
-							<goals>
-								<goal>generate</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

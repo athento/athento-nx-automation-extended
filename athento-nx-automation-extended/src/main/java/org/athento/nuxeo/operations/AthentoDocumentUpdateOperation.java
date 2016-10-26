@@ -170,7 +170,7 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
         String operationIdPre = String.valueOf(config
                 .get(AthentoDocumentUpdateOperation.CONFIG_OPERATION_ID_PRE));
         Object retValue;
-        if (StringUtils.isNullOrEmpty(operationIdPre)) {
+        if (StringUtils.isNullOrEmpty(operationIdPre) || isVoidChain(operationIdPre)) {
             Map<String, Object> findParams = new HashMap<>(params);
             // Replace properties to old_properties to find document
             findParams.put("properties", oldProperties);
