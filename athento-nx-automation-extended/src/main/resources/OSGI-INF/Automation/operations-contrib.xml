@@ -32,5 +32,6 @@
         <operation class="org.athento.nuxeo.operations.utils.GetJSONAttributeOperation" />
         <operation class="org.athento.nuxeo.operations.utils.PushObjectOperation" />
         <operation class="org.athento.nuxeo.operations.SetDocumentComplexPropertyOperation" />
+        <operation class="org.athento.nuxeo.operations.CSVToListOperation" />
     </extension>
 </component>

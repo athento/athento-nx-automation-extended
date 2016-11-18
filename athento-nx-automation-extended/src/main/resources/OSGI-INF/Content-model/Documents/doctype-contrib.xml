@@ -33,13 +33,13 @@
 			<category>label.athento-nx-athento-nx-automation-extended.ExtendedConfig
 			</category>
 			<default-view>view_documents</default-view>
-			<layouts mode="create">
+			<layouts mode="create" append="true">
 				<layout>layout@formlayout-automationExtended</layout>
 			</layouts>
-			<layouts mode="edit">
+			<layouts mode="edit" append="true">
 				<layout>layout@formlayout-automationExtended</layout>
 			</layouts>
-			<layouts mode="view">
+			<layouts mode="view" append="true">
 				<layout>layout@formlayout-automationExtended</layout>
 			</layouts>
 		</type>
