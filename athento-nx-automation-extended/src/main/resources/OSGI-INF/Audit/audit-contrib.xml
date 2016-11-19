@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component name="org.athento.nuxeo.athento-nx-automation-extended.audit-contrib"
+           version="1.0">
+
+    <extension target="org.nuxeo.ecm.platform.audit.service.NXAuditEventsService"
+               point="event">
+        <event name="auditExtendedDocumentCreated"/>
+        <event name="auditExtendedDocumentUpdated"/>
+        <event name="auditExtendedDocumentDeleted"/>
+    </extension>
+
+</component>

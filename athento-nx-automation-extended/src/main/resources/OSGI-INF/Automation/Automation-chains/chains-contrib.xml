@@ -71,6 +71,7 @@
             <param type="string" name="name"/>
             <param type="properties" name="properties"/>
             <param type="string" name="type"/>
+            <param type="string" name="audit"/>
             <operation id="Athento.Document.Create">
                 <param type="string" name="destination">expr:@{ChainParameters['destination']}
                 </param>
@@ -81,25 +82,34 @@
                 <param type="string" name="type">expr:@{ChainParameters['type']}
                 </param>
             </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentCreated</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:ChainParameters['audit']</param>
+            </operation>
         </chain>
 
         <chain id="Athento.DocumentDelete">
             <documentation>
                 Extended document delete.
             </documentation>
-
+            <param type="string" name="audit"/>
             <operation id="Context.FetchDocument"/>
             <operation id="Document.SetLifeCycle">
                 <param type="string" name="value">delete</param>
             </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentDeleted</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:ChainParameters['audit']</param>
+            </operation>
+
         </chain>
 
         <chain id="Athento.DocumentQuery">
-
             <documentation>
                 Extended document Query.
             </documentation>
-
             <param type="string" name="query"/>
             <param type="integer" name="currentPageIndex"/>
             <param type="integer" name="pageSize"/>
@@ -120,11 +130,9 @@
         </chain>
 
         <chain id="Athento.DocumentQueryDirectory">
-
             <documentation>
                 Extended document delete.
             </documentation>
-
             <param type="string" name="directory"/>
             <param type="string" name="parent"/>
             <param type="string" name="grandParent"/>
@@ -147,11 +155,9 @@
         </chain>
 
         <chain id="Athento.DocumentResultSet">
-
             <documentation>
                 Extended document ResultSet operation.
             </documentation>
-
             <param type="string" name="query"/>
             <param type="integer" name="page"/>
             <param type="integer" name="pageSize"/>
@@ -180,6 +186,7 @@
             <param type="properties" name="old_properties"/>
             <param type="boolean" name="updateParent"/>
             <param type="boolean" name="save"/>
+            <param type="string" name="audit"/>
             <operation id="Athento.Document.Update">
                 <param type="string" name="documentType">expr:@{ChainParameters['documentType']}
                 </param>
@@ -191,6 +198,11 @@
                 </param>
                 <param type="boolean" name="updateParent">expr:@{ChainParameters['updateParent']}
                 </param>
+            </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentUpdated</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:ChainParameters['audit']</param>
             </operation>
         </chain>
 
