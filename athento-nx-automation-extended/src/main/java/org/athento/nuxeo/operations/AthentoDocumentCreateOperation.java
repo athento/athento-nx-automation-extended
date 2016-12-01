@@ -4,10 +4,12 @@
 package org.athento.nuxeo.operations;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
@@ -22,8 +24,10 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
+import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
+import org.nuxeo.ecm.platform.tag.TagService;
 
 /**
  * @author athento
@@ -46,6 +50,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     @Context
     protected OperationContext ctx;
 
+    @Context
+    protected TagService tagService;
+
     @Param(name = "destination", required = false)
     protected String destination;
 
@@ -57,6 +64,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
 
     @Param(name = "type")
     protected String type;
+
+    @Param(name = "tags", required = false, description = "Tags for the new document")
+    protected StringList tags;
 
     /** Blob to save into new document. */
     private Blob blob;
@@ -121,7 +131,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     Object input = null;
                     parentFolder = (DocumentModel) AthentoOperationsHelper
                         .runOperation(operationId, input, params, session);
-                    // WIT?? parentFolder = (DocumentModel) parentFolder;
                 } else {
                     _log.warn("No operation to get basePath and no destination set. Using default basePath: "
                         + basePath);
@@ -168,6 +177,10 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     }
                 }
             }
+            // Add tags
+            if (tags != null) {
+                addTags(doc);
+            }
             if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 String postOperationId = String
@@ -206,6 +219,19 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
+        }
+    }
+
+    /**
+     * Add tags to document.
+     *
+     * @param doc is the document
+     */
+    private void addTags(DocumentModel doc) {
+        if (tagService.isEnabled()) {
+            for (String tag : tags) {
+                tagService.tag(session, doc.getId(), tag, session.getPrincipal().getName());
+            }
         }
     }
 

@@ -3,9 +3,11 @@
  */
 package org.athento.nuxeo.operations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,8 +25,10 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
+import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.platform.tag.TagService;
 
 /**
  * @author athento
@@ -57,6 +61,9 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
     @Context
     protected OperationContext ctx;
 
+    @Context
+    protected TagService tagService;
+
     @Param(name = "changeToken", required = false)
     protected String changeToken = null;
 
@@ -71,6 +78,9 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
 
     @Param(name = "save", required = false, values = "true")
     protected boolean save = true;
+
+    @Param(name = "tags", required = false, description = "Tags for the document")
+    protected StringList tags;
 
     @OperationMethod()
     public DocumentModel run() throws Exception {
@@ -139,6 +149,10 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
                     doc = session.saveDocument(doc);
                 }
             }
+            // Update tags
+            if (tags != null) {
+                updateTags(doc);
+            }
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentUpdateOperation.ID
                         + " END return value: " + doc);
@@ -185,6 +199,25 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
             retValue = doc;
         }
         return (DocumentModel) retValue;
+    }
+
+    /**
+     * Update tags to document. If tag starts with "-", the tag will be removed from document.
+     *
+     * @param doc is the document
+     */
+    private void updateTags(DocumentModel doc) {
+        if (tagService.isEnabled()) {
+            for (String tag : tags) {
+                tag = tag.trim();
+                if (tag.startsWith("-")) {
+                    tag = tag.substring(1).trim();
+                    tagService.untag(session, doc.getId(), tag, session.getPrincipal().getName());
+                } else {
+                    tagService.tag(session, doc.getId(), tag, session.getPrincipal().getName());
+                }
+            }
+        }
     }
 
     /**
