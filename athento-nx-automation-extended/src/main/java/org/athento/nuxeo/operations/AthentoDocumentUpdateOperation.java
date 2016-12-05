@@ -209,6 +209,9 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
     private void updateTags(DocumentModel doc) {
         if (tagService.isEnabled()) {
             for (String tag : tags) {
+                if (tag == null || tag.isEmpty()) {
+                    continue;
+                }
                 tag = tag.trim();
                 if (tag.startsWith("-")) {
                     tag = tag.substring(1).trim();
