@@ -87,7 +87,7 @@
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentCreated</param>
                 <param type="string" name="category">eventDocumentCategory</param>
-                <param type="string" name="comment">expr:@{ChainParameters['audit'] == empty || ChainParameters['audit'] == null ? 'Document created' : ChainParameters['audit']}</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
         </chain>
 
@@ -103,7 +103,7 @@
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentDeleted</param>
                 <param type="string" name="category">eventDocumentCategory</param>
-                <param type="string" name="comment">expr:@{ChainParameters['audit'] == empty || ChainParameters['audit'] == null ? 'Document deleted' : ChainParameters['audit']}</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
 
         </chain>
@@ -206,7 +206,7 @@
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentUpdated</param>
                 <param type="string" name="category">eventDocumentCategory</param>
-                <param type="string" name="comment">expr:@{ChainParameters['audit'] == empty || ChainParameters['audit'] == null ? 'Document updated' : ChainParameters['audit']}</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
         </chain>
 
