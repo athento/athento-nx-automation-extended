@@ -31,7 +31,7 @@
 		<module>athento-nx-automation-extended-dist</module>
 	</modules>
 	<properties>
-		<nuxeo.platform.version>6.0</nuxeo.platform.version>
+		<nuxeo.platform.version>7.10</nuxeo.platform.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
         <dependencyManagement>
