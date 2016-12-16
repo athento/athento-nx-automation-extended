@@ -230,6 +230,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     private void addTags(DocumentModel doc) {
         if (tagService.isEnabled()) {
             for (String tag : tags) {
+                if (tag == null || tag.isEmpty()) {
+                    continue;
+                }
                 tagService.tag(session, doc.getId(), tag, session.getPrincipal().getName());
             }
         }

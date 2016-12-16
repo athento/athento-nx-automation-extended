@@ -52,7 +52,6 @@ public class AthentoExceptionCreateOperation {
 		int returnCode = 500;
 		if (excObject instanceof AthentoException) {
 			retVal = (AthentoException)excObject;
-			returnCode = 400;
 		} else if (excObject instanceof Throwable) {
 			Throwable t = (Throwable)excObject;
 			retVal = new AthentoException(t.getMessage());
@@ -63,7 +62,9 @@ public class AthentoExceptionCreateOperation {
 			}
 			retVal = new AthentoException(message);
 		}
-		((RestOperationContext)ctx).setHttpStatus(returnCode);
+		if (ctx instanceof RestOperationContext) {
+			((RestOperationContext) ctx).setHttpStatus(returnCode);
+		}
 		retVal.setStatus(returnCode);
 		return retVal;
 	}

@@ -55,6 +55,10 @@
                     onChainId="Athento.Vocabulary.GetChildren">
             <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
         </catchChain>
+        <catchChain id="athentoExceptionCatchMultiDocumentCreate"
+                    onChainId="Athento.MultiDocumentCreate">
+            <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
+        </catchChain>
     </extension>
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"

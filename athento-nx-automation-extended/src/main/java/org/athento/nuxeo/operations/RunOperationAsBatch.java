@@ -143,7 +143,8 @@ public class RunOperationAsBatch {
                 interceptor.proceed((T) opResult, params);
             }
             if (!clazz.isInstance(opResult)) {
-                LOG.warn("Operation result was not a " + clazz + " instance.");
+                LOG.warn("Operation result was not a " + clazz + " instance. It was " + opResult.getClass());
+                throw new OperationException("Unable to execute batch operation: " + opResult);
             }
             result.getItems().add(opResult);
         }

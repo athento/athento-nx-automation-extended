@@ -23,6 +23,7 @@ import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelListCollector;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
+import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
@@ -32,7 +33,7 @@ import java.util.*;
 /**
  * @author athento
  */
-@Operation(id = AthentoDocumentMultiCreateOperation.ID, category = "Athento", label = "Athento Multi Document Create", description = "Creates multi-document in Athento's way")
+@Operation(id = AthentoDocumentMultiCreateOperation.ID, category = "Athento", label = "Athento Multi Document Create", description = "Creates several documents with a common and specific properties")
 public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Athento.MultiDocumentCreate";
@@ -52,6 +53,9 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
 
     @Param(name = "name", required = false)
     protected String name;
+
+    @Param(name = "tags", required = false, description = "Tags for all new documents")
+    protected StringList tags;
 
     @Param(name = "common_properties", required = false)
     protected Properties commonProperties;
@@ -125,6 +129,7 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
                 // Add name
                 props.put("name", name);
                 props.put("type", type);
+                props.put("tags", tags);
                 props.put("destination", destination);
                 // Add common properties and properties;
                 String propsString = AthentoOperationsHelper.transformPropertiesAsString(new LinkedHashMap<String, Object>(map));
