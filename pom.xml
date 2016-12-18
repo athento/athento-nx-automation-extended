@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
         <groupId>org.athento.nuxeo</groupId>
         <artifactId>athento-nx-automation-extended-project</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>2.5.2</version>
 
 	<packaging>pom</packaging>
 	<name>Athento NX automation extended Project</name>
@@ -31,7 +31,7 @@
 		<module>athento-nx-automation-extended-dist</module>
 	</modules>
 	<properties>
-		<nuxeo.platform.version>7.10</nuxeo.platform.version>
+		<nuxeo.platform.version>6.0</nuxeo.platform.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
         <dependencyManagement>
