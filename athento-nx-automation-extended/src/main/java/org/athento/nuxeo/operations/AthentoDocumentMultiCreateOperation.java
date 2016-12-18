@@ -57,6 +57,9 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
     @Param(name = "tags", required = false, description = "Tags for all new documents")
     protected StringList tags;
 
+    @Param(name = "audit", required = false)
+    protected String audit;
+
     @Param(name = "common_properties", required = false)
     protected Properties commonProperties;
 
@@ -130,6 +133,7 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
                 props.put("name", name);
                 props.put("type", type);
                 props.put("tags", tags);
+                props.put("audit", audit);
                 props.put("destination", destination);
                 // Add common properties and properties;
                 String propsString = AthentoOperationsHelper.transformPropertiesAsString(new LinkedHashMap<String, Object>(map));
