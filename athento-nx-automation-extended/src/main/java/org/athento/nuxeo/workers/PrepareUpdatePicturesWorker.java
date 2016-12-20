@@ -5,12 +5,9 @@ package org.athento.nuxeo.workers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.automation.client.model.StreamBlob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.ClientRuntimeException;
-import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
-import org.nuxeo.ecm.core.storage.StorageBlob;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.ecm.core.work.api.WorkManager;
@@ -58,7 +55,7 @@ public class PrepareUpdatePicturesWorker extends AbstractWork {
 	}
 
 	@Override
-	public void work() throws Exception {
+	public void work(){
 		initSession();
 		// Making query
 		String query = String.format(QUERY, this.docType);

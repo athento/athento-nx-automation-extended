@@ -12,7 +12,6 @@ Nuxeo-Component: OSGI-INF/chains-contrib.xml,
  OSGI-INF/Listing-Views/Form-layout/formlayout-automationExtended-contrib.xml,
  OSGI-INF/resources-contrib.xml,
  OSGI-INF/workmanager-contrib.xml,
- OSGI-INF/marshaller-contrib.xml,
  OSGI-INF/codec-contrib.xml,
  OSGI-INF/Audit/audit-contrib.xml
 Bundle-Name: athento-nx-automation-extended

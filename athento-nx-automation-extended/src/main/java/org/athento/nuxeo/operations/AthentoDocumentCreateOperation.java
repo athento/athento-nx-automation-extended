@@ -3,13 +3,6 @@
  */
 package org.athento.nuxeo.operations;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
@@ -28,6 +21,9 @@ import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 import org.nuxeo.ecm.platform.tag.TagService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author athento

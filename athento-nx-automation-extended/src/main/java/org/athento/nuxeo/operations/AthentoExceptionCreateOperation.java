@@ -3,9 +3,6 @@
  */
 package org.athento.nuxeo.operations;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
@@ -17,7 +14,6 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.jaxrs.io.operations.RestOperationContext;
-import org.nuxeo.ecm.automation.server.jaxrs.RestOperationException;
 import org.nuxeo.ecm.core.api.CoreSession;
 
 

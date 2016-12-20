@@ -3,32 +3,20 @@ package org.athento.nuxeo.operations;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.athento.nuxeo.query.DocumentPaginatedQueryOperation;
 import org.nuxeo.ecm.automation.OperationException;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.util.DocumentHelper;
-import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
-import org.nuxeo.ecm.core.api.model.PropertyNotFoundException;
-import org.nuxeo.elasticsearch.api.ElasticSearchService;
-import org.nuxeo.elasticsearch.query.NxQueryBuilder;
-import org.nuxeo.runtime.api.Framework;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Transform a CSV file to DocumentList given a document type.

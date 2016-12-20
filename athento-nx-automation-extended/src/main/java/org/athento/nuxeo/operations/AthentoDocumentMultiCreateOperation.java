@@ -10,7 +10,6 @@ import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
@@ -19,14 +18,11 @@ import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelListCollector;
-import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
-import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 
 import java.util.*;
 

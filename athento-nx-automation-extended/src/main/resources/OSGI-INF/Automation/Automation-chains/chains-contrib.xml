@@ -632,9 +632,9 @@
 
     </extension>
 
-    <extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">
+    <!--extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">
         <register class="org.athento.nuxeo.api.writer.JsonBatchResultWriter" enable="true"/>
-    </extension>
+    </extension-->
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
                point="adapters">

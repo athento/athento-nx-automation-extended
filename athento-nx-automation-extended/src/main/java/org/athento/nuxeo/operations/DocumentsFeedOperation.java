@@ -15,7 +15,10 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.blob.StringBlob;
 import org.nuxeo.runtime.services.resource.ResourceService;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Documents Feed operation.

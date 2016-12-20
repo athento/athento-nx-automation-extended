@@ -17,6 +17,8 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.Lock;
 import org.nuxeo.ecm.core.api.model.PropertyNotFoundException;
+import org.nuxeo.ecm.core.io.registry.reflect.Instantiations;
+import org.nuxeo.ecm.core.io.registry.reflect.Setup;
 import org.nuxeo.ecm.core.schema.utils.DateParser;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,7 @@ import java.util.List;
  */
 @Provider
 @Produces({"application/json+nxentity", "application/json"})
+@Setup(mode = Instantiations.SINGLETON)
 public class JsonBatchResultWriter implements
         MessageBodyWriter<BatchResult> {
 

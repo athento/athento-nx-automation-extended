@@ -6,24 +6,15 @@ package org.athento.nuxeo.workers;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.document.Document;
-import org.nuxeo.ecm.automation.AutomationService;
-import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.client.model.StreamBlob;
-import org.nuxeo.ecm.automation.core.util.Properties;
+import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.api.model.Property;
-import org.nuxeo.ecm.core.storage.StorageBlob;
 import org.nuxeo.ecm.core.work.AbstractWork;
-import org.nuxeo.ecm.platform.picture.api.adapters.AbstractPictureAdapter;
 import org.nuxeo.runtime.api.Framework;
 
 import java.io.File;
-import java.text.DecimalFormat;
-import java.util.Map;
 
 /**
  * Update pictures worker.
@@ -59,7 +50,7 @@ public class UpdatePicturesWorker extends AbstractWork {
 	}
 
 	@Override
-	public void work() throws Exception {
+	public void work() {
 		initSession();
 		float percent = 0;
 		long updated = 0L;
@@ -71,7 +62,7 @@ public class UpdatePicturesWorker extends AbstractWork {
 					LOG.info("Updating picture for " + doc.getId() + "(" + updated + ")");
 				}
                 Framework.login();
-                StorageBlob content = (StorageBlob) doc.getPropertyValue("file:content");
+                Blob content = (Blob) doc.getPropertyValue("file:content");
 				if (content != null) {
 					File tmpFile = File.createTempFile("update-picture-athento", "tmp");
 					tmpFile.deleteOnExit();
@@ -86,7 +77,7 @@ public class UpdatePicturesWorker extends AbstractWork {
 				updated++;
 				percent = ((float) updated / total) * 100;
 				setProgress(new Progress(percent));
-			} catch (ClientException e) {
+			} catch (Exception e) {
 				LOG.error("Problems updating picture for " + doc.getId(), e);
 			} finally {
                 commitOrRollbackTransaction();

@@ -22,12 +22,8 @@ import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
 import org.nuxeo.ecm.automation.core.collectors.BlobListCollector;
-import org.nuxeo.ecm.automation.core.operations.blob.AttachBlob;
 import org.nuxeo.ecm.automation.core.util.BlobList;
-import org.nuxeo.ecm.automation.core.util.DocumentHelper;
-import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.*;
 
 import java.util.*;

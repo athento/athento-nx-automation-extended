@@ -1,11 +1,8 @@
 package org.athento.nuxeo.operations;
 
 
-import java.io.IOException;
-
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;

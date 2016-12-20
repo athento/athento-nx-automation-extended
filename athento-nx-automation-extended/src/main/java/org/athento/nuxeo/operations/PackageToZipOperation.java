@@ -12,7 +12,6 @@ import org.nuxeo.ecm.automation.jaxrs.io.documents.PaginableDocumentModelListImp
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.storage.StorageBlob;
 import org.nuxeo.ecm.platform.query.api.PageProvider;
 import org.nuxeo.runtime.api.Framework;
 
@@ -94,7 +93,7 @@ public class PackageToZipOperation {
             }
             long totalSize = 0L;
             for (DocumentModel doc : docList) {
-                StorageBlob blob = (StorageBlob) doc.getPropertyValue("file:content");
+                Blob blob = (Blob) doc.getPropertyValue("file:content");
                 // Check content and limit size for zip
                 if (hasContent(blob) && limitSizeIsValid(totalSize, blob)) {
                     if (entryNameProperty != null) {
