@@ -630,6 +630,38 @@
             </operation>
         </chain>
 
+        <!-- Link and unlink document -->
+        <chain id="Athento.DocumentLink">
+            <documentation>
+                Extended document link creation.
+            </documentation>
+            <param type="properties" name="properties"/>
+            <param type="string" name="audit"/>
+            <operation id="Athento.Document.Link">
+                <param type="properties" name="properties">expr:ChainParameters['properties']</param>
+            </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentLinked</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
+            </operation>
+        </chain>
+        <chain id="Athento.DocumentUnlink">
+            <documentation>
+                Extended document unlink.
+            </documentation>
+            <param type="properties" name="properties"/>
+            <param type="string" name="audit"/>
+            <operation id="Athento.Document.Unlink">
+                <param type="properties" name="properties">expr:ChainParameters['properties']</param>
+            </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentUnlinked</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
+            </operation>
+        </chain>
+
     </extension>
 
     <extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">

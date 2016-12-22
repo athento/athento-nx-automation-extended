@@ -14,6 +14,8 @@
         <operation class="org.athento.nuxeo.operations.AthentoDocumentUpdateOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoExceptionCreateOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoMultiAttachBlobOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentLinkOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentUnlinkOperation" />
         <operation class="org.athento.nuxeo.operations.CompareVocabulariesOperation" />
         <operation class="org.athento.nuxeo.operations.CopyFileOperation" />
         <operation class="org.athento.nuxeo.operations.DocumentsFeedOperation" />
