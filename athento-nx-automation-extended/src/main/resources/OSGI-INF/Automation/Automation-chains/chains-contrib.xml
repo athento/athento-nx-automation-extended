@@ -631,7 +631,7 @@
         </chain>
 
         <!-- Link and unlink document -->
-        <chain id="Athento.DocumentLink">
+        <chain id="Athento.LinkDocument">
             <documentation>
                 Extended document link creation.
             </documentation>
@@ -646,7 +646,7 @@
                 <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
         </chain>
-        <chain id="Athento.DocumentUnlink">
+        <chain id="Athento.UnlinkDocument">
             <documentation>
                 Extended document unlink.
             </documentation>
