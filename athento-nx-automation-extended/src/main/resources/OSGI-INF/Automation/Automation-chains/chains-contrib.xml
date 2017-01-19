@@ -55,8 +55,12 @@
                     onChainId="Athento.Vocabulary.GetChildren">
             <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
         </catchChain>
-        <catchChain id="athentoExceptionCatchMultiDocumentCreate"
-                    onChainId="Athento.MultiDocumentCreate">
+        <catchChain id="athentoExceptionCatchLinkDocument"
+                    onChainId="Athento.LinkDocument">
+            <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
+        </catchChain>
+        <catchChain id="athentoExceptionCatchUnlinkDocument"
+                    onChainId="Athento.UnlinkDocument">
             <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
         </catchChain>
     </extension>
@@ -169,6 +173,7 @@
             <param type="integer" name="pageSize"/>
             <param type="string" name="sortBy"/>
             <param type="string" name="sortOrder"/>
+            <param type="stringList" name="fieldList" />
             <operation id="Athento.Document.ResultSet">
                 <param type="integer" name="page">expr:ChainParameters['page']
                 </param>
@@ -179,6 +184,8 @@
                 <param type="string" name="sortBy">expr:@{ChainParameters['sortBy']}
                 </param>
                 <param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
+                </param>
+                <param type="stringList" name="fieldList">expr:@{ChainParameters['fieldList']}
                 </param>
             </operation>
         </chain>
@@ -637,8 +644,10 @@
             </documentation>
             <param type="properties" name="properties"/>
             <param type="string" name="audit"/>
+            <param type="boolean" name="override" />
             <operation id="Athento.Document.Link">
                 <param type="properties" name="properties">expr:ChainParameters['properties']</param>
+                <param type="boolean" name="override">expr:ChainParameters['override']</param>
             </operation>
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentLinked</param>

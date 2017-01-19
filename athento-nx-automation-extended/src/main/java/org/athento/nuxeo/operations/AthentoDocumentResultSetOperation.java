@@ -28,6 +28,7 @@ import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.RecordSet;
+import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
@@ -78,6 +79,12 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         AthentoDocumentResultSetOperation.DESC })
     protected String sortOrder;
 
+    /**
+     * Field list params.
+     */
+    @Param(name = "fieldList", required = false)
+    protected StringList fieldList;
+
     @OperationMethod
     public RecordSet run() throws Exception {
         // Check access
@@ -117,6 +124,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             params.put("query", modifiedQuery);
             params.put("page", page);
             params.put("pageSize", pageSize);
+            params.put("fieldList", fieldList);
             if (!StringUtils.isNullOrEmpty(sortBy)) {
                 params.put("sortBy", sortBy);
                 if (!StringUtils.isNullOrEmpty(sortOrder)) {

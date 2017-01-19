@@ -5,6 +5,7 @@ package org.athento.nuxeo.operations;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -15,8 +16,10 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.util.Properties;
+import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.relations.api.DocumentRelationManager;
 
 import java.util.Arrays;
@@ -39,7 +42,7 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             .getLog(AthentoDocumentLinkOperation.class);
 
     // Ignored system schemas
-    private static final String [] IGNORED_SCHEMAS = { "uid", "file", "files", "common", "inherit", "inheritance" };
+    private static final String [] IGNORED_SCHEMAS = { "uid", "file", "files", "common", "inherit", "inheritance", "athentoRelation" };
 
     @Context
     protected CoreSession session;
@@ -54,6 +57,9 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
     @Param(name = "properties", required = false)
     protected Properties properties;
 
+    @Param(name = "override", required = false, description = "Override the link if document just has a relation")
+    protected boolean overrideLink = false;
+
     /**
      * Run operation.
      *
@@ -65,6 +71,10 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
     public DocumentModel run(DocumentModel doc) throws Exception {
         if (LOG.isInfoEnabled()) {
             LOG.info("Linking a document " + doc.getId());
+        }
+        // Check if document has a link
+        if (!overrideLink && checkRelationExistsForDocument(doc)) {
+            throw new AthentoException("Document already has a link");
         }
         // Prepare create link document params
         Map<String, Object> params = new HashMap<>();
@@ -81,7 +91,12 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             // Add content and filename
             linkedDocument.setPropertyValue("file:content", doc.getPropertyValue("file:content"));
             linkedDocument.setPropertyValue("file:filename", doc.getPropertyValue("file:filename"));
+            // Add source document of link to linked doc
+            linkedDocument.setPropertyValue("athentoRelation:sourceDoc", doc.getId());
             session.saveDocument(linkedDocument);
+            // Add destiny document of link to source doc
+            doc.setPropertyValue("athentoRelation:destinyDoc", linkedDocument.getId());
+            session.saveDocument(doc);
             // Create relation
             relations.addRelation(session, doc, linkedDocument, "http://purl.org/dc/terms/References", true);
             if (LOG.isInfoEnabled()) {
@@ -89,6 +104,25 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             }
         }
         return linkedDocument;
+    }
+
+    /**
+     * Check if a document has a link.
+     *
+     * @param doc
+     * @return
+     */
+    private boolean checkRelationExistsForDocument(DocumentModel doc) {
+        String destinyDocId = (String) doc.getPropertyValue("athentoRelation:destinyDoc");
+        if (destinyDocId == null) {
+            return false;
+        } else {
+            try {
+                return session.getDocument(new IdRef(destinyDocId)) != null;
+            } catch (ClientException e) {
+                return false;
+            }
+        }
     }
 
     /**
