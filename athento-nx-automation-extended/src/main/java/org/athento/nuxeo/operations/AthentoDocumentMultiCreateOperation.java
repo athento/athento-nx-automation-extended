@@ -132,6 +132,8 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
                 // Add name
                 props.put("name", name);
                 props.put("type", type);
+                // Add tags
+                tags = processTags();
                 props.put("tags", tags);
                 props.put("audit", audit);
                 props.put("destination", destination);
@@ -166,6 +168,31 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
     }
 
     /**
+     * Process tag list.
+     *
+     * @return
+     */
+    private StringList processTags() {
+        if (!tags.get(0).isEmpty()) {
+            String startTag = tags.get(0);
+            if (startTag.startsWith("[")) {
+                tags.remove(startTag);
+                startTag.substring(1);
+                tags.add(0, startTag);
+            }
+            if (tags.size() > 1) {
+                String endTag = tags.get(tags.size() - 1);
+                if (endTag.endsWith("]")) {
+                    tags.remove(endTag);
+                    endTag.substring(0, endTag.length() - 2);
+                    tags.add(tags.size() - 1, endTag);
+                }
+            }
+        }
+        return tags;
+    }
+
+    /**
      * Get destination path.
      *
      * @return destination
@@ -178,5 +205,6 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
         }
         return val;
     }
+
 
 }

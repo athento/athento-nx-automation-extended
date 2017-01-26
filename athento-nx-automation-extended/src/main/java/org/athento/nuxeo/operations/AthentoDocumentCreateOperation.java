@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.PropertyUtils;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -153,6 +154,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 name, type);
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
+                StringList lastUpdateMetadatas = PropertyUtils.getPropertiesAsStringList(properties, newDoc);
+                // Add properties as lastUpdatedMetadatas for the new document
+                newDoc.setPropertyValue("inheritance:lastUpdatedMetadatas", StringUtils.stringfy(lastUpdateMetadatas));
             }
             // Check if document must have the blob #AT-1066
             if (blob != null) {
