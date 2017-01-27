@@ -155,8 +155,10 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
                 StringList lastUpdateMetadatas = PropertyUtils.getPropertiesAsStringList(properties, newDoc);
-                // Add properties as lastUpdatedMetadatas for the new document
-                newDoc.setPropertyValue("inheritance:lastUpdatedMetadatas", StringUtils.stringfy(lastUpdateMetadatas));
+                if (newDoc.hasSchema("inheritance")) {
+                    // Add properties as lastUpdatedMetadatas for the new document
+                    newDoc.setPropertyValue("inheritance:lastUpdatedMetadatas", StringUtils.stringfy(lastUpdateMetadatas));
+                }
             }
             // Check if document must have the blob #AT-1066
             if (blob != null) {

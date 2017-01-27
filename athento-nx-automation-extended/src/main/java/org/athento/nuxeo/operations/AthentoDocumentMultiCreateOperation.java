@@ -173,19 +173,21 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
      * @return
      */
     private StringList processTags() {
-        if (!tags.get(0).isEmpty()) {
-            String startTag = tags.get(0);
-            if (startTag.startsWith("[")) {
-                tags.remove(startTag);
-                startTag.substring(1);
-                tags.add(0, startTag);
-            }
-            if (tags.size() > 1) {
-                String endTag = tags.get(tags.size() - 1);
-                if (endTag.endsWith("]")) {
-                    tags.remove(endTag);
-                    endTag.substring(0, endTag.length() - 2);
-                    tags.add(tags.size() - 1, endTag);
+        if (tags != null) {
+            if (!tags.get(0).isEmpty()) {
+                String startTag = tags.get(0);
+                if (startTag.startsWith("[")) {
+                    tags.remove(startTag);
+                    startTag = startTag.substring(1);
+                    tags.add(0, startTag);
+                }
+                if (tags.size() > 1) {
+                    String endTag = tags.get(tags.size() - 1);
+                    if (endTag.endsWith("]")) {
+                        tags.remove(endTag);
+                        endTag = endTag.substring(0, endTag.length() - 2);
+                        tags.add(tags.size() - 1, endTag);
+                    }
                 }
             }
         }
