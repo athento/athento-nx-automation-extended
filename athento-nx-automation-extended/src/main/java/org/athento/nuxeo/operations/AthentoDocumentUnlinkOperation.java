@@ -13,6 +13,7 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
+import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -60,48 +61,52 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
             LOG.info("Unlinking a document " + doc.getId());
         }
         if (!doc.hasFacet("relationable")) {
-            throw new AthentoException("Unable to unlink the document " + doc.getId()
-                    + " because it has not the relationable facet");
-        }
-        // Check if the document is a source doc
-        String sourceDocId = (String) doc.getPropertyValue("athentoRelation:sourceDoc");
-        DocumentModel sourceDoc = null;
-        try {
-            sourceDoc = session.getDocument(new IdRef(sourceDocId));
-        } catch (ClientException e) {
-            // No source document is found
-        }
-        // Check if it is a leaf in the relation
-        DocumentModel destinyDoc = null;
-        String destinyDocId = (String) doc.getPropertyValue("athentoRelation:destinyDoc");
-        try {
-            destinyDoc = session.getDocument(new IdRef(destinyDocId));
-        } catch (ClientException e) {
-            // Do nothing
-        }
-        unlink(doc);
-        if (sourceDoc != null) {
-            if (destinyDoc == null) {
-                // The document is a leaf in the global relations, then remove the destiny id in his source document
-                sourceDoc.setPropertyValue("athentoRelation:destinyDoc", null);
-            } else {
-                // The document is not a leaf in the global relations, then put the destiny id to the source
-                if (sourceDocId.equals(doc.getId())) {
-                    sourceDoc.setPropertyValue("athentoRelation:sourceDoc", null);
-                }
-                sourceDoc.setPropertyValue("athentoRelation:destinyDoc", destinyDocId);
-                if (destinyDocId.equals(doc.getId())) {
-                    destinyDoc.setPropertyValue("athentoRelation:destinyDoc", null);
-                }
-                destinyDoc.setPropertyValue("athentoRelation:sourceDoc", sourceDocId);
-                session.saveDocument(destinyDoc);
-            }
-            session.saveDocument(sourceDoc);
+            // Update document with properties
+            LOG.info("Unlinking the document " + doc.getId()
+                    + " with properties because it has not the relationable facet");
+            DocumentHelper.setProperties(session, doc, properties);
+            session.saveDocument(doc);
         } else {
-            if (destinyDoc != null) {
-                // The document is not a leaf in the global relations, then put the destiny id to the source
-                destinyDoc.setPropertyValue("athentoRelation:sourceDoc", null);
-                session.saveDocument(destinyDoc);
+            // Remove link document between source and destiny
+            String sourceDocId = (String) doc.getPropertyValue("athentoRelation:sourceDoc");
+            DocumentModel sourceDoc = null;
+            try {
+                sourceDoc = session.getDocument(new IdRef(sourceDocId));
+            } catch (ClientException e) {
+                // No source document is found
+            }
+            // Check if it is a leaf in the relation
+            DocumentModel destinyDoc = null;
+            String destinyDocId = (String) doc.getPropertyValue("athentoRelation:destinyDoc");
+            try {
+                destinyDoc = session.getDocument(new IdRef(destinyDocId));
+            } catch (ClientException e) {
+                // Do nothing
+            }
+            unlink(doc);
+            if (sourceDoc != null) {
+                if (destinyDoc == null) {
+                    // The document is a leaf in the global relations, then remove the destiny id in his source document
+                    sourceDoc.setPropertyValue("athentoRelation:destinyDoc", null);
+                } else {
+                    // The document is not a leaf in the global relations, then put the destiny id to the source
+                    if (sourceDocId.equals(doc.getId())) {
+                        sourceDoc.setPropertyValue("athentoRelation:sourceDoc", null);
+                    }
+                    sourceDoc.setPropertyValue("athentoRelation:destinyDoc", destinyDocId);
+                    if (destinyDocId.equals(doc.getId())) {
+                        destinyDoc.setPropertyValue("athentoRelation:destinyDoc", null);
+                    }
+                    destinyDoc.setPropertyValue("athentoRelation:sourceDoc", sourceDocId);
+                    session.saveDocument(destinyDoc);
+                }
+                session.saveDocument(sourceDoc);
+            } else {
+                if (destinyDoc != null) {
+                    // The document is not a leaf in the global relations, then put the destiny id to the source
+                    destinyDoc.setPropertyValue("athentoRelation:sourceDoc", null);
+                    session.saveDocument(destinyDoc);
+                }
             }
         }
         return doc;
