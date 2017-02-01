@@ -71,9 +71,14 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
                 String metadata = property.getKey();
                 Property prop;
                 if ((prop = doc.getProperty(metadata)) != null) {
-                    // check same value only for primitives to clean the value
-                    if (!prop.isComplex() && !prop.isList() && prop.getValue().equals(property.getValue())) {
-                        doc.setPropertyValue(metadata, null);
+                    if (!prop.isComplex() && !prop.isList()) {
+                        // check same value only for primitives to clean the value or save the new value
+                        // if they are distinct
+                        if (prop.getValue().equals(property.getValue())) {
+                            doc.setPropertyValue(metadata, null);
+                        } else {
+                            doc.setPropertyValue(metadata, property.getValue());
+                        }
                     }
                 }
             }
