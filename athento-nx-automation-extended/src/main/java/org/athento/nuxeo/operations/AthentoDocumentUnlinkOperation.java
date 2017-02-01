@@ -19,6 +19,9 @@ import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.model.Property;
+
+import java.util.Map;
 
 /**
  * Unlink a document.
@@ -64,7 +67,17 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
             // Update document with properties
             LOG.info("Unlinking the document " + doc.getId()
                     + " with properties because it has not the relationable facet");
-            DocumentHelper.setProperties(session, doc, properties);
+            for (Map.Entry<String, String> property : properties.entrySet()) {
+                String metadata = property.getKey();
+                Property prop;
+                if ((prop = doc.getProperty(metadata)) != null) {
+                    // check same value only for primitives to clean the value
+                    if (!prop.isComplex() && !prop.isList() && prop.getValue().equals(property.getValue())) {
+                        doc.setPropertyValue(metadata, null);
+                    }
+                }
+            }
+            // Save document
             session.saveDocument(doc);
         } else {
             // Remove link document between source and destiny
