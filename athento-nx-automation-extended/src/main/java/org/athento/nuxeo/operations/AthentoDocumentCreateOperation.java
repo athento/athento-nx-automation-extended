@@ -106,6 +106,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             _log.debug(" - type: " + type);
             _log.debug(" - name: " + name);
             _log.debug(" - properties: " + properties);
+            _log.info(" - tags: " + tags);
         }
         try {
             Map<String, Object> config = AthentoOperationsHelper
