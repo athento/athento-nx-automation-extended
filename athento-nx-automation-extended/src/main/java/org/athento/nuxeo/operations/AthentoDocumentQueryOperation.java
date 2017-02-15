@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.RelationFetchMode;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -47,13 +48,6 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
 
     public static final String ASC = "ASC";
 
-    /**
-     * Relations fetch modes.
-     */
-    public enum RELATION_FETCHMODE {
-        all, sources, destinies
-    }
-
     @Context
     protected CoreSession session;
 
@@ -86,7 +80,7 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
     protected String sortOrder;
 
     @Param(name = "relationFetchMode", required = false, description = "It is the fetch mode of relation", values = { "all", "sources", "destinies" })
-    protected String relationFetchMode = RELATION_FETCHMODE.all.name();
+    protected String relationFetchMode = RelationFetchMode.all.name();
 
     @OperationMethod
     public DocumentModelList run() throws Exception {
@@ -111,15 +105,15 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
             }
             // Check relation fetchMode
             if (relationFetchMode != null) {
-                if (RELATION_FETCHMODE.destinies.name().equals(relationFetchMode)) {
-                    modifiedQuery += " AND ((athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is null) " +
-                            "OR (athentoRelation:sourceDoc is not null AND athentoRelation:destinyDoc is null))";
-                } else if (RELATION_FETCHMODE.sources.name().equals(relationFetchMode)) {
-                    modifiedQuery += " AND (athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is not null)";
+                if (RelationFetchMode.destinies.name().equals(relationFetchMode)) {
+                    modifiedQuery = modifiedQuery.replace("WHERE", "WHERE ((athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is null) " +
+                            "OR (athentoRelation:sourceDoc is not null AND athentoRelation:destinyDoc is null)) AND ");
+                } else if (RelationFetchMode.sources.name().equals(relationFetchMode)) {
+                    modifiedQuery = modifiedQuery.replace("WHERE", "WHERE (athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is not null) AND ");
                 }
-            }
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Query " + query);
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Fetch mode changes: " + modifiedQuery);
+                }
             }
             // Execute query
             Object input = null;

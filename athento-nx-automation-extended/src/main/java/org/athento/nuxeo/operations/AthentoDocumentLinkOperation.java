@@ -70,7 +70,7 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) throws Exception {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Linking a document " + doc.getId());
+            LOG.info("Linking a document " + doc.getId() + " with properties " + this.properties);
         }
         // Check if document has a link
         if (!overrideLink && checkRelationExistsForDocument(doc)) {
@@ -82,8 +82,11 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
         params.put("name", doc.getName());
         // Extract properties from source document and add to properties param
         Properties linkedDocProperties = extractAndAddProperties(doc);
-        properties.putAll(linkedDocProperties);
-        params.put("properties", properties);
+        linkedDocProperties.putAll(properties);
+        params.put("properties", linkedDocProperties);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Linking document with properties " + linkedDocProperties);
+        }
         // Call to Athento.DocumentCreate operation to create the document
         DocumentModel linkedDocument = (DocumentModel) AthentoOperationsHelper
                 .runOperation(AthentoDocumentCreateOperation.ID, null, params, session);
@@ -96,6 +99,12 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             session.saveDocument(linkedDocument);
             // Add destiny document of link to source doc
             doc.setPropertyValue("athentoRelation:destinyDoc", linkedDocument.getId());
+            // Remove properties from source document
+            for (Map.Entry<String, String> propertyEntry : properties.entrySet()) {
+                String metadata = propertyEntry.getKey();
+                LOG.info("Metadata " + metadata + " will be removed.");
+                doc.setPropertyValue(metadata, null);
+            }
             session.saveDocument(doc);
             // Create relation
             relations.addRelation(session, doc, linkedDocument, "http://purl.org/dc/terms/References", true);
@@ -137,18 +146,20 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             if (!Arrays.asList(IGNORED_SCHEMAS).contains(schema)) {
                 for (Map.Entry<String, Object> entry : doc.getProperties(schema).entrySet()) {
                     Object v = entry.getValue();
-                    String property = entry.getKey();
-                    if (!this.properties.containsKey(property)) {
-                        if (v instanceof String) {
-                            properties.put(entry.getKey(), v.toString());
-                        } else if (v instanceof Boolean) {
-                            properties.put(entry.getKey(), String.valueOf(v));
-                        } else if (v instanceof Integer) {
-                            properties.put(entry.getKey(), String.valueOf(v));
-                        } else if (v instanceof Date) {
-                            properties.put(entry.getKey(), DateUtils.formatDate((Date) v));
-                        } else {
-                            LOG.warn("Unsupported scalar value for property " + entry.getKey());
+                    if (v != null) {
+                        String property = entry.getKey();
+                        if (!this.properties.containsKey(property)) {
+                            if (v instanceof String) {
+                                properties.put(entry.getKey(), v.toString());
+                            } else if (v instanceof Boolean) {
+                                properties.put(entry.getKey(), String.valueOf(v));
+                            } else if (v instanceof Integer) {
+                                properties.put(entry.getKey(), String.valueOf(v));
+                            } else if (v instanceof Date) {
+                                properties.put(entry.getKey(), DateUtils.formatDate((Date) v));
+                            } else {
+                                LOG.warn("Unsupported scalar value for property " + entry.getKey() + " with value " + v);
+                            }
                         }
                     }
                 }
