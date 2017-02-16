@@ -1,6 +1,7 @@
 # athento-nx-automation-extended
 
 ## For versions
+7.10 - master branch
 6.0
 
 ## Download
