@@ -166,7 +166,10 @@
         <dependency>
             <groupId>org.nuxeo.runtime</groupId>
             <artifactId>nuxeo-runtime-test</artifactId>
-            <version>6.0-HF21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nuxeo.template.rendering</groupId>
+            <artifactId>nuxeo-template-rendering-api</artifactId>
         </dependency>
     </dependencies>
 	<build>

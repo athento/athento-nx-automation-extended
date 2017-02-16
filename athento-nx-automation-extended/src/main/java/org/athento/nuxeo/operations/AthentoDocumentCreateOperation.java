@@ -19,9 +19,12 @@ import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
+import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 import org.nuxeo.ecm.platform.tag.TagService;
+import org.nuxeo.template.api.adapters.TemplateBasedDocument;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +66,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
 
     @Param(name = "tags", required = false, description = "Tags for the new document")
     protected StringList tags;
+
+    @Param(name = "template", required = false, description = "Template to generate the document content")
+    protected String template;
 
     /** Blob to save into new document. */
     private Blob blob;
@@ -176,6 +182,15 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             // Add tags
             if (tags != null) {
                 addTags(doc);
+            }
+            // Check template (overwrite blob always)
+            if (template != null) {
+                TemplateBasedDocument renderable = doc.getAdapter(TemplateBasedDocument.class);
+                if (renderable != null) {
+                    Blob renderedBlob = renderable.renderWithTemplate(template);
+                    doc.setPropertyValue("file:content", (Serializable) renderedBlob);
+                    session.saveDocument(doc);
+                }
             }
             if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
