@@ -107,6 +107,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             _log.debug(" providerName: " + providerName);
             _log.debug(" sortBy: " + sortBy);
             _log.debug(" sortOrder: " + sortOrder);
+            _log.debug(" fetchMode: " + relationFetchMode);
         }
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {

@@ -124,6 +124,7 @@
             <param type="integer" name="currentPageIndex"/>
             <param type="integer" name="pageSize"/>
             <param type="string" name="sortOrder"/>
+            <param type="string" name="relationFetchMode"/>
             <param type="string" name="sortBy"/>
             <operation id="Athento.Document.Query">
                 <param type="integer" name="currentPageIndex">expr:ChainParameters['currentPageIndex']
@@ -133,6 +134,8 @@
                 <param type="string" name="query">expr:@{ChainParameters['query']}
                 </param>
                 <param type="string" name="sortBy">expr:@{ChainParameters['sortBy']}
+                </param>
+                <param type="string" name="relationFetchMode">expr:@{ChainParameters['relationFetchMode']}
                 </param>
                 <param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
                 </param>
@@ -173,6 +176,7 @@
             <param type="integer" name="pageSize"/>
             <param type="string" name="sortBy"/>
             <param type="string" name="sortOrder"/>
+            <param type="string" name="relationFetchMode"/>
             <param type="stringList" name="fieldList" />
             <operation id="Athento.Document.ResultSet">
                 <param type="integer" name="page">expr:ChainParameters['page']
@@ -184,6 +188,8 @@
                 <param type="string" name="sortBy">expr:@{ChainParameters['sortBy']}
                 </param>
                 <param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
+                </param>
+                <param type="string" name="relationFetchMode">expr:@{ChainParameters['relationFetchMode']}
                 </param>
                 <param type="stringList" name="fieldList">expr:@{ChainParameters['fieldList']}
                 </param>

@@ -127,7 +127,13 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             return false;
         } else {
             try {
-                return session.getDocument(new IdRef(destinyDocId)) != null;
+                DocumentModel linkedDoc = session.getDocument(new IdRef(destinyDocId));
+                if (linkedDoc != null) {
+                    if ("deleted".equals(linkedDoc.getCurrentLifeCycleState())) {
+                        return false;
+                    }
+                }
+                return true;
             } catch (ClientException e) {
                 return false;
             }

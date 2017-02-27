@@ -74,7 +74,7 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
                     if (!prop.isComplex() && !prop.isList()) {
                         // check same value only for primitives to clean the value or save the new value
                         // if they are distinct
-                        if (prop.getValue().equals(property.getValue())) {
+                        if (prop.getValue() != null && prop.getValue().equals(property.getValue())) {
                             doc.setPropertyValue(metadata, null);
                         } else {
                             doc.setPropertyValue(metadata, property.getValue());
@@ -101,8 +101,8 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
             } catch (ClientException e) {
                 // Do nothing
             }
-            unlink(doc);
             if (sourceDoc != null) {
+                unlink(doc);
                 if (destinyDoc == null) {
                     // The document is a leaf in the global relations, then remove the destiny id in his source document
                     sourceDoc.setPropertyValue("athentoRelation:destinyDoc", null);
@@ -121,9 +121,8 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
                 session.saveDocument(sourceDoc);
             } else {
                 if (destinyDoc != null) {
-                    // The document is not a leaf in the global relations, then put the destiny id to the source
-                    destinyDoc.setPropertyValue("athentoRelation:sourceDoc", null);
-                    session.saveDocument(destinyDoc);
+                    // Unlink destiny document
+                    run(destinyDoc);
                 }
             }
         }
