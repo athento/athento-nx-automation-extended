@@ -8,6 +8,12 @@
       <category>AthentoUpdatePictures</category>
       <clearCompletedAfterSeconds>${athento.updatePictures.clearCompletedAfterSeconds:=90}</clearCompletedAfterSeconds>
     </queue>
+    <queue id="athentoUpdateVideos">
+      <name>Athento Update Videos</name>
+      <maxThreads>${athento.updateVideos.maxThreads:=4}</maxThreads>
+      <category>AthentoUpdateVideos</category>
+      <clearCompletedAfterSeconds>${athento.updateVideos.clearCompletedAfterSeconds:=90}</clearCompletedAfterSeconds>
+    </queue>
   </extension>
 
 </component>

@@ -25,6 +25,7 @@
         <operation class="org.athento.nuxeo.operations.PushListOperation" />
         <operation class="org.athento.nuxeo.operations.PushPaginableProviderOperation" />
         <operation class="org.athento.nuxeo.operations.RefreshPictureOperation" />
+        <operation class="org.athento.nuxeo.operations.RefreshVideoOperation" />
         <operation class="org.athento.nuxeo.operations.RunOperationAsBatch" />
         <operation class="org.athento.nuxeo.operations.RunOperationAsWorkerOperation" />
         <operation class="org.athento.nuxeo.operations.RunOperationAsVar" />

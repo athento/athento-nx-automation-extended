@@ -14,6 +14,7 @@ package org.athento.nuxeo.operations;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.workers.PrepareUpdatePicturesWorker;
+import org.athento.nuxeo.workers.PrepareUpdateVideosWorker;
 import org.athento.nuxeo.workers.UpdatePicturesWorker;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -28,17 +29,17 @@ import org.nuxeo.ecm.core.work.api.WorkManager;
 import org.nuxeo.runtime.api.Framework;
 
 /**
- * Run an operation to refresh a pictures given a document type. This operation uses Document.ElasticQuery
+ * Run an operation to refresh a videos given a document type. This operation uses Document.ElasticQuery
  * operation to query by document type.
  *
  * @author victorsanchez
  */
-@Operation(id = RefreshPictureOperation.ID, label = "Refresh pictures", description = "Refresh all picture documents filter by document type")
-public class RefreshPictureOperation {
+@Operation(id = RefreshVideoOperation.ID, label = "Refresh video", description = "Refresh all video documents filter by document type")
+public class RefreshVideoOperation {
 
-    public static final String ID = "Athento.RefreshPicture";
+    public static final String ID = "Athento.RefreshVideo";
 
-    private static final Log LOG = LogFactory.getLog(RefreshPictureOperation.class);
+    private static final Log LOG = LogFactory.getLog(RefreshVideoOperation.class);
 
     /** Core session. */
     @Context
@@ -70,7 +71,7 @@ public class RefreshPictureOperation {
     @OperationMethod
     public void run(DocumentModel doc) throws Exception {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Update picture for only one document " + doc.getId());
+            LOG.info("Update video for only one document " + doc.getId());
         }
         DocumentModelList list = new DocumentModelListImpl();
         list.add(doc);
@@ -86,9 +87,9 @@ public class RefreshPictureOperation {
      */
     @OperationMethod
     public void run() throws Exception {
-        // Start preparing update pictures worker
-        PrepareUpdatePicturesWorker prepareUpdatePictures = new PrepareUpdatePicturesWorker(documentType, blockSize, condition);
-        startWorker(prepareUpdatePictures);
+        // Start preparing update videos worker
+        PrepareUpdateVideosWorker prepareUpdateVideos = new PrepareUpdateVideosWorker(documentType, blockSize, condition);
+        startWorker(prepareUpdateVideos);
     }
 
     /**
