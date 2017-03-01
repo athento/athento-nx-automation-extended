@@ -37,15 +37,17 @@ public class PrepareUpdatePicturesWorker extends AbstractWork {
 
     private String docType;
     private int blockSize;
+    private String condition;
 
     /**
      * Constructor.
      *
      * @param docType of document to update
      */
-    public PrepareUpdatePicturesWorker(String docType, int blockSize) {
+    public PrepareUpdatePicturesWorker(String docType, int blockSize, String condition) {
         this.docType = docType;
         this.blockSize = blockSize;
+        this.condition = condition;
     }
 
     @Override
@@ -62,10 +64,10 @@ public class PrepareUpdatePicturesWorker extends AbstractWork {
     public void work() {
         initSession();
         // Making query
-        String query = String.format(QUERY, this.docType);
+        String query = String.format(QUERY + (condition != null ? " AND " + condition : ""), this.docType);
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Prepare update pictures for document type= " + docType);
+            LOG.info("Prepare update pictures for document type= " + docType + " and query " + query);
         }
 
         DocumentModelList docList = null;

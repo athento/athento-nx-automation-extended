@@ -54,6 +54,12 @@ public class RefreshPictureOperation {
     @Param(name = "blockSize", required = false)
     private int blockSize = 100;
 
+    /**
+     * Condition.
+     */
+    @Param(name = "condition", required = false)
+    private String condition;
+
 
     /**
      * Run operation for a document.
@@ -81,7 +87,7 @@ public class RefreshPictureOperation {
     @OperationMethod
     public void run() throws Exception {
         // Start preparing update pictures worker
-        PrepareUpdatePicturesWorker prepareUpdatePictures = new PrepareUpdatePicturesWorker(documentType, blockSize);
+        PrepareUpdatePicturesWorker prepareUpdatePictures = new PrepareUpdatePicturesWorker(documentType, blockSize, condition);
         startWorker(prepareUpdatePictures);
     }
 
