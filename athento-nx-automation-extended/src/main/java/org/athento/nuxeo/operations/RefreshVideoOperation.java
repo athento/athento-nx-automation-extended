@@ -55,11 +55,17 @@ public class RefreshVideoOperation {
     @Param(name = "blockSize", required = false)
     private int blockSize = 100;
 
-    /**
-     * Condition.
-     */
+    /** Condition. */
     @Param(name = "condition", required = false)
     private String condition;
+
+    /** Init Page. */
+    @Param(name = "initPage", required = false)
+    private int initPage = 0;
+
+    /** Max iterations. */
+    @Param(name = "iters", required = false)
+    private int iters = -1;
 
 
     /**
@@ -88,7 +94,7 @@ public class RefreshVideoOperation {
     @OperationMethod
     public void run() throws Exception {
         // Start preparing update videos worker
-        PrepareUpdateVideosWorker prepareUpdateVideos = new PrepareUpdateVideosWorker(documentType, blockSize, condition);
+        PrepareUpdateVideosWorker prepareUpdateVideos = new PrepareUpdateVideosWorker(documentType, blockSize, condition, iters, initPage);
         startWorker(prepareUpdateVideos);
     }
 

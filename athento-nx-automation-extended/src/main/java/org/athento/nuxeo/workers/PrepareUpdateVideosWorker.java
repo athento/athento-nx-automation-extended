@@ -36,16 +36,22 @@ public class PrepareUpdateVideosWorker extends AbstractWork {
     private String docType;
     private int blockSize;
     private String condition;
+    private int iters;
+    private int initPage = 0;
 
     /**
      * Constructor.
      *
      * @param docType of document to update
      */
-    public PrepareUpdateVideosWorker(String docType, int blockSize, String condition) {
+    public PrepareUpdateVideosWorker(String docType, int blockSize, String condition, int iters, int initPage) {
         this.docType = docType;
         this.blockSize = blockSize;
         this.condition = condition;
+        this.iters = iters;
+        if (initPage > 0) {
+            this.initPage = initPage;
+        }
     }
 
     @Override
@@ -64,20 +70,23 @@ public class PrepareUpdateVideosWorker extends AbstractWork {
         // Making query
         String query = String.format(QUERY + (condition != null ? " AND " + condition : ""), this.docType);
 
+        query = query + " ORDER BY dc:created DESC";
+
         if (LOG.isInfoEnabled()) {
-            LOG.info("Prepare update videos for document type= " + docType + " and query " + query);
+            LOG.info("Prepare " + iters + " for update videos for document type= " + docType + " and query " + query);
         }
 
         DocumentModelList docList = null;
 
-        int currentPage = 0;
+        int currentPage = initPage;
+        int tmpIters = 0;
 
         // Build and execute the ES query
         ElasticSearchService ess = Framework.getLocalService(ElasticSearchService.class);
         do {
             int offset = currentPage * blockSize;
             if (LOG.isInfoEnabled()) {
-                LOG.info("Preparing block " + offset + " with size " + blockSize);
+                LOG.info("Preparing block " + offset + " with size " + blockSize + " and page " + currentPage);
             }
             NxQueryBuilder nxQuery = new NxQueryBuilder(session).nxql(query)
                     .limit(blockSize).offset(offset);
@@ -86,8 +95,11 @@ public class PrepareUpdateVideosWorker extends AbstractWork {
             // Update list videos as worker
             UpdateVideosWorker worker = new UpdateVideosWorker(docList);
             startWorker(worker);
-
             currentPage++;
+            tmpIters++;
+            if (tmpIters == iters) {
+                break;
+            }
         } while (docList.size() > 0);
 
     }

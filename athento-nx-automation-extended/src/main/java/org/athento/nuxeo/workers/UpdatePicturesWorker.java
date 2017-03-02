@@ -58,7 +58,7 @@ public class UpdatePicturesWorker extends AbstractWork {
 		for (DocumentModel doc : this.list) {
 			try {
 				if (LOG.isInfoEnabled()) {
-					LOG.info("Updating picture for " + doc.getId() + "(" + updated + ")");
+					LOG.info("Updating picture for " + doc.getId() + "(" + updated + "/" + total + ") [" + percent + "%]");
 				}
                 Framework.login();
 				Blob content = (Blob) doc.getPropertyValue("file:content");
