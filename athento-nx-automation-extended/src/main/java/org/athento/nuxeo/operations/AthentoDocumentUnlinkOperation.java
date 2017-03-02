@@ -102,6 +102,7 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
                 // Do nothing
             }
             if (sourceDoc != null) {
+                LOG.info("Unlink from source...");
                 unlink(doc);
                 if (destinyDoc == null) {
                     // The document is a leaf in the global relations, then remove the destiny id in his source document
@@ -121,8 +122,28 @@ public class AthentoDocumentUnlinkOperation extends AbstractAthentoOperation {
                 session.saveDocument(sourceDoc);
             } else {
                 if (destinyDoc != null) {
+                    LOG.info("Unlinking from destiny...");
                     // Unlink destiny document
                     run(destinyDoc);
+                } else {
+                    LOG.info("Unlinking only from properties... " + properties);
+                    // Unlink the document with only change metadata
+                    for (Map.Entry<String, String> property : properties.entrySet()) {
+                        String metadata = property.getKey();
+                        Property prop;
+                        if ((prop = doc.getProperty(metadata)) != null) {
+                            if (!prop.isComplex() && !prop.isList()) {
+                                // check same value only for primitives to clean the value or save the new value
+                                // if they are distinct
+                                if (prop.getValue() != null && prop.getValue().equals(property.getValue())) {
+                                    doc.setPropertyValue(metadata, null);
+                                } else {
+                                    doc.setPropertyValue(metadata, property.getValue());
+                                }
+                            }
+                        }
+                    }
+                    session.saveDocument(doc);
                 }
             }
         }
