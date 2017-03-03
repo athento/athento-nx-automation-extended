@@ -21,6 +21,9 @@
         <doctype name="File" append="true">
             <facet name="relationable" />
         </doctype>
+		<doctype name="Picture" append="true">
+			<facet name="relationable" />
+		</doctype>
 
         <!-- Facets -->
 		<facet name="relationable">
