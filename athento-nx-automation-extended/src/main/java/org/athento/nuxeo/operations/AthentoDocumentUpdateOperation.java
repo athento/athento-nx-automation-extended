@@ -207,6 +207,7 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
      * @param doc is the document
      */
     private void updateTags(DocumentModel doc) {
+        _log.info("Updating tags for " + doc.getId());
         if (tagService.isEnabled()) {
             for (String tag : tags) {
                 if (tag == null || tag.isEmpty()) {
@@ -215,8 +216,10 @@ public class AthentoDocumentUpdateOperation extends AbstractAthentoOperation {
                 tag = tag.trim();
                 if (tag.startsWith("-")) {
                     tag = tag.substring(1).trim();
+                    _log.info("Untagging doc with " + tag);
                     tagService.untag(session, doc.getId(), tag, session.getPrincipal().getName());
                 } else {
+                    _log.info("Tagging doc with " + tag);
                     tagService.tag(session, doc.getId(), tag, session.getPrincipal().getName());
                 }
             }

@@ -37,15 +37,17 @@ public class PrepareUpdatePicturesWorker extends AbstractWork {
 
 	private String docType;
     private int blockSize;
+    private int iters;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param docType of document to update
      */
-	public PrepareUpdatePicturesWorker(String docType, int blockSize) {
+	public PrepareUpdatePicturesWorker(String docType, int blockSize, int iters) {
 		this.docType = docType;
         this.blockSize = blockSize;
+        this.iters = iters;
 	}
 
 	@Override
@@ -70,6 +72,7 @@ public class PrepareUpdatePicturesWorker extends AbstractWork {
         DocumentModelList docList = null;
 
         int currentPage = 0;
+        int tmpIters = 0;
 
         // Build and execute the ES query
         ElasticSearchService ess = Framework.getLocalService(ElasticSearchService.class);
@@ -88,6 +91,10 @@ public class PrepareUpdatePicturesWorker extends AbstractWork {
                 startWorker(worker);
 
                 currentPage++;
+                if (tmpIters == iters) {
+                    break;
+                }
+                tmpIters++;
             } while (docList.size() > 0);
         } catch (ClientException e) {
             throw new ClientRuntimeException(e);

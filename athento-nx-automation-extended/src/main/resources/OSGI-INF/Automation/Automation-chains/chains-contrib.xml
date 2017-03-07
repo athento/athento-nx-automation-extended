@@ -55,8 +55,12 @@
                     onChainId="Athento.Vocabulary.GetChildren">
             <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
         </catchChain>
-        <catchChain id="athentoExceptionCatchMultiDocumentCreate"
-                    onChainId="Athento.MultiDocumentCreate">
+        <catchChain id="athentoExceptionCatchLinkDocument"
+                    onChainId="Athento.LinkDocument">
+            <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
+        </catchChain>
+        <catchChain id="athentoExceptionCatchUnlinkDocument"
+                    onChainId="Athento.UnlinkDocument">
             <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
         </catchChain>
     </extension>
@@ -120,6 +124,7 @@
             <param type="integer" name="currentPageIndex"/>
             <param type="integer" name="pageSize"/>
             <param type="string" name="sortOrder"/>
+            <param type="string" name="relationFetchMode"/>
             <param type="string" name="sortBy"/>
             <operation id="Athento.Document.Query">
                 <param type="integer" name="currentPageIndex">expr:ChainParameters['currentPageIndex']
@@ -129,6 +134,8 @@
                 <param type="string" name="query">expr:@{ChainParameters['query']}
                 </param>
                 <param type="string" name="sortBy">expr:@{ChainParameters['sortBy']}
+                </param>
+                <param type="string" name="relationFetchMode">expr:@{ChainParameters['relationFetchMode']}
                 </param>
                 <param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
                 </param>
@@ -169,6 +176,8 @@
             <param type="integer" name="pageSize"/>
             <param type="string" name="sortBy"/>
             <param type="string" name="sortOrder"/>
+            <param type="string" name="relationFetchMode"/>
+            <param type="stringList" name="fieldList" />
             <operation id="Athento.Document.ResultSet">
                 <param type="integer" name="page">expr:ChainParameters['page']
                 </param>
@@ -179,6 +188,10 @@
                 <param type="string" name="sortBy">expr:@{ChainParameters['sortBy']}
                 </param>
                 <param type="string" name="sortOrder">expr:@{ChainParameters['sortOrder']}
+                </param>
+                <param type="string" name="relationFetchMode">expr:@{ChainParameters['relationFetchMode']}
+                </param>
+                <param type="stringList" name="fieldList">expr:@{ChainParameters['fieldList']}
                 </param>
             </operation>
         </chain>
@@ -627,6 +640,40 @@
             </operation>
             <operation id="Blob.ToFile">
                 <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
+            </operation>
+        </chain>
+
+        <!-- Link and unlink document -->
+        <chain id="Athento.LinkDocument">
+            <documentation>
+                Extended document link creation.
+            </documentation>
+            <param type="properties" name="properties"/>
+            <param type="string" name="audit"/>
+            <param type="boolean" name="override" />
+            <operation id="Athento.Document.Link">
+                <param type="properties" name="properties">expr:ChainParameters['properties']</param>
+                <param type="boolean" name="override">expr:ChainParameters['override']</param>
+            </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentLinked</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
+            </operation>
+        </chain>
+        <chain id="Athento.UnlinkDocument">
+            <documentation>
+                Extended document unlink.
+            </documentation>
+            <param type="properties" name="properties"/>
+            <param type="string" name="audit"/>
+            <operation id="Athento.Document.Unlink">
+                <param type="properties" name="properties">expr:ChainParameters['properties']</param>
+            </operation>
+            <operation id="Audit.Log">
+                <param type="string" name="event">auditExtendedDocumentUnlinked</param>
+                <param type="string" name="category">eventDocumentCategory</param>
+                <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
         </chain>
 

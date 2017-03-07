@@ -10,6 +10,8 @@
 
 		<schema name="automationExtendedConfig" prefix="automationExtendedConfig" src="data/schemas/automationExtendedConfig.xsd" />
 		<schema name="athentoException" prefix="athentoException" src="data/schemas/athentoException.xsd"/>
+		<!-- Relation between docs. -->
+		<schema name="athentoRelation" prefix="athentoRelation" src="data/schemas/athentoRelation.xsd" />
 	</extension>
 
 </component>

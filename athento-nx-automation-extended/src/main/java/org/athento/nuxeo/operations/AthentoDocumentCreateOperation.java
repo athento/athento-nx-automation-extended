@@ -3,18 +3,12 @@
  */
 package org.athento.nuxeo.operations;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.PropertyUtils;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -28,6 +22,9 @@ import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 import org.nuxeo.ecm.platform.tag.TagService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author athento
@@ -109,6 +106,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             _log.debug(" - type: " + type);
             _log.debug(" - name: " + name);
             _log.debug(" - properties: " + properties);
+            _log.info(" - tags: " + tags);
         }
         try {
             Map<String, Object> config = AthentoOperationsHelper
@@ -153,6 +151,11 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 name, type);
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
+                StringList lastUpdateMetadatas = PropertyUtils.getPropertiesAsStringList(properties, newDoc);
+                if (newDoc.hasSchema("inheritance")) {
+                    // Add properties as lastUpdatedMetadatas for the new document
+                    newDoc.setPropertyValue("inheritance:lastUpdatedMetadatas", StringUtils.stringfy(lastUpdateMetadatas));
+                }
             }
             // Check if document must have the blob #AT-1066
             if (blob != null) {

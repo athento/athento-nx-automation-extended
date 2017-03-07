@@ -111,6 +111,7 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
             LOG.debug(" - type: " + type);
             LOG.debug(" - name: " + name);
             LOG.debug(" - properties: " + properties);
+            LOG.info(" - tags: " + tags);
         }
         try {
             List<LinkedHashMap<String, Object>> propertiesList = new ArrayList<>();
@@ -132,6 +133,7 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
                 // Add name
                 props.put("name", name);
                 props.put("type", type);
+                // Add tags
                 props.put("tags", tags);
                 props.put("audit", audit);
                 props.put("destination", destination);
@@ -144,7 +146,7 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
             // Add properties to param
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("properties", propertiesList);
-            params.put("chainId", "Athento.DocumentCreate");
+            params.put("chainId", "Athento.Document.Create");
             params.put("class", "org.nuxeo.ecm.core.api.DocumentModel");
 
             // Execute batch operation
@@ -178,5 +180,6 @@ public class AthentoDocumentMultiCreateOperation extends AbstractAthentoOperatio
         }
         return val;
     }
+
 
 }

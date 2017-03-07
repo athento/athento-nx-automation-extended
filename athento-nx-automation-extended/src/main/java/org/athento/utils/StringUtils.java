@@ -6,6 +6,8 @@ package org.athento.utils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,6 +89,20 @@ public class StringUtils {
             _log.error(" delimiter: " + delimiter);
         }
         return false;
+    }
+
+    /**
+     * Transform string list to comma-separated values.
+     *
+     * @param properties
+     * @return
+     */
+    public static String stringfy(List<String> properties) {
+        StringBuffer str = new StringBuffer();
+        for (Iterator<String> it = properties.iterator(); it.hasNext();) {
+            str.append(it.next() + (it.hasNext() ? "," : ""));
+        }
+        return str.toString();
     }
 
     private static final Log _log = LogFactory.getLog(StringUtils.class);

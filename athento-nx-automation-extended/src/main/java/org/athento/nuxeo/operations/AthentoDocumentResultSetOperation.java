@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.RelationFetchMode;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.ConflictOperationException;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -28,6 +29,7 @@ import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.RecordSet;
+import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 
@@ -37,6 +39,9 @@ import org.nuxeo.ecm.core.api.DocumentModel;
  */
 @Operation(id = AthentoDocumentResultSetOperation.ID, category = "Athento", label = "Athento Document ResultSet", description = "ResultSets a document in Athento's way")
 public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation {
+
+    /** Log. */
+    private static final Log LOG = LogFactory.getLog(AthentoDocumentResultSetOperation.class);
 
     public static final String ID = "Athento.Document.ResultSet";
 
@@ -78,6 +83,15 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         AthentoDocumentResultSetOperation.DESC })
     protected String sortOrder;
 
+    @Param(name = "relationFetchMode", required = false, description = "It is the fetch mode of relation", values = { "all", "sources", "destinies" })
+    protected String relationFetchMode = RelationFetchMode.all.name();
+
+    /**
+     * Field list params.
+     */
+    @Param(name = "fieldList", required = false)
+    protected StringList fieldList;
+
     @OperationMethod
     public RecordSet run() throws Exception {
         // Check access
@@ -93,6 +107,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             _log.debug(" providerName: " + providerName);
             _log.debug(" sortBy: " + sortBy);
             _log.debug(" sortOrder: " + sortOrder);
+            _log.debug(" fetchMode: " + relationFetchMode);
         }
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {
@@ -111,12 +126,25 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
                     operationId, input, params, session);
                 modifiedQuery = String.valueOf(retValue);
             }
+            // Check relation fetchMode
+            if (relationFetchMode != null) {
+                if (RelationFetchMode.destinies.name().equals(relationFetchMode)) {
+                    modifiedQuery = modifiedQuery.replace("WHERE", "WHERE ((athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is null) " +
+                            "OR (athentoRelation:sourceDoc is not null AND athentoRelation:destinyDoc is null)) AND ");
+                } else if (RelationFetchMode.sources.name().equals(relationFetchMode)) {
+                    modifiedQuery = modifiedQuery.replace("WHERE", "WHERE (athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is not null) AND ");
+                }
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Fetch mode changes: " + modifiedQuery);
+                }
+            }
             Object input = null;
             operationId = "Resultset.PageProvider";
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("query", modifiedQuery);
             params.put("page", page);
             params.put("pageSize", pageSize);
+            params.put("fieldList", fieldList);
             if (!StringUtils.isNullOrEmpty(sortBy)) {
                 params.put("sortBy", sortBy);
                 if (!StringUtils.isNullOrEmpty(sortOrder)) {

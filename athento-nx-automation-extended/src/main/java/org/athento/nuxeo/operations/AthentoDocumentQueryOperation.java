@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.RelationFetchMode;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -22,6 +24,7 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.runtime.trackers.files.FileEventTracker;
 
 /**
  * @author athento
@@ -30,6 +33,13 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 @Operation(id = AthentoDocumentQueryOperation.ID, category = "Athento", label = "Athento Document Query", description = "Query for documents in Athento's way")
 public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
 
+    /**
+     * Log.
+     */
+    private static final Log LOG = LogFactory
+            .getLog(AthentoDocumentQueryOperation.class);
+
+    /** Operation ID. */
     public static final String ID = "Athento.Document.Query";
 
     public static final String CONFIG_WATCHED_DOCTYPE = "automationExtendedConfig:documentQueryWatchedDocumentTypes";
@@ -45,7 +55,7 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
     @Context
     protected OperationContext ctx;
 
-    @Param(name = "query", required = false)
+    @Param(name = "query", required = true)
     protected String query;
 
     @Param(name = "maxResults", required = false)
@@ -69,21 +79,13 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
         AthentoDocumentQueryOperation.ASC, AthentoDocumentQueryOperation.DESC })
     protected String sortOrder;
 
+    @Param(name = "relationFetchMode", required = false, description = "It is the fetch mode of relation", values = { "all", "sources", "destinies" })
+    protected String relationFetchMode = RelationFetchMode.all.name();
+
     @OperationMethod
     public DocumentModelList run() throws Exception {
         // Check access
         checkAllowedAccess(ctx);
-
-        if (_log.isDebugEnabled()) {
-            _log.debug(AthentoDocumentQueryOperation.ID + " BEGIN with params:");
-            _log.debug(" query: " + query);
-            _log.debug(" maxResults: " + maxResults);
-            _log.debug(" currentPageIndex: " + currentPageIndex);
-            _log.debug(" pageSize: " + pageSize);
-            _log.debug(" providerName: " + providerName);
-            _log.debug(" sortBy: " + sortBy);
-            _log.debug(" sortOrder: " + sortOrder);
-        }
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {
             String modifiedQuery = query;
@@ -101,33 +103,36 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
                     operationId, input, params, session);
                 modifiedQuery = String.valueOf(retValue);
             }
+            // Check relation fetchMode
+            if (relationFetchMode != null) {
+                if (RelationFetchMode.destinies.name().equals(relationFetchMode)) {
+                    modifiedQuery = modifiedQuery.replace("WHERE", "WHERE ((athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is null) " +
+                            "OR (athentoRelation:sourceDoc is not null AND athentoRelation:destinyDoc is null)) AND ");
+                } else if (RelationFetchMode.sources.name().equals(relationFetchMode)) {
+                    modifiedQuery = modifiedQuery.replace("WHERE", "WHERE (athentoRelation:sourceDoc is null AND athentoRelation:destinyDoc is not null) AND ");
+                }
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Fetch mode changes: " + modifiedQuery);
+                }
+            }
+            // Execute query
             Object input = null;
             operationId = "Document.ElasticQuery";
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("query", modifiedQuery);
             params.put("offset", getOffset());
             params.put("limit", pageSize);
-//            if (!StringUtils.isNullOrEmpty(sortBy)) {
-//                params.put("sortBy", sortBy);
-//                if (!StringUtils.isNullOrEmpty(sortOrder)) {
-//                    params.put("sortOrder", sortOrder);
-//                }
-//            }
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
                 input, params, session);
-            if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentQueryOperation.ID
-                    + " END return value: " + retValue);
-            }
             if (retValue instanceof DocumentModelList) {
                 return (DocumentModelList) retValue;
             } else {
-                _log.error("Unexpected return type [" + retValue.getClass()
+                LOG.error("Unexpected return type [" + retValue.getClass()
                     + "] for operation: " + operationId);
                 return null;
             }
         } catch (Exception e) {
-            _log.error(
+            LOG.error(
                 "Unable to complete operation: "
                     + AthentoDocumentQueryOperation.ID + " due to: "
                     + e.getMessage(), e);
@@ -153,7 +158,7 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
             subquery = subquery.trim();
             return StringUtils.asList(subquery, StringUtils.COMMA);
         } catch (Throwable t) {
-            _log.error("Error looking for document Type in query: " + query, t);
+            LOG.error("Error looking for document Type in query: " + query, t);
         }
         return new ArrayList<String>();
     }
@@ -165,22 +170,12 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
         }
         boolean isIncluded = false;
         for (String docType : docTypes) {
-            if (_log.isDebugEnabled()) {
-                _log.debug(" checking docType: " + docType);
-            }
             isIncluded = StringUtils.isIncludedIn(docType,
                 watchedDocumentTypes, StringUtils.COMMA);
-            if (_log.isDebugEnabled()) {
-                _log.debug(" ... isIncluded: " + isIncluded);
-            }
             if (isIncluded) {
                 break;
             }
         }
         return isIncluded;
     }
-
-    private static final Log _log = LogFactory
-        .getLog(AthentoDocumentQueryOperation.class);
-
 }

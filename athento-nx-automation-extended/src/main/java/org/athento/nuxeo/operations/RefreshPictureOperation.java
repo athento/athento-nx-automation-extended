@@ -59,6 +59,9 @@ public class RefreshPictureOperation {
     @Param(name = "blockSize", required = false)
     private int blockSize = 100;
 
+    /** Max iterations. */
+    private int iters = -1;
+
 
     /**
      * Run operation for a document.
@@ -86,7 +89,7 @@ public class RefreshPictureOperation {
     @OperationMethod
     public void run() throws Exception {
         // Start preparing update pictures worker
-        PrepareUpdatePicturesWorker prepareUpdatePictures = new PrepareUpdatePicturesWorker(documentType, blockSize);
+        PrepareUpdatePicturesWorker prepareUpdatePictures = new PrepareUpdatePicturesWorker(documentType, blockSize, iters);
         startWorker(prepareUpdatePictures);
     }
 

@@ -66,13 +66,13 @@ public class VocabularyGetChildrenOperation {
      */
     @OperationMethod
     public Object run() throws Exception {
-        if (_log.isDebugEnabled()) {
-            _log.debug("Getting children of vocabulary: " + vocabularyName + " for value " + parentValue);
-            _log.debug("    languageId: " + languageId + " expanded:" + expanded);
+        if (_log.isTraceEnabled()) {
+            _log.trace("Getting children of vocabulary: " + vocabularyName + " for value " + parentValue);
+            _log.trace("    languageId: " + languageId + " expanded:" + expanded);
         }
         List<JSONObject> children = getValuesForParentValue();
-        if (_log.isDebugEnabled()) {
-            _log.debug("Children vocabularies of [" + vocabularyName + "]: " + children);
+        if (_log.isTraceEnabled()) {
+            _log.trace("Children vocabularies of [" + vocabularyName + "]: " + children);
         }
 
         return children;
@@ -133,10 +133,10 @@ public class VocabularyGetChildrenOperation {
         while (it.hasNext()) {
             DocumentModel entry = it.next();
             String label = (String) entry.getPropertyValue("xvocabulary:label");
-            if (_log.isDebugEnabled()) {
-                _log.debug("- entry Id: " + entry.getId());
-                _log.debug("- entry Title: " + entry.getTitle());
-                _log.debug("- entry Label: " + label);
+            if (_log.isTraceEnabled()) {
+                _log.trace("- entry Id: " + entry.getId());
+                _log.trace("- entry Title: " + entry.getTitle());
+                _log.trace("- entry Label: " + label);
             }
 
             if (locale != null) {
@@ -155,8 +155,8 @@ public class VocabularyGetChildrenOperation {
                     val.put("parent", entry.getPropertyValue("xvocabulary:parent"));
                 }
             }
-            if (_log.isDebugEnabled()) {
-                _log.debug(">> adding value: " + val);
+            if (_log.isTraceEnabled()) {
+                _log.trace(">> adding value: " + val);
             }
             jsonResult.add(val);
         }
@@ -175,8 +175,8 @@ public class VocabularyGetChildrenOperation {
         // Prepare filter map
         Map queryFilter = new HashMap();
         queryFilter.put("parent", parentValue);
-        if (_log.isInfoEnabled()) {
-            _log.info("Querying directory [" + vocabularyName + "] with query: " + queryFilter);
+        if (_log.isTraceEnabled()) {
+            _log.trace("Querying directory [" + vocabularyName + "] with query: " + queryFilter);
         }
         // Get sort info
         Map<String, String> sortInfo = getSortInfo();
