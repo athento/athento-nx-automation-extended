@@ -52,4 +52,7 @@
     <xs:element name="documentUpdateOperationIdPost" type="xs:string" default="" />
     <xs:element name="documentUpdateWatchedDocumentTypes" type="xs:string" default="" />
 
+    <xs:element name="documentDeleteOperationIdPre" type="xs:string" default="voidChain" />
+    <xs:element name="documentDeleteOperationIdPost" type="xs:string" default="voidChain" />
+
 </xs:schema>

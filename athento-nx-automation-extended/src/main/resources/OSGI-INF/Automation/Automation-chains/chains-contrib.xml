@@ -103,10 +103,10 @@
             <documentation>
                 Extended document delete.
             </documentation>
+            <param type="boolean" name="permanent"/>
             <param type="string" name="audit"/>
-            <operation id="Context.FetchDocument"/>
-            <operation id="Document.SetLifeCycle">
-                <param type="string" name="value">delete</param>
+            <operation id="Athento.Document.Delete">
+                <param type="string" name="permanent">expr:@{ChainParameters['permanent']}</param>
             </operation>
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentDeleted</param>

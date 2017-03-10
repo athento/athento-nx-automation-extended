@@ -33,6 +33,18 @@
                     <properties mode="any">
                         <property name="nxl_colspan_0">1</property>
                     </properties>
+                    <widget>documentDeleteOperationIdPre</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>documentDeleteOperationIdPost</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
                     <widget>documentCreateWatchedDocumentTypes</widget>
                 </row>
                 <row>
@@ -112,6 +124,26 @@
                 <translated>true</translated>
                 <fields>
                     <field>automationExtendedConfig:documentCreateOperationIdPost</field>
+                </fields>
+            </widget>
+            <widget name="documentDeleteOperationIdPre" type="text">
+                <labels>
+                    <label mode="any">label.automationExtendedConfig.documentDeleteOperationIdPre
+                    </label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>automationExtendedConfig:documentDeleteOperationIdPre</field>
+                </fields>
+            </widget>
+            <widget name="documentDeleteOperationIdPost" type="text">
+                <labels>
+                    <label mode="any">label.automationExtendedConfig.documentDeleteOperationIdPost
+                    </label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>automationExtendedConfig:documentDeleteOperationIdPost</field>
                 </fields>
             </widget>
             <widget name="documentCreateWatchedDocumentTypes" type="text">
