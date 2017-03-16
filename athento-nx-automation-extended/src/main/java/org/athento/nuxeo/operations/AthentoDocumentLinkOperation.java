@@ -99,13 +99,13 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
             session.saveDocument(linkedDocument);
             // Add destiny document of link to source doc
             doc.setPropertyValue("athentoRelation:destinyDoc", linkedDocument.getId());
-            // Remove properties from source document
+            // FIXME: Remove properties from source document
             /*for (Map.Entry<String, String> propertyEntry : properties.entrySet()) {
                 String metadata = propertyEntry.getKey();
                 LOG.info("Metadata " + metadata + " will be removed.");
                 doc.setPropertyValue(metadata, null);
-            }
-            session.saveDocument(doc);*/
+            }*/
+            session.saveDocument(doc);
             // Create relation
             relations.addRelation(session, doc, linkedDocument, "http://purl.org/dc/terms/References", true);
             if (LOG.isInfoEnabled()) {
