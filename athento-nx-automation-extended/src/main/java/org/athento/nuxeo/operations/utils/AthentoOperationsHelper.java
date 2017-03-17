@@ -157,4 +157,26 @@ public class AthentoOperationsHelper {
         }
         return propertiesString.toString();
     }
+
+    /**
+     * Check total operators.
+     *
+     * @param session
+     * @param query
+     * @return
+     */
+    public static boolean isValidQueryOperators(CoreSession session, String query) {
+        int maxOperators = -1;
+        try {
+            maxOperators = Integer.valueOf(AthentoOperationsHelper.readConfigValue(session, "maxQueryOperators"));
+        } catch (NumberFormatException e) {
+            _log.warn("Error in extended config value for max query operators");
+        }
+        if (maxOperators <= 0) {
+            return true;
+        }
+        int ands = org.apache.commons.lang.StringUtils.countMatches(query.toLowerCase(), " and ");
+        int ors = org.apache.commons.lang.StringUtils.countMatches(query.toLowerCase(), " or ");
+        return ands + ors < maxOperators;
+    }
 }

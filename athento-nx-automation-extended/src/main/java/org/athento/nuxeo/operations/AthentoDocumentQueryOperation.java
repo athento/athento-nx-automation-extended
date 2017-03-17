@@ -10,6 +10,7 @@ import java.util.Map;
 import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.util.QueryBuilder;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
@@ -24,6 +25,10 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+import org.nuxeo.ecm.core.storage.sql.jdbc.NXQLQueryMaker;
+import org.nuxeo.ecm.platform.query.nxql.NXQLQueryBuilder;
+import org.nuxeo.elasticsearch.query.NxQueryBuilder;
 import org.nuxeo.runtime.trackers.files.FileEventTracker;
 
 /**
@@ -71,7 +76,7 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
     protected String providerName;
 
     @Param(name = "sortBy", required = false, description = "Sort by "
-        + "properties (separated by comma)")
+            + "properties (separated by comma)")
     protected String sortBy;
 
     @Param(name = "sortOrder", required = false, description = "Sort order, "
@@ -114,6 +119,10 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Fetch mode changes: " + modifiedQuery);
                 }
+            }
+            // Check max operators
+            if (!AthentoOperationsHelper.isValidQueryOperators(session, modifiedQuery)) {
+                throw new Exception("Query is too big");
             }
             // Execute query
             Object input = null;

@@ -3,6 +3,7 @@
  */
 package org.athento.nuxeo.operations;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.nuxeo.query.ElasticSearchQueryAndFetchPageProvider;
 import org.athento.utils.RelationFetchMode;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.ConflictOperationException;
@@ -26,12 +28,16 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
+import org.nuxeo.ecm.automation.core.operations.services.PaginableRecordSetImpl;
 import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.RecordSet;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
+import org.nuxeo.ecm.platform.query.core.DocumentModelListPageProvider;
+import org.nuxeo.ecm.platform.query.core.EmptyPageProvider;
 
 /**
  * @author athento
@@ -137,6 +143,10 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
                 if (LOG.isInfoEnabled()) {
                     LOG.info("Fetch mode changes: " + modifiedQuery);
                 }
+            }
+            // Check max operators
+            if (!AthentoOperationsHelper.isValidQueryOperators(session, modifiedQuery)) {
+                throw new Exception("Query is too big");
             }
             Object input = null;
             operationId = "Resultset.PageProvider";

@@ -55,4 +55,6 @@
     <xs:element name="documentDeleteOperationIdPre" type="xs:string" default="voidChain" />
     <xs:element name="documentDeleteOperationIdPost" type="xs:string" default="voidChain" />
 
+    <xs:element name="maxQueryOperators" type="xs:string" default="-1" />
+
 </xs:schema>

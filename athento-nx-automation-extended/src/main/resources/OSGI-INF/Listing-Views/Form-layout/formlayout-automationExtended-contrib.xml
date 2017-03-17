@@ -95,6 +95,12 @@
                     </properties>
                     <widget>enabledIPs</widget>
                 </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>maxQueryOperators</widget>
+                </row>
             </rows>
             <widget name="defaultDestination" type="text">
                 <labels>
@@ -240,6 +246,16 @@
                 <translated>true</translated>
                 <fields>
                     <field>automationExtendedConfig:enabledIPs</field>
+                </fields>
+            </widget>
+            <widget name="maxQueryOperators" type="text">
+                <labels>
+                    <label mode="any">label.automationExtendedConfig.maxQueryOperators
+                    </label>
+                </labels>
+                <translated>true</translated>
+                <fields>
+                    <field>automationExtendedConfig:maxQueryOperators</field>
                 </fields>
             </widget>
         </layout>
