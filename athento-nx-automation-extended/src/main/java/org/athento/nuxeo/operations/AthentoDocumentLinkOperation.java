@@ -20,7 +20,11 @@ import org.nuxeo.ecm.core.api.ClientException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.schema.DocumentType;
+import org.nuxeo.ecm.core.schema.SchemaManager;
+import org.nuxeo.ecm.core.schema.TypeService;
 import org.nuxeo.ecm.platform.relations.api.DocumentRelationManager;
+import org.nuxeo.runtime.api.Framework;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -57,6 +61,12 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
     @Param(name = "properties", required = false)
     protected Properties properties;
 
+    @Param(name = "type", required = false)
+    protected String type;
+
+    @Param(name = "destination", required = false)
+    protected String destination;
+
     @Param(name = "override", required = false, description = "Override the link if document just has a relation")
     protected boolean overrideLink = false;
 
@@ -78,10 +88,18 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
         }
         // Prepare create link document params
         Map<String, Object> params = new HashMap<>();
-        params.put("type", doc.getType());
+        // Check type
+        if (type == null) {
+            type = doc.getType();
+        }
+        params.put("type", type);
         params.put("name", doc.getName());
+        // Add destination
+        if (destination != null) {
+            params.put("destination", destination);
+        }
         // Extract properties from source document and add to properties param
-        Properties linkedDocProperties = extractAndAddProperties(doc);
+        Properties linkedDocProperties = extractAndAddProperties(doc, type);
         linkedDocProperties.putAll(properties);
         params.put("properties", linkedDocProperties);
         if (LOG.isInfoEnabled()) {
@@ -141,30 +159,44 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
     }
 
     /**
-     * Extract properties to create the linked document.
+     * Extract properties to create the linked document for a document type.
      *
-     * @param doc
+     * @param doc is the document model
+     * @param type is the document type to extract
      * @return
      */
-    private Properties extractAndAddProperties(DocumentModel doc) {
+    private Properties extractAndAddProperties(DocumentModel doc, String type) {
         Properties properties = new Properties();
-        for (String schema : doc.getSchemas()) {
-            if (!Arrays.asList(IGNORED_SCHEMAS).contains(schema)) {
-                for (Map.Entry<String, Object> entry : doc.getProperties(schema).entrySet()) {
-                    Object v = entry.getValue();
-                    if (v != null) {
-                        String property = entry.getKey();
-                        if (!this.properties.containsKey(property)) {
-                            if (v instanceof String) {
-                                properties.put(entry.getKey(), v.toString());
-                            } else if (v instanceof Boolean) {
-                                properties.put(entry.getKey(), String.valueOf(v));
-                            } else if (v instanceof Integer) {
-                                properties.put(entry.getKey(), String.valueOf(v));
-                            } else if (v instanceof Date) {
-                                properties.put(entry.getKey(), DateUtils.formatDate((Date) v));
-                            } else {
-                                LOG.warn("Unsupported scalar value for property " + entry.getKey() + " with value " + v);
+        if (doc != null) {
+            String [] schemas = doc.getSchemas();
+            // Get type
+            if (type != null) {
+                SchemaManager schemaManager = Framework.getService(SchemaManager.class);
+                DocumentType docType = schemaManager.getDocumentType(type);
+                schemas = docType.getSchemaNames();
+            }
+            // Only extract document schemas
+            for (String schema : schemas) {
+                if (!doc.hasSchema(schema)) {
+                    continue;
+                }
+                if (!Arrays.asList(IGNORED_SCHEMAS).contains(schema)) {
+                    for (Map.Entry<String, Object> entry : doc.getProperties(schema).entrySet()) {
+                        Object v = entry.getValue();
+                        if (v != null) {
+                            String property = entry.getKey();
+                            if (!this.properties.containsKey(property)) {
+                                if (v instanceof String) {
+                                    properties.put(entry.getKey(), v.toString());
+                                } else if (v instanceof Boolean) {
+                                    properties.put(entry.getKey(), String.valueOf(v));
+                                } else if (v instanceof Integer) {
+                                    properties.put(entry.getKey(), String.valueOf(v));
+                                } else if (v instanceof Date) {
+                                    properties.put(entry.getKey(), DateUtils.formatDate((Date) v));
+                                } else {
+                                    LOG.warn("Unsupported scalar value for property " + entry.getKey() + " with value " + v);
+                                }
                             }
                         }
                     }
@@ -173,6 +205,5 @@ public class AthentoDocumentLinkOperation extends AbstractAthentoOperation {
         }
         return properties;
     }
-
 
 }

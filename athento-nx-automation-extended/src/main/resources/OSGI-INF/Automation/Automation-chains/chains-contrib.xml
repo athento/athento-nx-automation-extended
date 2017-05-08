@@ -648,6 +648,7 @@
             <documentation>
                 Extended document link creation.
             </documentation>
+            <param type="string" name="type" />
             <param type="properties" name="properties"/>
             <param type="string" name="audit"/>
             <param type="boolean" name="override" />
