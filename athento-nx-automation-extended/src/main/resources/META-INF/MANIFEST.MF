@@ -14,7 +14,9 @@ Nuxeo-Component: OSGI-INF/chains-contrib.xml,
  OSGI-INF/workmanager-contrib.xml,
  OSGI-INF/marshaller-contrib.xml,
  OSGI-INF/codec-contrib.xml,
- OSGI-INF/Audit/audit-contrib.xml
+ OSGI-INF/Audit/audit-contrib.xml,
+ OSGI-INF/automation-registry-framework.xml,
+ OSGI-INF/automation-registry-directory-contrib.xml
 Bundle-Name: athento-nx-automation-extended
 Bundle-ManifestVersion: 2
 Nuxeo-WebModule: org.athento.nuxeo.module.ExtendedModule;name=api;extends=automation;package=org/athento/nuxeo/module;headless=true

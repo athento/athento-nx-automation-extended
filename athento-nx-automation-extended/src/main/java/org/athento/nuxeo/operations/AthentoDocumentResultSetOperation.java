@@ -3,41 +3,27 @@
  */
 package org.athento.nuxeo.operations;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
-
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
-import org.athento.nuxeo.query.ElasticSearchQueryAndFetchPageProvider;
+import org.athento.utils.RegisterHelper;
 import org.athento.utils.RelationFetchMode;
 import org.athento.utils.StringUtils;
-import org.nuxeo.ecm.automation.ConflictOperationException;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
-import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
-import org.nuxeo.ecm.automation.core.operations.services.PaginableRecordSetImpl;
-import org.nuxeo.ecm.automation.core.util.DocumentHelper;
-import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.RecordSet;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
-import org.nuxeo.ecm.platform.query.core.DocumentModelListPageProvider;
-import org.nuxeo.ecm.platform.query.core.EmptyPageProvider;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author athento
@@ -102,19 +88,6 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     public RecordSet run() throws Exception {
         // Check access
         checkAllowedAccess(ctx);
-
-        if (_log.isDebugEnabled()) {
-            _log.debug(AthentoDocumentResultSetOperation.ID
-                + " BEGIN with params:");
-            _log.debug(" query: " + query);
-            _log.debug(" maxResults: " + maxResults);
-            _log.debug(" page: " + page);
-            _log.debug(" pageSize: " + pageSize);
-            _log.debug(" providerName: " + providerName);
-            _log.debug(" sortBy: " + sortBy);
-            _log.debug(" sortOrder: " + sortOrder);
-            _log.debug(" fetchMode: " + relationFetchMode);
-        }
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {
             String modifiedQuery = query;
@@ -161,13 +134,13 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
                     params.put("sortOrder", sortOrder);
                 }
             }
+            long startTime = System.currentTimeMillis();
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
                 input, params, session);
-            if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentResultSetOperation.ID
-                    + " END return value: " + retValue);
-            }
             if (retValue instanceof RecordSet) {
+                long endTime = System.currentTimeMillis();
+                // Register an entry into queryRequest registry
+                RegisterHelper.registerQuery(modifiedQuery, pageSize, page, startTime, endTime);
                 return (RecordSet) retValue;
             } else {
                 _log.error("Unexpected return type for operation: "
@@ -192,7 +165,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         try {
             int idx1 = upperQuery.indexOf(StringUtils.FROM);
             int idx2 = upperQuery.indexOf(StringUtils.WHERE);
-            String subquery = null;
+            String subquery;
             if (idx2 > idx1) {
                 subquery = query.substring(idx1 + StringUtils.FROM.length(),
                     idx2);
@@ -204,7 +177,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         } catch (Throwable t) {
             _log.error("Error looking for document Type in query: " + query, t);
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     private boolean isWatchedDocumentType(ArrayList<String> docTypes,
@@ -214,14 +187,8 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         }
         boolean isIncluded = false;
         for (String docType : docTypes) {
-            if (_log.isDebugEnabled()) {
-                _log.debug(" checking docType: " + docType);
-            }
             isIncluded = StringUtils.isIncludedIn(docType,
                 watchedDocumentTypes, StringUtils.COMMA);
-            if (_log.isDebugEnabled()) {
-                _log.debug(" ... isIncluded: " + isIncluded);
-            }
             if (isIncluded) {
                 break;
             }
