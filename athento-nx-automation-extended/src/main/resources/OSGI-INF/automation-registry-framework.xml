@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<component name="org.athento.nuxeo.automation.extended.AutomationRegistryContrib">
+
+  <documentation>
+    Automation registry.
+  </documentation>
+
+  <implementation
+    class="org.athento.nuxeo.service.AutomationRegistryServiceImpl" />
+
+  <service>
+    <provide
+      interface="org.athento.nuxeo.service.AutomationRegistryService" />
+  </service>
+
+</component>

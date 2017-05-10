@@ -17,7 +17,10 @@
 			<schema name="common" />
 			<facet name="HiddenInNavigation" />
 		</doctype>
-	</extension>
+		<doctype name="AutomationQueryRequest" extends="Document">
+			<schema name="automationQueryRequest" />
+		</doctype>
+    </extension>
 
 	<extension target="org.nuxeo.ecm.platform.types.TypeService"
 		point="types">

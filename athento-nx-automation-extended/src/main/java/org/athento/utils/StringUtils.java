@@ -5,6 +5,8 @@ package org.athento.utils;
  */
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
@@ -91,4 +93,14 @@ public class StringUtils {
 
     private static final Log _log = LogFactory.getLog(StringUtils.class);
 
+    /**
+     * Transform string to md5.
+     *
+     * @param bytes
+     * @return
+     */
+    public static byte [] md5(byte [] bytes) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        return md.digest(bytes);
+    }
 }
