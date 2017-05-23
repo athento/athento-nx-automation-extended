@@ -59,6 +59,9 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     @Param(name = "page", required = false)
     protected Integer page = 0;
 
+    @Param(name = "offset", required = false)
+    protected Integer offset = 0;
+
     @Param(name = "pageSize", required = false)
     protected Integer pageSize = 20;
 
@@ -125,7 +128,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             operationId = "Resultset.PageProvider";
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("query", modifiedQuery);
-            params.put("page", page);
+            params.put("page", offset != 0 ? offset : page);
             params.put("pageSize", pageSize);
             params.put("fieldList", fieldList);
             if (!StringUtils.isNullOrEmpty(sortBy)) {
