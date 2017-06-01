@@ -33,8 +33,11 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
     @Context
     protected CoreSession session;
 
-    @Param(name = "name")
-    protected String name;
+    @Param(name = "mondaysToSaturdaysName")
+    protected String mondaysToSaturdaysName;
+
+    @Param(name = "sundaysName")
+    protected String sundaysName;
 
     @Param(name = "startDate")
     protected Date startDate;
@@ -50,13 +53,14 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
 
     @OperationMethod
     public void run() throws AthentoException {
-        int businessDays = calculateBusinessDays(startDate, endDate, year, region);
-        ctx.put(name,businessDays);
+        calculateBusinessDays(startDate, endDate, year, region, mondaysToSaturdaysName, sundaysName, ctx);
+
     }
 
     // Dates are not inclusive
-    private int calculateBusinessDays(Date startDate, Date endDate, String year, String region) {
+    private void calculateBusinessDays(Date startDate, Date endDate, String year, String region, String mondaysToSaturdaysName, String sundaysName, OperationContext ctx) {
         int businessDays = 0;
+        int sundays = 0;
 
         if (startDate != null && endDate != null) {
 
@@ -83,17 +87,20 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
 
             while (startCal.getTimeInMillis() <= endCal.getTimeInMillis())
             {
-                if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
-                {
-                    if(!isHoliday(startCal.getTime(), holidays)) {
+                if(!isHoliday(startCal.getTime(), holidays)) {
+                    if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
+                    {
                         businessDays++;
+                    }else{
+                        sundays++;
                     }
                 }
                 startCal.add(Calendar.DAY_OF_MONTH, 1);
             }
         }
 
-        return businessDays;
+        ctx.put(mondaysToSaturdaysName, businessDays);
+        ctx.put(sundaysName, sundays);
     }
 
     private List<Calendar> getHolidays(String year, String region ) throws OperationException{
@@ -111,7 +118,7 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
                 if (retValue instanceof DocumentModelList) {
                     queryRes = (DocumentModelList) retValue;
                     if(!queryRes.isEmpty()){
-                        Property prop = queryRes.get(0).getProperty("Holidays");
+                        Property prop = queryRes.get(0).getProperty("holidayscr:Holidays");
                         Type type = prop.getType();
                         Serializable value = prop.getValue();
                         if(type.isListType()){
@@ -144,7 +151,7 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
                 _log.error("Business days Error--> " + e);
             }
         }
-
+    _log.debug("Found " + holidays.size() + " holidays");
         return holidays;
     }
 
@@ -165,6 +172,7 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
 
     private boolean isSameDay(Date d1, Date d2){
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        _log.debug("Is " + fmt.format(d1) + " the same as " + fmt.format(d2) + "?");
         return fmt.format(d1).equals(fmt.format(d2));
     }
 
