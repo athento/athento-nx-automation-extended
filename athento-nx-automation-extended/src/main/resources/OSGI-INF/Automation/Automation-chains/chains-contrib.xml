@@ -629,7 +629,7 @@
                 <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
             </operation>
         </chain>
-
+<!--
         <chain id="Athento.SubscribeUser">
             <documentation>
                 Subscribe user to the current document (to all notifications)
@@ -667,7 +667,7 @@
             </operation>
             <operation id="Context.FetchDocument"/>
         </chain>
-
+-->
     </extension>
 
     <!--extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">
