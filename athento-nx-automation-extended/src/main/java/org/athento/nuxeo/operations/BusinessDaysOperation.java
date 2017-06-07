@@ -48,17 +48,17 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
     @Param(name = "year")
     protected String year;
 
-    @Param(name = "region")
-    protected String region;
+    @Param(name = "center")
+    protected String center;
 
     @OperationMethod
     public void run() throws AthentoException {
-        calculateBusinessDays(startDate, endDate, year, region, mondaysToSaturdaysName, sundaysName, ctx);
+        calculateBusinessDays(startDate, endDate, year, center, mondaysToSaturdaysName, sundaysName, ctx);
 
     }
 
     // Dates are not inclusive
-    private void calculateBusinessDays(Date startDate, Date endDate, String year, String region, String mondaysToSaturdaysName, String sundaysName, OperationContext ctx) {
+    private void calculateBusinessDays(Date startDate, Date endDate, String year, String center, String mondaysToSaturdaysName, String sundaysName, OperationContext ctx) {
         int businessDays = 0;
         int sundays = 0;
 
@@ -79,7 +79,7 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
             }
             List<Calendar> holidays = null;
             try{
-                holidays = getHolidays( year, region);
+                holidays = getHolidays( year, center);
             }catch(OperationException e){
                 _log.error(e);
                 holidays = new ArrayList<>();
@@ -103,13 +103,13 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
         ctx.put(sundaysName, sundays);
     }
 
-    private List<Calendar> getHolidays(String year, String region ) throws OperationException{
+    private List<Calendar> getHolidays(String year, String center ) throws OperationException{
         List<Calendar> holidays = new ArrayList<Calendar>();
 
-        if(!nullOrEmpty(year) && !nullOrEmpty(region)){
+        if(!nullOrEmpty(year) && !nullOrEmpty(center)){
             try {
                 String operationId = "Athento.Document.Query";
-                String query = "SELECT * FROM Holidays_Cal WHERE holidayscr:Year='" + year + "' AND holidayscr:Region='"+ region +"' AND ecm:mixinType != 'HiddenInNavigation' AND ecm:isProxy = 0 AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState != 'deleted'";
+                String query = "SELECT * FROM Holidays_Cal WHERE holidayscr:Year='" + year + "' AND holidayscr:Centers IN ('"+ center +"') AND ecm:mixinType != 'HiddenInNavigation' AND ecm:isProxy = 0 AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState != 'deleted'";
                 Object input = null;
                 Map<String, Object> params = new HashMap<>();
                 params.put("query", query);
@@ -172,7 +172,6 @@ public class BusinessDaysOperation extends AbstractAthentoOperation {
 
     private boolean isSameDay(Date d1, Date d2){
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        _log.debug("Is " + fmt.format(d1) + " the same as " + fmt.format(d2) + "?");
         return fmt.format(d1).equals(fmt.format(d2));
     }
 

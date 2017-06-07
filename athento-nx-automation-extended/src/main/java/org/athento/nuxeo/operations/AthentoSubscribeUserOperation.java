@@ -44,17 +44,11 @@ public class AthentoSubscribeUserOperation extends AbstractAthentoOperation {
     private void subscribeUser(OperationContext ctx, String username, DocumentModel doc) {
         if(doc != null){
             UserManager userManager = Framework.getService(UserManager.class);
-            _log.debug("Getting principal of --> " + username);
             NuxeoPrincipal principal = userManager.getPrincipal(username);
             if(principal != null){
-                _log.debug("Subscribing user");
                 NotificationManager notificationManager = Framework.getService(NotificationManager.class);
                 notificationManager.addSubscriptions(NotificationConstants.USER_PREFIX + principal.getName(),doc,true,principal);
-            }else{
-                _log.debug("Principal is null");
             }
-        }else{
-            _log.debug("Document is null");
         }
     }
 
