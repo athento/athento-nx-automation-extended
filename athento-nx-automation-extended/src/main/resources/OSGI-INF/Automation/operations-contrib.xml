@@ -38,5 +38,7 @@
         <operation class="org.athento.nuxeo.operations.CSVToListOperation" />
         <operation class="org.athento.nuxeo.operations.utils.ClearInputOperation" />
         <operation class="org.athento.nuxeo.operations.BusinessDaysOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
+        <operation class="org.athento.nuxeo.operations.GetPublicURLOperation" />
     </extension>
 </component>
