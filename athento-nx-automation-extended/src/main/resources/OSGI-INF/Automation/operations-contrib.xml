@@ -40,5 +40,6 @@
         <operation class="org.athento.nuxeo.operations.BusinessDaysOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
         <operation class="org.athento.nuxeo.operations.GetPublicURLOperation" />
+        <operation class="org.athento.nuxeo.operations.ExportDocumentsToZIPOperation" />
     </extension>
 </component>
