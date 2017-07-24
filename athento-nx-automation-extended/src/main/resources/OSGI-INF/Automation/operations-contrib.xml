@@ -38,5 +38,6 @@
         <operation class="org.athento.nuxeo.operations.CSVToListOperation" />
         <operation class="org.athento.nuxeo.operations.utils.ClearInputOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
+        <operation class="org.athento.nuxeo.operations.ExportDocumentsToZIPOperation" />
     </extension>
 </component>
