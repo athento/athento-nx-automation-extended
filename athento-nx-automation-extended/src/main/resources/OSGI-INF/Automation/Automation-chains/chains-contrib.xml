@@ -678,6 +678,19 @@
             </operation>
         </chain>
 
+        <chain id="Athento.ExportDocumentsToZIP">
+            <documentation>Export the query document list result to ZIP File</documentation>
+            <param type="string" name="query"/>
+            <param type="integer" name="offset"/>
+            <param type="integer" name="limit"/>
+            <operation id="Document.ElasticQuery">
+                <param type="string" name="query">expr:@{ChainParameters['query']}</param>
+                <param type="integer" name="limit">expr:ChainParameters['limit']</param>
+                <param type="integer" name="offset">expr:ChainParameters['offset']</param>
+            </operation>
+            <operation id="Athento.ExportDocsToZIP" />
+        </chain>
+
     </extension>
 
     <extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">
