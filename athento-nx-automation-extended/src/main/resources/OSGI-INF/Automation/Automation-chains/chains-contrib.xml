@@ -631,7 +631,7 @@
         </chain>
 
         <!-- Link and unlink document -->
-        <chain id="Athento.LinkDocument">
+        <!--COMPLETE: chain id="Athento.LinkDocument">
             <documentation>
                 Extended document link creation.
             </documentation>
@@ -663,7 +663,7 @@
                 <param type="string" name="category">eventDocumentCategory</param>
                 <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
-        </chain>
+        </chain-->
 
         <chain id="Athento.ExportDocumentsToZIP">
             <documentation>Export the query document list result to ZIP File</documentation>
