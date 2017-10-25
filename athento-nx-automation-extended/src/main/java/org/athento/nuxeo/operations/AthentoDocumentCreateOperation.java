@@ -139,7 +139,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     + ". Watched doctypes are: " + watchedDocumentTypes);
                 parentFolder = parentDoc;
             }
-            if (name == null) {
+            if (name == null || "".equals(name.trim())) {
                 name = "Untitled";
             }
             String parentPath = parentFolder.getPathAsString();
@@ -149,6 +149,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             DocumentModel newDoc = session.createDocumentModel(parentPath,
                 name, type);
+            _log.info("Creating document 0 " + newDoc.getPathAsString());
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
                 StringList lastUpdateMetadatas = PropertyUtils.getPropertiesAsStringList(properties, newDoc);
@@ -157,6 +158,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     newDoc.setPropertyValue("inheritance:lastUpdatedMetadatas", StringUtils.stringfy(lastUpdateMetadatas));
                 }
             }
+            _log.info("Creating document 1 " + newDoc.getPathAsString());
             // Check if document must have the blob #AT-1066
             if (blob != null) {
                 // Set file:filename property
@@ -164,6 +166,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 // Add blob to property
                 DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
             }
+            _log.info("Creating document 2 " + newDoc.getPathAsString());
             DocumentModel doc = session.createDocument(newDoc);
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentCreateOperation.ID

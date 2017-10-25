@@ -46,6 +46,8 @@ public final class DocumentFunctions {
             return doc.isVersion();
         } else if (NXQL.ECM_ISPROXY.equals(column)) {
             return doc.isProxy();
+        } else if (NXQL.ECM_PRIMARYTYPE.equals(column)) {
+            return doc.getType();
         } else if (NXQL.ECM_LOCK_OWNER.equals(column)) {
             if (doc.isLocked()) {
                 return doc.getLockInfo().getOwner();
