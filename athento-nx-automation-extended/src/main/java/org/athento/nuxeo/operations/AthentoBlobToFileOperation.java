@@ -1,11 +1,9 @@
 package org.athento.nuxeo.operations;
 
-import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.BlobCollector;
-import org.nuxeo.ecm.automation.core.operations.blob.BlobToFile;
 import org.nuxeo.ecm.core.api.Blob;
 
 import java.io.File;
@@ -14,7 +12,7 @@ import java.io.IOException;
 /**
  * Athento Blob to File using a filename parameter.
  */
-@Operation(id = BlobToFile.ID, category = "Athento", label = "Export to File", description = "Save blob into file.")
+@Operation(id = AthentoBlobToFileOperation.ID, category = "Athento", label = "Export to File", description = "Save blob into file.")
 public class AthentoBlobToFileOperation {
 
     public static final String ID = "Athento.BlobToFile";
