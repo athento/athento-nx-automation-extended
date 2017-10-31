@@ -4,8 +4,6 @@
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations">
         <operation class="org.athento.nuxeo.operations.AthentoAttachBlobOperation"
             replace="true" />
-        <operation class="org.athento.nuxeo.operations.AthentoBlobToFileOperation"
-                   replace="true" />
         <operation class="org.athento.nuxeo.operations.AthentoFilterDocuments"
                    replace="true" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentCreateOperation" />
@@ -42,5 +40,6 @@
         <operation class="org.athento.nuxeo.operations.BusinessDaysOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
         <operation class="org.athento.nuxeo.operations.ExportDocumentsToZIPOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoBlobToFileOperation"/>
     </extension>
 </component>
