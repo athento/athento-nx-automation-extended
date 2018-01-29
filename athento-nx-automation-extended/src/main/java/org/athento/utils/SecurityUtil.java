@@ -1,6 +1,7 @@
 package org.athento.utils;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -8,15 +9,16 @@ import org.nuxeo.ecm.core.api.DocumentRef;
 import org.nuxeo.ecm.core.api.security.ACE;
 import org.nuxeo.ecm.core.api.security.impl.ACLImpl;
 import org.nuxeo.ecm.core.api.security.impl.ACPImpl;
+import org.nuxeo.runtime.api.Framework;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
+import java.io.UnsupportedEncodingException;
+import java.security.Key;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.AlgorithmParameterSpec;
 
 /**
  * Security util class.
@@ -25,6 +27,8 @@ public final class SecurityUtil {
 
     /** Log. */
     private static final Log LOG = LogFactory.getLog(SecurityUtil.class);
+
+    private static final String DEFAULT_IV = "Z8guyTT7clad3vVV"; //"Z8564fTyghlad3vV";
 
     /**
      * Add permission to user.
@@ -45,79 +49,45 @@ public final class SecurityUtil {
         documentManager.setACP(ref, acp, false);
     }
 
-    /**
-     * Encrypt a value.
-     *
-     * @param secret
-     * @param init
-     * @param value
-     * @return
-     */
-    public static String encrypt(String secret, String init, String value) {
-        if (secret == null || init == null) {
-            return value;
-        }
+    public static String encrypt(String key, String src) {
         try {
-            IvParameterSpec iv = new IvParameterSpec(init.getBytes("UTF-8"));
-            SecretKeySpec skeySpec = new SecretKeySpec(secret.getBytes("UTF-8"), "AES");
-
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-
-            byte[] encrypted = cipher.doFinal(value.getBytes());
-            return Base64.encodeBase64String(encrypted);
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, makeKey(key), makeIv());
+            return new String(Base64.encodeBase64(cipher.doFinal(src.getBytes())));
         } catch (Exception e) {
-            LOG.trace("Encrypt error query: " + e.getMessage());
+            throw new RuntimeException(e);
         }
+    }
 
+    public static String decrypt(String key, String src) {
+        String decrypted = "";
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, makeKey(key), makeIv());
+            decrypted = new String(cipher.doFinal(Base64.decodeBase64(src)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return decrypted;
+    }
+
+    static AlgorithmParameterSpec makeIv() {
+        try {
+            String iv;
+            if (Framework.isInitialized()) {
+                iv = Framework.getProperty("athento.cipher.iv", null);
+            } else {
+                iv = DEFAULT_IV;
+            }
+            return new IvParameterSpec(iv.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
-    /**
-     * Decrypt a value.
-     *
-     * @param secret
-     * @param init
-     * @param value
-     * @return
-     */
-    public static String decrypt(String secret, String init, String value) {
-        if (secret == null || init == null) {
-            return value;
-        }
-        try {
-            String initVector = init;
-            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
-            SecretKeySpec skeySpec = new SecretKeySpec(secret.getBytes("UTF-8"), "AES");
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-            byte[] original = cipher.doFinal(Base64.decodeBase64(value));
-            value = new String(original);
-        } catch (Exception e) {
-            LOG.trace("Decrypt error query: " + e.getMessage());
-        }
-        return value;
-    }
-
-    public static String decrypt_data(String secret, String encData)
-            throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        SecretKeySpec skeySpec = new SecretKeySpec(secret.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-        byte[] original = cipher
-                .doFinal(Base64.decodeBase64(encData.getBytes()));
-        String decrypt = new String(original).trim();
-        return decrypt;
-    }
-
-    public static String encrypt_data(String secret, String data)
-            throws Exception {
-        SecretKeySpec skeySpec = new SecretKeySpec(secret.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-        byte[] original = Base64.encodeBase64(cipher.doFinal(data.getBytes()));
-        String encrypt = new String(original);
-        return encrypt;
+    static Key makeKey(String secret) throws UnsupportedEncodingException {
+        SecretKeySpec skeySpec = new SecretKeySpec(secret.getBytes("UTF-8"), "AES");
+        return skeySpec;
     }
 }

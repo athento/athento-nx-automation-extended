@@ -94,7 +94,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             // Check if query is ciphered
             if (!query.startsWith("SELECT")) {
                 String secret = Framework.getProperty("athento.cipher.secret", null);
-                modifiedQuery = SecurityUtil.decrypt_data(secret, query);
+                modifiedQuery = SecurityUtil.decrypt(secret, query);
             } else {
                 modifiedQuery = query;
             }
