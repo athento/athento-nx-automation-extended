@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.athento.nuxeo.operations;
 
 import org.apache.commons.logging.Log;
@@ -8,8 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
-import org.athento.nuxeo.service.AutomationRegistryService;
 import org.athento.utils.RegisterHelper;
+import org.athento.utils.SecurityUtil;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
@@ -22,14 +19,21 @@ import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.runtime.api.Framework;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * @author athento
- *
  */
 @Operation(id = AthentoDocumentResultSetOperation.ID, category = "Athento", label = "Athento Document ResultSet", description = "ResultSets a document in Athento's way")
 public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation {
+
+    /**
+     * Log.
+     */
+    private static final Log LOG = LogFactory.getLog(AthentoDocumentResultSetOperation.class);
 
     public static final String ID = "Athento.Document.ResultSet";
 
@@ -42,7 +46,9 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     @Context
     protected CoreSession session;
 
-    /** Operation context. */
+    /**
+     * Operation context.
+     */
     @Context
     protected OperationContext ctx;
 
@@ -62,14 +68,15 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     protected String providerName;
 
     @Param(name = "sortBy", required = false, description = "Sort by "
-        + "properties (separated by comma)")
+            + "properties (separated by comma)")
     protected String sortBy;
 
     @Param(name = "sortOrder", required = false, description = "Sort order, "
-        + "ASC or DESC", widget = Constants.W_OPTION, values = {
-        AthentoDocumentResultSetOperation.ASC,
-        AthentoDocumentResultSetOperation.DESC })
+            + "ASC or DESC", widget = Constants.W_OPTION, values = {
+            AthentoDocumentResultSetOperation.ASC,
+            AthentoDocumentResultSetOperation.DESC})
     protected String sortOrder;
+
 
     /**
      * Field list params.
@@ -83,24 +90,31 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         checkAllowedAccess(ctx);
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {
-            String modifiedQuery = query;
+            String modifiedQuery;
+            // Check if query is ciphered
+            if (!query.startsWith("SELECT")) {
+                String secret = Framework.getProperty("athento.cipher.secret", null);
+                modifiedQuery = SecurityUtil.decrypt_data(secret, query);
+            } else {
+                modifiedQuery = query;
+            }
             Map<String, Object> config = AthentoOperationsHelper
-                .readConfig(session);
+                    .readConfig(session);
             String watchedDocumentTypes = String.valueOf(config
-                .get(AthentoDocumentResultSetOperation.CONFIG_WATCHED_DOCTYPE));
+                    .get(AthentoDocumentResultSetOperation.CONFIG_WATCHED_DOCTYPE));
             String operationId = String.valueOf(config
-                .get(AthentoDocumentResultSetOperation.CONFIG_OPERATION_ID));
+                    .get(AthentoDocumentResultSetOperation.CONFIG_OPERATION_ID));
             if (isWatchedDocumentType(docTypes, watchedDocumentTypes)) {
                 Object input = null;
-                Map<String, Object> params = new HashMap<String, Object>();
+                Map<String, Object> params = new HashMap<>();
                 params.put("query", query);
                 Object retValue = AthentoOperationsHelper.runOperation(
-                    operationId, input, params, session);
+                        operationId, input, params, session);
                 modifiedQuery = String.valueOf(retValue);
             }
             Object input = null;
             operationId = "Resultset.PageProvider";
-            Map<String, Object> params = new HashMap<String, Object>();
+            Map<String, Object> params = new HashMap<>();
             params.put("query", modifiedQuery);
             params.put("page", page);
             params.put("pageSize", pageSize);
@@ -113,22 +127,22 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             }
             long startTime = System.currentTimeMillis();
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
-                input, params, session);
+                    input, params, session);
             if (retValue instanceof RecordSet) {
                 long endTime = System.currentTimeMillis();
                 // Register an entry into queryRequest registry
                 RegisterHelper.registerQuery(modifiedQuery, pageSize, page, startTime, endTime);
                 return (RecordSet) retValue;
             } else {
-                _log.error("Unexpected return type for operation: "
-                    + operationId);
+                LOG.error("Unexpected return type for operation: "
+                        + operationId);
                 return null;
             }
         } catch (Exception e) {
-            _log.error(
-                "Unable to complete operation: "
-                    + AthentoDocumentResultSetOperation.ID + " due to: "
-                    + e.getMessage(), e);
+            LOG.error(
+                    "Unable to complete operation: "
+                            + AthentoDocumentResultSetOperation.ID + " due to: "
+                            + e.getMessage(), e);
             if (e instanceof AthentoException) {
                 throw e;
             }
@@ -145,35 +159,32 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             String subquery;
             if (idx2 > idx1) {
                 subquery = query.substring(idx1 + StringUtils.FROM.length(),
-                    idx2);
+                        idx2);
             } else {
                 subquery = query.substring(idx1 + StringUtils.FROM.length());
             }
             subquery = subquery.trim();
             return StringUtils.asList(subquery, StringUtils.COMMA);
         } catch (Throwable t) {
-            _log.error("Error looking for document Type in query: " + query, t);
+            LOG.error("Error looking for document Type in query: " + query, t);
         }
         return new ArrayList<>();
     }
 
     private boolean isWatchedDocumentType(ArrayList<String> docTypes,
-        String watchedDocumentTypes) {
+                                          String watchedDocumentTypes) {
         if (StringUtils.isNullOrEmpty(watchedDocumentTypes)) {
             return false;
         }
         boolean isIncluded = false;
         for (String docType : docTypes) {
             isIncluded = StringUtils.isIncludedIn(docType,
-                watchedDocumentTypes, StringUtils.COMMA);
+                    watchedDocumentTypes, StringUtils.COMMA);
             if (isIncluded) {
                 break;
             }
         }
         return isIncluded;
     }
-
-    private static final Log _log = LogFactory
-        .getLog(AthentoDocumentResultSetOperation.class);
 
 }
