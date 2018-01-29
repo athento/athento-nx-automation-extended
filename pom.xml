@@ -30,6 +30,7 @@
         <module>athento-nx-automation-extended</module>
         <module>athento-nx-automation-extended-dist</module>
     </modules>
+
     <properties>
         <nuxeo.platform.version>8.10</nuxeo.platform.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -10,24 +10,18 @@ import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationChain;
 import org.nuxeo.ecm.automation.OperationContext;
-import org.nuxeo.ecm.automation.core.operations.FetchContextDocument;
 import org.nuxeo.ecm.automation.core.rendering.Renderer;
-import org.nuxeo.ecm.automation.core.rendering.operations.RenderDocument;
-import org.nuxeo.ecm.automation.core.rendering.operations.RenderDocumentFeed;
-import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
-import org.nuxeo.ecm.core.test.CoreFeature;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.services.resource.ResourceService;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
-import org.nuxeo.theme.models.Feed;
 
 import java.net.URL;
 
@@ -37,7 +31,6 @@ import static org.junit.Assert.assertEquals;
  * Feed operation test.
  */
 @RunWith(FeaturesRunner.class)
-@Features(CoreFeature.class)
 @Deploy("org.nuxeo.ecm.automation.core")
 @LocalDeploy("org.athento.nuxeo.automation-extended:OSGI-INF/Automation/operations-contrib.xml")
 public class FeedOperationTest {
