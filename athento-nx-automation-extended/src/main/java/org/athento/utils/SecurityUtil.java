@@ -1,7 +1,6 @@
 package org.athento.utils;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -16,8 +15,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 
 /**
@@ -28,7 +25,7 @@ public final class SecurityUtil {
     /** Log. */
     private static final Log LOG = LogFactory.getLog(SecurityUtil.class);
 
-    private static final String DEFAULT_IV = "Z8guyTT7clad3vVV"; //"Z8564fTyghlad3vV";
+    private static final String DEFAULT_IV = "ZxT3mzDekMgrm123"; //"Z8564fTyghlad3vV";
 
     /**
      * Add permission to user.
