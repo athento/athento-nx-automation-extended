@@ -8,6 +8,8 @@
                    replace="true" />
         <operation class="org.athento.nuxeo.operations.NuxeoDriveGetClientUpdateInfoOperation"
                    replace="true" />
+        <operation class="org.athento.nuxeo.operations.GetSelectedDocumentsOperation"
+                   replace="true" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentCreateOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentFindOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMultiCreateOperation" />
