@@ -35,6 +35,9 @@ public class GetSelectedDocumentsOperation {
 
     @OperationMethod
     public DocumentModelList run() {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Getting selected documents from Athento...");
+        }
         DocumentModelList docFinal = new DocumentModelListImpl();
         List<DocumentModel> res = getDocumentListManager().getWorkingList(
                 DocumentsListsManager.CURRENT_DOCUMENT_SELECTION);
