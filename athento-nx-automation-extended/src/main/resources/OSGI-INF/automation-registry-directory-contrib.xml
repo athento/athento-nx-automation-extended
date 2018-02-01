@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<component name="org.athento.nuxeo.automation.extended.DirectoryContrib">
+
+  <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory"
+    point="directories">
+
+    <directory name="queryRequests">
+      <dataSource>java:/nxsqldirectory</dataSource>
+      <schema>automationQueryRequest</schema>
+      <table>query_requests</table>
+      <idField>name</idField>
+      <autoincrementIdField>false</autoincrementIdField>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+      <cacheTimeout>300</cacheTimeout>
+      <cacheMaxSize>1000</cacheMaxSize>
+    </directory>
+
+  </extension>
+</component>
