@@ -629,7 +629,45 @@
                 <param type="string" name="directory">expr:@{ChainParameters['outputDir']}</param>
             </operation>
         </chain>
-
+      
+        <chain id="Athento.SubscribeUser">
+            <documentation>
+                Subscribe user to the current document (to all notifications)
+            </documentation>
+            <param type="string" name="username"/>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">usernamechain</param>
+                <param type="string" name="value">expr:@{ChainParameters['username']}
+                </param>
+            </operation>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">username</param>
+                <param type="string" name="value">expr:@{"user:"+usernamechain}
+                </param>
+            </operation>
+            <operation id="Context.FetchDocument"/>
+            <operation id="Context.SetInputAsVar">
+                <param type="string" name="name">doc</param>
+            </operation>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">nm</param>
+                <param type="string" name="value">
+                    expr:org.nuxeo.runtime.api.Framework.getService(org.nuxeo.ecm.platform.notification.api.NotificationManager)
+                </param>
+            </operation>
+            <operation id="Context.SetVar">
+                <param type="string" name="name">principal</param>
+                <param type="string" name="value">
+                    expr:Fn.getPrincipal('usernamechain')
+                </param>
+            </operation>
+            <operation id="Context.RunScript">
+                <param type="string" name="script">nm.addSubscriptions(username,doc,true,principal);username;
+                </param>
+            </operation>
+            <operation id="Context.FetchDocument"/>
+        </chain>
+      
         <!-- Link and unlink document -->
         <chain id="Athento.LinkDocument">
             <documentation>
@@ -677,7 +715,7 @@
             </operation>
             <operation id="Athento.ExportDocsToZIP" />
         </chain>
-
+      
     </extension>
 
     <!--extension target="org.nuxeo.ecm.core.io.MarshallerRegistry" point="marshallers">
