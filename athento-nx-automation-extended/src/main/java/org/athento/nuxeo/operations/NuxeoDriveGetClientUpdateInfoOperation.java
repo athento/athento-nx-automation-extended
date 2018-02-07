@@ -34,9 +34,12 @@ public class NuxeoDriveGetClientUpdateInfoOperation {
     public Blob run() throws ClientException, IOException {
         NuxeoDriveClientUpdateInfo info = new NuxeoDriveClientUpdateInfo();
         if (((NuxeoPrincipal) session.getPrincipal()).isAdministrator()) {
-            String serverVersion = Framework.getProperty("org.nuxeo.ecm.product.version");
+            /*String serverVersion = Framework.getProperty("org.nuxeo.ecm.product.version");
             String updateSiteURL = Framework.getProperty("org.nuxeo.drive.update.site.url");
-            String betaUpdateSiteURL = Framework.getProperty("org.nuxeo.drive.beta.update.site.url");
+            String betaUpdateSiteURL = Framework.getProperty("org.nuxeo.drive.beta.update.site.url");*/
+            String serverVersion = "OK";
+            String updateSiteURL = "Unavailable";
+            String betaUpdateSiteURL = "Unavailable";
             info.setBetaUpdateSiteURL(betaUpdateSiteURL);
             info.setServerVersion(serverVersion);
             info.setUpdateSiteURL(updateSiteURL);
@@ -49,6 +52,7 @@ public class NuxeoDriveGetClientUpdateInfoOperation {
         String json = mapper.writeValueAsString(value);
         return StreamingBlob.createFromByteArray(json.getBytes("UTF-8"), "application/json");
     }
+
 
     private class NuxeoDriveClientUpdateInfo {
 

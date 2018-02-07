@@ -23,4 +23,13 @@ public class EncryptDecryptTest {
         SecurityUtil.decrypt_data(key, v);
     }
 
+    @Test
+    public void testEncryptDecryptSE() throws Exception {
+        String key = "kFPdsiT348Yu43jh34876w";
+        String v = SecurityUtil.encrypt(key, "metadata.dni_persona=12345678&metadata.nombre_persona=usuario1&metadata.apellidos_persona=apellido1&metadata.telefono_persona=99999999&metadata.email_persona=usuario1@empresa.com&metadata.autor=userid&metadata.oficina=1111&current_datetime=2018-01-30 19:14");
+        System.out.println(v);
+        v = SecurityUtil.decrypt(key, v);
+        System.out.println(v);
+    }
+
 }
