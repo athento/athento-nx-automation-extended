@@ -25,7 +25,7 @@ public final class SecurityUtil {
     /** Log. */
     private static final Log LOG = LogFactory.getLog(SecurityUtil.class);
 
-    private static final String DEFAULT_IV = "ZxT3mzDekMgrm123"; //"Z8564fTyghlad3vV";
+    private static final String DEFAULT_IV = "ZxT3mzDekMgrm123";;
 
     /**
      * Add permission to user.
@@ -52,7 +52,8 @@ public final class SecurityUtil {
             cipher.init(Cipher.ENCRYPT_MODE, makeKey(key), makeIv());
             return new String(Base64.encodeBase64(cipher.doFinal(src.getBytes())));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            LOG.error("Encrypt problem occurred: " + e.getMessage());
+            return src;
         }
     }
 
@@ -63,7 +64,8 @@ public final class SecurityUtil {
             cipher.init(Cipher.DECRYPT_MODE, makeKey(key), makeIv());
             decrypted = new String(cipher.doFinal(Base64.decodeBase64(src)));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            LOG.error("Decrypt problem occurred: " + e.getMessage());
+            decrypted = src;
         }
         return decrypted;
     }
