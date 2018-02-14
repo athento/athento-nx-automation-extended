@@ -15,7 +15,7 @@ public class EncryptDecryptTest {
     @Test
     public void testEncryptDecrypt() throws Exception {
         String key = "ZxT3mzDekMgrmExE";
-        String v = SecurityUtil.encrypt(key, "SELECT ecm:uuid, ecm:path, ecm:primaryType, ecm:mixinType, dc:title, dc:description FROM Document WHERE ecm:mixinType != 'HiddenInNavigation' AND ecm:isProxy = 0 AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState != 'deleted'");
+        String v = SecurityUtil.encrypt(key, "SELECT ecm:uuid, ecm:path, ecm:primaryType, ecm:mixinType, dc:title, dc:description, oportunidad:identificador_crm, oportunidad:documento, oportunidad:cliente FROM Document WHERE ecm:mixinType != 'HiddenInNavigation' AND ecm:isProxy = 0 AND ecm:isCheckedInVersion = 0 AND ecm:currentLifeCycleState != 'deleted'");
         System.out.println(v);
         v = SecurityUtil.decrypt(key, v);
         System.out.println(v);

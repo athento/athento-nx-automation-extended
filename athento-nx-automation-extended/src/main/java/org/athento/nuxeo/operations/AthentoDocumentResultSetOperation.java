@@ -90,9 +90,15 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
         checkAllowedAccess(ctx);
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Executing query " + query);
+            }
+            if (query != null) {
+                query = query.trim();
+            }
             String modifiedQuery;
             // Check if query is ciphered
-            if (!query.startsWith("SELECT")) {
+            if (!query.startsWith("SELECT ")) {
                 String secret = Framework.getProperty("athento.cipher.secret", null);
                 modifiedQuery = SecurityUtil.decrypt(secret, query);
             } else {

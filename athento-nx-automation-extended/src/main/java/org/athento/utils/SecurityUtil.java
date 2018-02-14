@@ -25,7 +25,7 @@ public final class SecurityUtil {
     /** Log. */
     private static final Log LOG = LogFactory.getLog(SecurityUtil.class);
 
-    private static final String DEFAULT_IV = "ZxT3mzDekMgrm123";;
+    private static final String DEFAULT_IV = "Z8guyTT7clad3vVV";
 
     /**
      * Add permission to user.
