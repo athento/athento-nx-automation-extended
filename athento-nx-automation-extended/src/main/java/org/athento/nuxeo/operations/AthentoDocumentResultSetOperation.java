@@ -96,13 +96,17 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             if (query != null) {
                 query = query.trim();
             }
-            String modifiedQuery;
+            String modifiedQuery = query;
             // Check if query is ciphered
-            if (!query.startsWith("SELECT ")) {
+            if (query.startsWith("{cipher}")) {
                 String secret = Framework.getProperty("athento.cipher.secret", null);
-                modifiedQuery = SecurityUtil.decrypt(secret, query);
-            } else {
-                modifiedQuery = query;
+                if (secret != null) {
+                    if (LOG.isInfoEnabled()) {
+                        LOG.info("Query is ready to decrypt...");
+                    }
+                    query = query.substring(8);
+                    modifiedQuery = SecurityUtil.decrypt(secret, query);
+                }
             }
             Map<String, Object> config = AthentoOperationsHelper
                     .readConfig(session);
