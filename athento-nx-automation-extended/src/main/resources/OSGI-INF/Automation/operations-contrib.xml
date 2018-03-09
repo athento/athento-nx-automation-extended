@@ -39,6 +39,10 @@
         <operation class="org.athento.nuxeo.operations.SetDocumentComplexPropertyOperation" />
         <operation class="org.athento.nuxeo.operations.CSVToListOperation" />
         <operation class="org.athento.nuxeo.operations.utils.ClearInputOperation" />
+        <operation class="org.athento.nuxeo.operations.BusinessDaysOperation" />
+        <operation class="org.athento.nuxeo.operations.GetUsersByEmailOperation" />
+        <operation class="org.athento.nuxeo.operations.GetUsersByFilter" />
+        <operation class="org.athento.nuxeo.operations.AthentoSubscribeUserOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
         <operation class="org.athento.nuxeo.operations.ExportDocumentsToZIPOperation" />
     </extension>
