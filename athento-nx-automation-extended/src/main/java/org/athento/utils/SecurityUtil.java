@@ -11,10 +11,12 @@ import org.nuxeo.ecm.core.api.security.impl.ACPImpl;
 import org.nuxeo.runtime.api.Framework;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 
 /**
@@ -26,6 +28,18 @@ public final class SecurityUtil {
     private static final Log LOG = LogFactory.getLog(SecurityUtil.class);
 
     private static final String DEFAULT_IV = "Z8guyTT7clad3vVV";
+
+    private static Cipher cipher;
+    private static IvParameterSpec parameterSpec;
+    private static SecretKeySpec skeySpec;
+
+    static {
+        try {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            LOG.error("Unable to init ciper instance");
+        }
+    }
 
     /**
      * Add permission to user.
@@ -48,7 +62,6 @@ public final class SecurityUtil {
 
     public static String encrypt(String key, String src) {
         try {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, makeKey(key), makeIv());
             return new String(Base64.encodeBase64(cipher.doFinal(src.getBytes())));
         } catch (Exception e) {
@@ -60,7 +73,6 @@ public final class SecurityUtil {
     public static String decrypt(String key, String src) {
         String decrypted = "";
         try {
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, makeKey(key), makeIv());
             decrypted = new String(cipher.doFinal(Base64.decodeBase64(src)));
         } catch (Exception e) {
@@ -78,7 +90,10 @@ public final class SecurityUtil {
             } else {
                 iv = DEFAULT_IV;
             }
-            return new IvParameterSpec(iv.getBytes("UTF-8"));
+            if (parameterSpec == null) {
+                parameterSpec = new IvParameterSpec(iv.getBytes("UTF-8"));
+            }
+            return parameterSpec;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -86,7 +101,6 @@ public final class SecurityUtil {
     }
 
     static Key makeKey(String secret) throws UnsupportedEncodingException {
-        SecretKeySpec skeySpec = new SecretKeySpec(secret.getBytes("UTF-8"), "AES");
-        return skeySpec;
+        return new SecretKeySpec(secret.getBytes("UTF-8"), "AES");
     }
 }
