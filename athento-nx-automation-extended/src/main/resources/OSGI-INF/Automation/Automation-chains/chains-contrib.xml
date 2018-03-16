@@ -59,6 +59,10 @@
                     onChainId="Athento.MultiDocumentCreate">
             <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
         </catchChain>
+        <catchChain id="athentoExceptionCatchDocumentPermanentDelete"
+                    onChainId="Athento.DocumentPermanentDelete">
+            <run chainId="athentoExceptionReturn" priority="0" rollBack="true"/>
+        </catchChain>
     </extension>
 
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
@@ -109,7 +113,6 @@
                 <param type="string" name="category">eventDocumentCategory</param>
                 <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
-
         </chain>
 
         <chain id="Athento.DocumentQuery">

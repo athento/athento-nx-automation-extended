@@ -14,6 +14,7 @@
         <operation class="org.athento.nuxeo.operations.AthentoDocumentQueryOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentResultSetOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentUpdateOperation" />
+        <operation class="org.athento.nuxeo.operations.AthentoDocumentPermanentDeleteOperation"/>
         <operation class="org.athento.nuxeo.operations.AthentoExceptionCreateOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoMultiAttachBlobOperation" />
         <operation class="org.athento.nuxeo.operations.CompareVocabulariesOperation" />
