@@ -22,6 +22,7 @@ import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.platform.tag.TagService;
 
 import java.util.HashMap;
@@ -47,17 +48,22 @@ public class AthentoDocumentPermanentDeleteOperation extends AbstractAthentoOper
     @Context
     protected CoreSession session;
 
-    /** Operation context. */
     @Context
-    protected OperationContext ctx;
+    protected String docId;
 
-    @OperationMethod(collector = DocumentModelCollector.class)
-    public void run(DocumentModel doc) throws Exception {
-        if (!session.canRemoveDocument(doc.getRef())) {
-            LOG.warn("Document " + doc.getRef() + " cannot be removed.");
+    /**
+     * Run.
+     *
+     * @throws Exception
+     */
+    public void run() throws Exception {
+        IdRef docRef = new IdRef(docId);
+        if (!session.canRemoveDocument(docRef)) {
+            LOG.warn("Document " + docId + " cannot be removed.");
+        } else {
+            LOG.info("Removing permanent for " + docId);
+            session.removeDocument(docRef);
         }
-        session.removeDocument(doc.getRef());
     }
-
 
 }
