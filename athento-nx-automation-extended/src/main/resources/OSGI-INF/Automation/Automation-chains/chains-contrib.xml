@@ -672,7 +672,7 @@
         </chain>
       
         <!-- Link and unlink document -->
-        <chain id="Athento.LinkDocument">
+        <chain id="Athento.Document.Link">
             <documentation>
                 Extended document link creation.
             </documentation>
@@ -680,25 +680,25 @@
             <param type="properties" name="properties"/>
             <param type="string" name="audit"/>
             <param type="boolean" name="override" />
-            <operation id="Athento.Document.Link">
+            <!--operation id="Athento.Document.Link">
                 <param type="properties" name="properties">expr:ChainParameters['properties']</param>
                 <param type="boolean" name="override">expr:ChainParameters['override']</param>
-            </operation>
+            </operation-->
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentLinked</param>
                 <param type="string" name="category">eventDocumentCategory</param>
                 <param type="string" name="comment">expr:@{ChainParameters['audit']}</param>
             </operation>
         </chain>
-        <chain id="Athento.UnlinkDocument">
+        <chain id="Athento.Document.Unlink">
             <documentation>
                 Extended document unlink.
             </documentation>
             <param type="properties" name="properties"/>
             <param type="string" name="audit"/>
-            <operation id="Athento.Document.Unlink">
+            <!--operation id="Athento.Document.Unlink">
                 <param type="properties" name="properties">expr:ChainParameters['properties']</param>
-            </operation>
+            </operation-->
             <operation id="Audit.Log">
                 <param type="string" name="event">auditExtendedDocumentUnlinked</param>
                 <param type="string" name="category">eventDocumentCategory</param>
