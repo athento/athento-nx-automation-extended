@@ -34,6 +34,9 @@ import java.util.Map;
 @Operation(id = AthentoDocumentCreateOperation.ID, category = "Athento", label = "Athento Document Create", description = "Creates a document in Athento's way")
 public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
 
+    private static final Log _log = LogFactory
+            .getLog(AthentoDocumentCreateOperation.class);
+
     public static final String ID = "Athento.Document.Create";
 
     public static final String CONFIG_DEFAULT_DESTINATION = "automationExtendedConfig:defaultDestination";
@@ -94,11 +97,25 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
         return run(new PathRef(parentFolderPath));
     }
 
+    /**
+     * Run.
+     *
+     * @param doc
+     * @return
+     * @throws Exception
+     */
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentRef doc) throws Exception {
         return run(session.getDocument(doc));
     }
 
+    /**
+     * Run.
+     *
+     * @param parentDoc
+     * @return
+     * @throws Exception
+     */
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel parentDoc) throws Exception {
         // Check access
@@ -125,7 +142,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             params.put("name", name);
             params.put("properties", properties);
             params.put("type", type);
-            DocumentModel parentFolder = null;
+            DocumentModel parentFolder;
             if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 if (!StringUtils.isNullOrEmpty(operationId)) {
@@ -138,8 +155,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     parentFolder = session.getDocument(new PathRef(basePath));
                 }
             } else {
-                _log.info("Document not watched: " + type
-                    + ". Watched doctypes are: " + watchedDocumentTypes);
                 parentFolder = parentDoc;
             }
             if (name == null) {
@@ -163,21 +178,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
             }
             DocumentModel doc = session.createDocument(newDoc);
-            if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentCreateOperation.ID
-                    + " Doc created : " + doc);
-                _log.debug(AthentoDocumentCreateOperation.ID + " properties: ");
-                Map<String, Object> props = DocumentModelUtils
-                    .getProperties(doc);
-                for (String k : props.keySet()) {
-                    Object v = props.get(k);
-                    if (v != null) {
-                        _log.debug(" Prop [" + k + "] " + v);
-                    } else {
-                        _log.debug(" Prop [" + k + "] is NULL");
-                    }
-                }
-            }
             // Add tags
             if (tags != null) {
                 addTags(doc);
@@ -200,8 +200,8 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     Object input = doc;
                     Object result = AthentoOperationsHelper.runOperation(
                         postOperationId, input, params, session);
-                    if (_log.isInfoEnabled()) {
-                        _log.info(AthentoDocumentCreateOperation.ID
+                    if (_log.isDebugEnabled()) {
+                        _log.debug(AthentoDocumentCreateOperation.ID
                             + " Post operation [: " + postOperationId
                             + "] executed with result: " + result);
                     }
@@ -213,10 +213,8 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 _log.info("Document not watched: " + type
                     + ". Watched doctypes are: " + watchedDocumentTypes);
             }
-            // -- END Document.Create
             if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentCreateOperation.ID
-                    + " END return value: " + doc);
+                _log.debug("Document created " + doc.getRef() + " with status: " + doc.getCurrentLifeCycleState());
             }
             return doc;
         } catch (Exception e) {
@@ -256,8 +254,4 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
         }
         return val;
     }
-
-    private static final Log _log = LogFactory
-        .getLog(AthentoDocumentCreateOperation.class);
-
 }
