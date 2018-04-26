@@ -21,10 +21,14 @@ import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 import org.nuxeo.ecm.platform.tag.TagService;
+import org.nuxeo.runtime.api.Framework;
+import org.nuxeo.template.api.TemplateProcessorService;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
+import org.nuxeo.template.api.adapters.TemplateSourceDocument;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -185,12 +189,19 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             // Check template (overwrite blob always)
             if (template != null) {
                 TemplateBasedDocument renderable = doc.getAdapter(TemplateBasedDocument.class);
+                if (renderable == null) {
+                    associateTemplate(template, doc);
+                    renderable = doc.getAdapter(TemplateBasedDocument.class);
+                }
                 if (renderable != null) {
                     Blob renderedBlob = renderable.renderWithTemplate(template);
                     doc.setPropertyValue("file:content", (Serializable) renderedBlob);
                     session.saveDocument(doc);
+                } else {
+                    throw new Exception("Unable to associate template " + template + " to document, please check your template!");
                 }
             }
+
             if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 String postOperationId = String
@@ -229,6 +240,27 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
+        }
+    }
+
+    /**
+     * Associate template to document.
+     *
+     * @param template
+     * @param doc
+     */
+    private void associateTemplate(String template, DocumentModel doc) {
+        TemplateProcessorService tps = Framework.getLocalService(TemplateProcessorService.class);
+        List<DocumentModel> templates = tps.getAvailableTemplateDocs(session, doc.getType());
+        for (DocumentModel d : templates) {
+            TemplateSourceDocument source = d.getAdapter(TemplateSourceDocument.class);
+            if (source.getName().equals(template)) {
+                try {
+                    tps.makeTemplateBasedDocument(doc, d, true);
+                } catch (NuxeoException e) {
+                    _log.error("Unable to associaate template to document");
+                }
+            }
         }
     }
 
