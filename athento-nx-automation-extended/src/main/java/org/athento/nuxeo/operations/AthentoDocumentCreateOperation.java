@@ -280,11 +280,20 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
         }
     }
 
+    /**
+     * Get destination path.
+     *
+     * @return
+     */
     private String getDestinationPath() {
         String val = destination;
         if (StringUtils.isNullOrEmpty(destination)) {
             val = AthentoOperationsHelper.readConfigValue(session,
                 AthentoDocumentCreateOperation.CONFIG_DEFAULT_DESTINATION);
+        }
+        if (!val.startsWith("/")) {
+            DocumentModel pathDoc = session.getDocument(new IdRef(val));
+            val = pathDoc.getPathAsString();
         }
         return val;
     }
