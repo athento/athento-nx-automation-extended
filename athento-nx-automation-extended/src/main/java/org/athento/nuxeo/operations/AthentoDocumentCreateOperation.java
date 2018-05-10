@@ -19,6 +19,7 @@ import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
+import org.nuxeo.ecm.core.api.model.Property;
 import org.nuxeo.ecm.core.utils.DocumentModelUtils;
 import org.nuxeo.ecm.platform.tag.TagService;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
@@ -71,6 +72,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
 
     @Param(name = "template", required = false, description = "Template to generate the document content")
     protected String template;
+
+    @Param(name = "xpath", required = false, description = "XPATH for document content")
+    protected String xpath;
 
     /** Blob to save into new document. */
     private Blob blob;
@@ -172,10 +176,15 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             // Check if document must have the blob #AT-1066
             if (blob != null) {
-                // Set file:filename property
-                newDoc.setPropertyValue("file:filename", blob.getFilename());
-                // Add blob to property
-                DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
+                if (xpath != null) {
+                    // Add blob to property
+                    DocumentHelper.addBlob(newDoc.getProperty(xpath), blob);
+                } else if (newDoc.hasSchema("file")) {
+                    // Set file:filename property
+                    newDoc.setPropertyValue("file:filename", blob.getFilename());
+                    // Add blob to property
+                    DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
+                }
             }
             DocumentModel doc = session.createDocument(newDoc);
             // Add tags
