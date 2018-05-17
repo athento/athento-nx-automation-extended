@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
+import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
@@ -51,9 +52,10 @@ public class AthentoExceptionCreateOperation {
 		_log.error("Registering new AthentoException: " + excObject, (Throwable)excObject);
 		int returnCode = 500;
 		if (excObject instanceof AthentoException) {
-			retVal = (AthentoException)excObject;
+			retVal = (AthentoException) excObject;
 		} else if (excObject instanceof Throwable) {
 			Throwable t = (Throwable)excObject;
+			t = AthentoOperationsHelper.getRootCause(t);
 			retVal = new AthentoException(t.getMessage());
 		} else {
 			if (StringUtils.isNullOrEmpty(message)) {

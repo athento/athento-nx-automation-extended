@@ -120,4 +120,13 @@ public final class SecurityUtil {
         String encrypt = new String(original);
         return encrypt;
     }
+
+    /**
+     * Check if login as is enabled.
+     *
+     * @return
+     */
+    public static boolean isLoginAsEnabled() {
+        return Boolean.valueOf(Framework.getProperty("loginas.enabled", "false"));
+    }
 }

@@ -100,6 +100,8 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     public RecordSet run() throws Exception {
         // Check access
         checkAllowedAccess(ctx);
+        // Get session from context
+        session = ctx.getCoreSession();
         ArrayList<String> docTypes = getDocumentTypesFromQuery();
         try {
             String modifiedQuery;
