@@ -97,11 +97,15 @@ public class AthentoDocumentPermanentDeleteOperation extends AbstractAthentoOper
             if (document.isFolder()) {
                 deleteFolder(document.getRef());
             }
-            LOG.info("Removing permanent for " + document.getRef() + " (" + total + ")");
-            session.removeDocument(document.getRef());
-            commitOrRollbackTransaction();
-            startTransaction();
-            total++;
+            try {
+                LOG.info("Removing permanent for " + document.getRef() + " (" + total + ")");
+                session.removeDocument(document.getRef());
+                commitOrRollbackTransaction();
+                startTransaction();
+                total++;
+            } catch (NuxeoException e) {
+                LOG.error("Unable to remove document", e);
+            }
         }
     }
 
