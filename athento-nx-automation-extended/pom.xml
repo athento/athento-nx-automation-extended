@@ -179,7 +179,12 @@
             <groupId>org.nuxeo.ecm.platform</groupId>
             <artifactId>nuxeo-platform-io-client</artifactId>
         </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.38</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
