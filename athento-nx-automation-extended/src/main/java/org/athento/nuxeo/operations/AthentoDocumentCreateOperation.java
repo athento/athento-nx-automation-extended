@@ -8,6 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.FTPException;
+import org.athento.utils.FTPUtils;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -19,14 +21,14 @@ import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
-import org.nuxeo.ecm.core.api.model.Property;
-import org.nuxeo.ecm.core.utils.DocumentModelUtils;
+import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.tag.TagService;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.template.api.TemplateProcessorService;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
 import org.nuxeo.template.api.adapters.TemplateSourceDocument;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -74,8 +76,12 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     @Param(name = "template", required = false, description = "Template to generate the document content")
     protected String template;
 
-    @Param(name = "xpath", required = false, description = "XPATH for document content")
+    @Param(name = "xpath", required = false, description = "xpath for document content")
     protected String xpath;
+
+    @Param(name = "externalContent", required = false, description = "External content for document content")
+    protected String externalContent;
+
 
     /** Blob to save into new document. */
     private Blob blob;
@@ -111,14 +117,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     public DocumentModel run(DocumentModel parentDoc) throws Exception {
         // Check access
         checkAllowedAccess(ctx);
-        if (_log.isDebugEnabled()) {
-            _log.debug(AthentoDocumentCreateOperation.ID
-                + " BEGIN with params:");
-            _log.debug(" - parentDoc: " + parentDoc);
-            _log.debug(" - type: " + type);
-            _log.debug(" - name: " + name);
-            _log.debug(" - properties: " + properties);
-        }
         try {
             Map<String, Object> config = AthentoOperationsHelper
                 .readConfig(session);
@@ -146,8 +144,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     parentFolder = session.getDocument(new PathRef(basePath));
                 }
             } else {
-                _log.info("Document not watched: " + type
-                    + ". Watched doctypes are: " + watchedDocumentTypes);
                 parentFolder = parentDoc;
             }
             if (name == null) {
@@ -163,34 +159,10 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             if (properties != null) {
                 DocumentHelper.setProperties(session, newDoc, properties);
             }
-            // Check if document must have the blob #AT-1066
-            if (blob != null) {
-                if (xpath != null) {
-                    // Add blob to property
-                    DocumentHelper.addBlob(newDoc.getProperty(xpath), blob);
-                } else if (newDoc.hasSchema("file")) {
-                    // Set file:filename property
-                    newDoc.setPropertyValue("file:filename", blob.getFilename());
-                    // Add blob to property
-                    DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
-                }
-            }
+            // Add content to doc
+            addContent(newDoc);
+            // Create document
             DocumentModel doc = session.createDocument(newDoc);
-            if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentCreateOperation.ID
-                    + " Doc created : " + doc);
-                _log.debug(AthentoDocumentCreateOperation.ID + " properties: ");
-                Map<String, Object> props = DocumentModelUtils
-                    .getProperties(doc);
-                for (String k : props.keySet()) {
-                    Object v = props.get(k);
-                    if (v != null) {
-                        _log.debug(" Prop [" + k + "] " + v);
-                    } else {
-                        _log.debug(" Prop [" + k + "] is NULL");
-                    }
-                }
-            }
             // Add tags
             if (tags != null) {
                 addTags(doc);
@@ -225,18 +197,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                             + " Post operation [: " + postOperationId
                             + "] executed with result: " + result);
                     }
-                } else {
-                    _log.warn("No operation to execute Post Document Creation for doctype: "
-                        + type);
                 }
-            } else {
-                _log.info("Document not watched: " + type
-                    + ". Watched doctypes are: " + watchedDocumentTypes);
-            }
-            // -- END Document.Create
-            if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentCreateOperation.ID
-                    + " END return value: " + doc);
             }
             return doc;
         } catch (Exception e) {
@@ -249,6 +210,45 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
+        }
+    }
+
+    /**
+     * Add content to document.
+     * @param newDoc
+     */
+    private void addContent(DocumentModel newDoc) {
+        // Check external Content
+        if (externalContent != null) {
+            if (externalContent.startsWith("sftp:")) {
+                // Connect to SFTP Server to get content
+                try {
+                    File remoteFile = FTPUtils.getFile(externalContent);
+                    if (remoteFile != null) {
+                        blob = new FileBlob(remoteFile);
+                        blob.setFilename(remoteFile.getName());
+                        // Add dc:source metadata
+                        if (!FTPUtils.hasPassword(externalContent)) {
+                            newDoc.setPropertyValue("dc:source", externalContent);
+                        }
+                    }
+                } catch (FTPException e) {
+                    _log.error("Unable to set blob from external content SFTP", e);
+                }
+            }
+            // TODO: Include other external content implementations
+        }
+        // Check if document must have the blob #AT-1066
+        if (blob != null) {
+            if (xpath != null) {
+                // Add blob to property
+                DocumentHelper.addBlob(newDoc.getProperty(xpath), blob);
+            } else if (newDoc.hasSchema("file")) {
+                // Set file:filename property
+                newDoc.setPropertyValue("file:filename", blob.getFilename());
+                // Add blob to property
+                DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
+            }
         }
     }
 
