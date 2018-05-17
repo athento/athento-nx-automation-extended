@@ -103,4 +103,13 @@ public final class SecurityUtil {
     static Key makeKey(String secret) throws UnsupportedEncodingException {
         return new SecretKeySpec(secret.getBytes("UTF-8"), "AES");
     }
+
+    /**
+     * Check if login as is enabled.
+     *
+     * @return
+     */
+    public static boolean isLoginAsEnabled() {
+        return Boolean.valueOf(Framework.getProperty("loginas.enabled", "false"));
+    }
 }
