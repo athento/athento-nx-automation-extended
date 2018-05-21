@@ -8,8 +8,16 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.nuxeo.report.api.ReportException;
+import org.athento.nuxeo.report.api.ReportManager;
+import org.athento.nuxeo.report.api.model.OutputReport;
+import org.athento.nuxeo.report.api.model.Report;
+import org.athento.nuxeo.report.api.model.ReportEngine;
+import org.athento.nuxeo.report.api.model.ReportHandler;
+import org.athento.nuxeo.report.api.xpoint.ReportDescriptor;
 import org.athento.utils.FTPException;
 import org.athento.utils.FTPUtils;
+import org.athento.utils.ReportInfo;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -21,6 +29,7 @@ import org.nuxeo.ecm.automation.core.util.DocumentHelper;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.*;
+import org.nuxeo.ecm.core.api.impl.blob.ByteArrayBlob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.tag.TagService;
 import org.nuxeo.runtime.api.Framework;
@@ -40,6 +49,10 @@ import java.util.Map;
  */
 @Operation(id = AthentoDocumentCreateOperation.ID, category = "Athento", label = "Athento Document Create", description = "Creates a document in Athento's way")
 public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
+
+    private static final Log LOG = LogFactory
+            .getLog(AthentoDocumentCreateOperation.class);
+
 
     public static final String ID = "Athento.Document.Create";
 
@@ -76,7 +89,10 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     @Param(name = "template", required = false, description = "Template to generate the document content")
     protected String template;
 
-    @Param(name = "xpath", required = false, description = "xpath for document content")
+    @Param(name = "report", required = false, description = "Report to generate the document content using a report string format", values = { "jr:reportalias:pdf" })
+    protected String report;
+
+    @Param(name = "xpath", required = false, description = "xpath for document content metadata")
     protected String xpath;
 
     @Param(name = "externalContent", required = false, description = "External content for document content")
@@ -139,7 +155,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     parentFolder = (DocumentModel) AthentoOperationsHelper
                         .runOperation(operationId, input, params, session);
                 } else {
-                    _log.warn("No operation to get basePath and no destination set. Using default basePath: "
+                    LOG.warn("No operation to get basePath and no destination set. Using default basePath: "
                         + basePath);
                     parentFolder = session.getDocument(new PathRef(basePath));
                 }
@@ -150,10 +166,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 name = "Untitled";
             }
             String parentPath = parentFolder.getPathAsString();
-            if (_log.isDebugEnabled()) {
-                _log.debug(AthentoDocumentCreateOperation.ID
-                    + " Creating document in parentPath: " + parentPath);
-            }
             DocumentModel newDoc = session.createDocumentModel(parentPath,
                 name, type);
             if (properties != null) {
@@ -169,20 +181,12 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             // Check template (overwrite blob always)
             if (template != null) {
-                TemplateBasedDocument renderable = doc.getAdapter(TemplateBasedDocument.class);
-                if (renderable == null) {
-                    associateTemplate(template, doc);
-                    renderable = doc.getAdapter(TemplateBasedDocument.class);
-                }
-                if (renderable != null) {
-                    Blob renderedBlob = renderable.renderWithTemplate(template);
-                    doc.setPropertyValue("file:content", (Serializable) renderedBlob);
-                    session.saveDocument(doc);
-                } else {
-                    throw new Exception("Unable to associate template " + template + " to document, please check your template!");
-                }
+                addContentFromTemplate(template, newDoc);
             }
-
+            // Check report (overwrite blob always too)
+            if (report != null) {
+                addContentFromReport(report, doc);
+            }
             if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 String postOperationId = String
@@ -192,8 +196,8 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     Object input = doc;
                     Object result = AthentoOperationsHelper.runOperation(
                         postOperationId, input, params, session);
-                    if (_log.isInfoEnabled()) {
-                        _log.info(AthentoDocumentCreateOperation.ID
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(AthentoDocumentCreateOperation.ID
                             + " Post operation [: " + postOperationId
                             + "] executed with result: " + result);
                     }
@@ -201,7 +205,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             return doc;
         } catch (Exception e) {
-            _log.error(
+            LOG.error(
                 "Unable to complete operation: "
                     + AthentoDocumentCreateOperation.ID + " due to: "
                     + e.getMessage(), e);
@@ -210,6 +214,98 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             AthentoException exc = new AthentoException(e.getMessage(), e);
             throw exc;
+        }
+    }
+
+    /**
+     * Add content from report.
+     *
+     * @param report
+     * @param doc
+     */
+    private void addContentFromReport(String report, DocumentModel doc) throws ReportException {
+        ReportManager reportManager = Framework.getService(ReportManager.class);
+        ReportInfo reportInfo = new ReportInfo(report);
+        Report reportContent = reportManager.getReportByAlias(report);
+        if (reportContent == null) {
+            LOG.warn("Report " + report + " is not found");
+        } else {
+            // Get report engine
+            ReportEngine reportEngine = reportManager.getReportEngineById(reportInfo.getReportEngine());
+            // Add doc as parameters
+            reportContent.getParameters().put("docIds", doc.getId());
+            Properties properties = new Properties();
+            if (reportContent.getDescriptor().getHandler() != null) {
+                // Load handler for report
+                loadHandler(reportContent, properties);
+            }
+            OutputReport outputReport = reportManager.getOutputReportByReqParam(reportInfo.getReportOutput());
+            Map<String, Object> reportParams = new HashMap<>();
+            reportParams.put("doc", doc);
+            byte [] reportPrinted = reportEngine.print(reportContent, outputReport, reportParams);
+            if (reportPrinted != null) {
+                ByteArrayBlob blob = new ByteArrayBlob(reportPrinted, reportInfo.getMimetype());
+                blob.setFilename(doc.getTitle());
+                if (xpath == null || xpath.isEmpty()) {
+                    xpath = "file:content";
+                }
+                // Add blob to property
+                DocumentHelper.addBlob(doc.getProperty(xpath), blob);
+                session.saveDocument(doc);
+            }
+        }
+    }
+
+    /**
+     * Load handler for report.
+     *
+     * @param report
+     * @param params
+     */
+    private void loadHandler(Report report, Properties params) {
+        ReportDescriptor descriptor = report.getDescriptor();
+        if (descriptor.isUseSeam()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Loading handler " + descriptor.getId());
+            }
+            if (descriptor.getHandler() != null) {
+                try {
+                    ReportHandler handler = descriptor.getHandler()
+                            .newInstance();
+                    Map<String, Object> handleParams = new HashMap<>();
+                    handleParams.put("documentManager", this.session);
+                    handleParams.putAll(params);
+                    handler.handle(report, handleParams);
+                } catch (InstantiationException | IllegalAccessException
+                        | ReportException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Add content from template.
+     *
+     * @param template
+     * @param doc
+     * @throws Exception
+     */
+    private void addContentFromTemplate(String template, DocumentModel doc) throws Exception {
+        TemplateBasedDocument renderable = doc.getAdapter(TemplateBasedDocument.class);
+        if (renderable == null) {
+            associateTemplate(template, doc);
+            renderable = doc.getAdapter(TemplateBasedDocument.class);
+        }
+        if (renderable != null) {
+            Blob renderedBlob = renderable.renderWithTemplate(template);
+            if (xpath == null || xpath.isEmpty()) {
+                xpath = "file:content";
+            }
+            doc.setPropertyValue(xpath, (Serializable) renderedBlob);
+        } else {
+            throw new Exception("Unable to associate template " + template + " to document, please check your template!");
         }
     }
 
@@ -233,21 +329,21 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                         }
                     }
                 } catch (FTPException e) {
-                    _log.error("Unable to set blob from external content SFTP", e);
+                    LOG.error("Unable to set blob from external content SFTP", e);
                 }
             }
             // TODO: Include other external content implementations
         }
         // Check if document must have the blob #AT-1066
         if (blob != null) {
-            if (xpath != null) {
-                // Add blob to property
-                DocumentHelper.addBlob(newDoc.getProperty(xpath), blob);
-            } else if (newDoc.hasSchema("file")) {
+            if (newDoc.hasSchema("file")) {
                 // Set file:filename property
                 newDoc.setPropertyValue("file:filename", blob.getFilename());
                 // Add blob to property
                 DocumentHelper.addBlob(newDoc.getProperty("file:content"), blob);
+            } else if (xpath != null && !xpath.isEmpty()) {
+                // Add blob to property
+                DocumentHelper.addBlob(newDoc.getProperty(xpath), blob);
             }
         }
     }
@@ -267,7 +363,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 try {
                     tps.makeTemplateBasedDocument(doc, d, true);
                 } catch (NuxeoException e) {
-                    _log.error("Unable to associaate template to document");
+                    LOG.error("Unable to associaate template to document");
                 }
             }
         }
@@ -306,8 +402,5 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
         }
         return val;
     }
-
-    private static final Log _log = LogFactory
-        .getLog(AthentoDocumentCreateOperation.class);
 
 }

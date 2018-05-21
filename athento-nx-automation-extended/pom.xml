@@ -184,6 +184,22 @@
 			<artifactId>jsch</artifactId>
 			<version>0.1.38</version>
 		</dependency>
+        <!-- Reporting -->
+        <dependency>
+            <groupId>org.athento.nuxeo</groupId>
+            <artifactId>athento-nx-report-api</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.athento.nuxeo</groupId>
+            <artifactId>athento-nx-report-core</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.athento.nuxeo</groupId>
+            <artifactId>athento-nx-report-jasperreport</artifactId>
+            <version>3.0</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
