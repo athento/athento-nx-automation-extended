@@ -38,6 +38,8 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
 
     public static final String ID = "Blob.Attach";
 
+    private static final String FILENAME_FIELD = "file:filename";
+
     /** Operation context. */
     @Context
     protected OperationContext ctx;
@@ -45,8 +47,8 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
     @Context
     protected CoreSession session;
 
-    @Param(name = "xpath", required = false, values = "file:content")
-    protected String xpath = "file:content";
+    @Param(name = "xpath", required = false, values = FILENAME_FIELD)
+    protected String xpath = FILENAME_FIELD;
 
     @Param(name = "document")
     protected DocumentModel doc;
@@ -60,11 +62,12 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
         checkAllowedAccess(ctx);
         DocumentHelper.addBlob(doc.getProperty(xpath), blob);
         if (save) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Attaching Blob " + blob.getFilename() + " into " + doc.getId());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attaching Blob " + blob.getFilename() + " into " + doc.getId());
             }
-            // #AT-933
-            doc.setPropertyValue("file:filename", blob.getFilename());
+            if (FILENAME_FIELD.equals(xpath)) {
+                doc.setPropertyValue(FILENAME_FIELD, blob.getFilename());
+            }
             doc = session.saveDocument(doc);
         }
         return blob;
