@@ -36,6 +36,9 @@ public class SetDocumentComplexPropertyOperation {
     @Param(name = "properties", required = false)
     protected Properties properties;
 
+    @Param(name = "position", required = false)
+    protected Integer position;
+
     @Param(name = "save", required = false, values = "true")
     protected boolean save = true;
 
@@ -55,7 +58,7 @@ public class SetDocumentComplexPropertyOperation {
             }
         }
 
-        Serializable newValue = addComplexIntoList(array, this.properties);
+        Serializable newValue = addComplexIntoList(array, this.properties, this.position);
         p.setValue(newValue);
 
         if (save) {
@@ -70,30 +73,37 @@ public class SetDocumentComplexPropertyOperation {
      *
      * @param array
      * @param properties
+     * @param position
      * @return
      */
-    private Serializable addComplexIntoList(List<Serializable> array, Properties properties) {
-
-        List<Object> list = new ArrayList<Object>();
-
+    private Serializable addComplexIntoList(List<Serializable> array, Properties properties, Integer position) {
+        List list = new ArrayList<>();
         if (array != null) {
             list.addAll(array);
         }
-
         Map<String, String> newComplexItem = new HashMap<String, String>();
-
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            String metadata = entry.getKey();
-            String value = entry.getValue();
-            LOG.info(metadata + "=" + value);
-            newComplexItem.put(metadata, value);
+        if (position == null) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                String metadata = entry.getKey();
+                String value = entry.getValue();
+                LOG.info(metadata + "=" + value);
+                newComplexItem.put(metadata, value);
+            }
+            list.add(newComplexItem);
+        } else {
+            try {
+                Map<String, Object> item = (Map) array.get(position);
+                for (Map.Entry<String, String> entry : properties.entrySet()) {
+                    String metadata = entry.getKey();
+                    String value = entry.getValue();
+                    item.put(metadata, value);
+                }
+                list = array;
+            } catch (IndexOutOfBoundsException e) {
+                LOG.error("Position " + position + " is not found in complex metadata");
+            }
         }
-
-        // TODO: Check if item exists with a parameter
-        list.add(newComplexItem);
-
-        LOG.info("List =" + list);
-
+        LOG.info("List =" + list + " for position " + position);
         return (Serializable) list;
 
     }
