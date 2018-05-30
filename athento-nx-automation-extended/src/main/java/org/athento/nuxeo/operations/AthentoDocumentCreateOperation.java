@@ -181,7 +181,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             }
             // Check template (overwrite blob always)
             if (template != null) {
-                addContentFromTemplate(template, newDoc);
+                addContentFromTemplate(template, doc);
             }
             // Check report (overwrite blob always too)
             if (report != null) {
@@ -293,6 +293,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
      * @throws Exception
      */
     private void addContentFromTemplate(String template, DocumentModel doc) throws Exception {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Add content from template " + template);
+        }
         TemplateBasedDocument renderable = doc.getAdapter(TemplateBasedDocument.class);
         if (renderable == null) {
             associateTemplate(template, doc);
@@ -304,6 +307,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 xpath = "file:content";
             }
             doc.setPropertyValue(xpath, (Serializable) renderedBlob);
+            session.saveDocument(doc);
         } else {
             throw new Exception("Unable to associate template " + template + " to document, please check your template!");
         }
@@ -355,6 +359,9 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
      * @param doc
      */
     private void associateTemplate(String template, DocumentModel doc) {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Associating template " + template + " for doc " + doc.getTitle());
+        }
         TemplateProcessorService tps = Framework.getLocalService(TemplateProcessorService.class);
         List<DocumentModel> templates = tps.getAvailableTemplateDocs(session, doc.getType());
         for (DocumentModel d : templates) {
