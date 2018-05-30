@@ -77,12 +77,11 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             AthentoDocumentResultSetOperation.DESC})
     protected String sortOrder;
 
-
-    /**
-     * Field list params.
-     */
     @Param(name = "fieldList", required = false)
     protected StringList fieldList;
+
+    @Param(name = "fieldComplex", required = false)
+    protected StringList fieldComplex;
 
     @OperationMethod
     public RecordSet run() throws Exception {
@@ -131,6 +130,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             params.put("page", page);
             params.put("pageSize", pageSize);
             params.put("fieldList", fieldList);
+            params.put("fieldComplex", fieldComplex);
             if (!StringUtils.isNullOrEmpty(sortBy)) {
                 params.put("sortBy", sortBy);
                 if (!StringUtils.isNullOrEmpty(sortOrder)) {
