@@ -183,6 +183,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             if (template != null) {
                 addContentFromTemplate(template, doc);
             }
+
             // Check report (overwrite blob always too)
             if (report != null) {
                 addContentFromReport(report, doc);
