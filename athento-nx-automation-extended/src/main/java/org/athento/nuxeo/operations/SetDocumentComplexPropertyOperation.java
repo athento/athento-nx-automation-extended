@@ -2,6 +2,7 @@ package org.athento.nuxeo.operations;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.common.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -9,9 +10,11 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.collectors.DocumentModelCollector;
+import org.nuxeo.ecm.automation.core.collectors.DocumentModelListCollector;
 import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.model.Property;
 
 import java.io.Serializable;
@@ -42,6 +45,13 @@ public class SetDocumentComplexPropertyOperation {
     @Param(name = "save", required = false, values = "true")
     protected boolean save = true;
 
+    public DocumentModel run(DocumentModelList docs) throws Exception {
+        if (!docs.isEmpty()) {
+            return run(docs.get(0));
+        }
+        return null;
+    }
+
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) throws Exception {
         Property p = doc.getProperty(xpath);
@@ -57,10 +67,11 @@ public class SetDocumentComplexPropertyOperation {
                 throw new OperationException("Value must be a list");
             }
         }
-
         Serializable newValue = addComplexIntoList(array, this.properties, this.position);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Complex List to add " + newValue);
+        }
         p.setValue(newValue);
-
         if (save) {
             doc = session.saveDocument(doc);
         }
@@ -81,13 +92,17 @@ public class SetDocumentComplexPropertyOperation {
         if (array != null) {
             list.addAll(array);
         }
-        Map<String, String> newComplexItem = new HashMap<String, String>();
-        if (position == null) {
+        Map<String, Object> newComplexItem = new HashMap<>();
+        if (position == null || position >= list.size()) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
                 String metadata = entry.getKey();
                 String value = entry.getValue();
-                LOG.info(metadata + "=" + value);
-                newComplexItem.put(metadata, value);
+                if (value.startsWith("[") && value.endsWith("]")) {
+                    List<String> li = Arrays.asList(StringUtils.split(value.replace("[","").replace("]", ""), ',', true));
+                    newComplexItem.put(metadata, li);
+                } else {
+                    newComplexItem.put(metadata, value);
+                }
             }
             list.add(newComplexItem);
         } else {
@@ -103,7 +118,6 @@ public class SetDocumentComplexPropertyOperation {
                 LOG.error("Position " + position + " is not found in complex metadata");
             }
         }
-        LOG.info("List =" + list + " for position " + position);
         return (Serializable) list;
 
     }
