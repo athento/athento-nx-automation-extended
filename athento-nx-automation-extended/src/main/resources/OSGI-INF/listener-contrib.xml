@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<component name="org.athento.nuxeo.automation.extended.listener-contrib">
+
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent"
+               point="listener">
+        <listener name="updateFromExternalContent" async="true"
+                  enabled="true"
+                  postCommit="true" priority="100"
+                  class="org.athento.nuxeo.listener.UpdateDocumentExternalContentListener">
+            <event>documentCreated</event>
+        </listener>
+
+    </extension>
+
+</component>

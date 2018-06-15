@@ -183,11 +183,12 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
             if (template != null) {
                 addContentFromTemplate(template, doc);
             }
-
             // Check report (overwrite blob always too)
             if (report != null) {
                 addContentFromReport(report, doc);
             }
+            // Saving document
+            session.saveDocument(doc);
             if (AthentoOperationsHelper.isWatchedDocumentType(null, type,
                 watchedDocumentTypes)) {
                 String postOperationId = String
@@ -308,7 +309,6 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 xpath = "file:content";
             }
             doc.setPropertyValue(xpath, (Serializable) renderedBlob);
-            session.saveDocument(doc);
         } else {
             throw new Exception("Unable to associate template " + template + " to document, please check your template!");
         }
@@ -321,16 +321,18 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     private void addContent(DocumentModel newDoc) {
         // Check external Content
         if (externalContent != null) {
-            if (externalContent.startsWith("sftp:")) {
+            if (externalContent.startsWith("sftp:") || externalContent.startsWith("ftp:")) {
                 // Connect to SFTP Server to get content
                 try {
-                    File remoteFile = FTPUtils.getFile(externalContent);
+                    boolean remove = FTPUtils.checkRemoveRemoteFile(externalContent);
+                    String remoteFilePath = FTPUtils.getRemoteFilePath(externalContent);
+                    File remoteFile = FTPUtils.getFile(remoteFilePath, remove);
                     if (remoteFile != null) {
                         blob = new FileBlob(remoteFile);
                         blob.setFilename(remoteFile.getName());
                         // Add dc:source metadata
                         if (!FTPUtils.hasPassword(externalContent)) {
-                            newDoc.setPropertyValue("dc:source", externalContent);
+                            newDoc.setPropertyValue("dc:source", "Content from " + externalContent);
                         }
                     }
                 } catch (FTPException e) {
@@ -371,7 +373,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                 try {
                     tps.makeTemplateBasedDocument(doc, d, true);
                 } catch (NuxeoException e) {
-                    LOG.error("Unable to associaate template to document");
+                    LOG.error("Unable to associate template to document");
                 }
             }
         }

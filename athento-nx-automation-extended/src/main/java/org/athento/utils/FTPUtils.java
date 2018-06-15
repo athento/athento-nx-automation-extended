@@ -22,9 +22,10 @@ public class FTPUtils {
      * Get file from FTP.
      *
      * @param sftpString
+     * @param remove remove from ftp server
      * @return
      */
-    public static final File getFile(String sftpString) throws FTPException {
+    public static final File getFile(String sftpString, boolean remove) throws FTPException {
         if (!sftpString.startsWith("sftp") && !sftpString.startsWith("ftp"))  {
             throw new FTPException("SFTP remote is not valid");
         }
@@ -61,6 +62,9 @@ public class FTPUtils {
 
             // Get file from server
             client.retrieveFile(path, file.getAbsolutePath());
+            if (remove) {
+                client.removeFile(path);
+            }
 
             return file;
 
@@ -91,5 +95,35 @@ public class FTPUtils {
             e.printStackTrace();
         }
         return true;
+    }
+
+    /**
+     * Check remove file.
+     *
+     * @param value
+     * @return
+     */
+    public static boolean checkRemoveRemoteFile(String value) {
+        boolean remove = true;
+        if (value != null) {
+            if (value.contains(" --no-remove") || value.contains(" --nr")) {
+                remove = false;
+            }
+        }
+        return remove;
+    }
+
+    /**
+     * Get remote file path.
+     *
+     * @param remoteString
+     * @return
+     */
+    public static String getRemoteFilePath(String remoteString) {
+        String remoteFilePath = new String(remoteString);
+        if (remoteFilePath != null) {
+            remoteFilePath = remoteFilePath.replace(" --no-remove", "").replace(" --nr", "");
+        }
+        return remoteFilePath;
     }
 }
