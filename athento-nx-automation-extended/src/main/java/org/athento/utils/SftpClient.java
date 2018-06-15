@@ -106,6 +106,22 @@ public class SftpClient {
         }
     }
 
+    /**
+     * Remove file.
+     *
+     * @param sourceFile
+     */
+    public void removeFile(String sourceFile) throws Exception {
+        if (c == null || session == null || !session.isConnected() || !c.isConnected()) {
+            throw new Exception("Connection to server is closed. Open it first.");
+        }
+        try {
+            c.rm(sourceFile);
+        } catch (SftpException e) {
+            throw new Exception(e.getMessage(), e);
+        }
+    }
+
     public void disconnect() {
         if (c != null) {
             c.disconnect();
