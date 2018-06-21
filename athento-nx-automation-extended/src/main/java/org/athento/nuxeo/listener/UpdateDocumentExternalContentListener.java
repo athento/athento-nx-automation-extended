@@ -12,6 +12,8 @@ import org.nuxeo.ecm.core.api.model.PropertyNotFoundException;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.ecm.platform.mimetype.interfaces.MimetypeRegistry;
+import org.nuxeo.runtime.api.Framework;
 
 import java.io.File;
 import java.io.Serializable;
@@ -44,6 +46,17 @@ public class UpdateDocumentExternalContentListener implements EventListener {
                     if (remoteFile != null) {
                         Blob blob = new FileBlob(remoteFile);
                         blob.setFilename(remoteFile.getName());
+                        String mime;
+                        try {
+                            MimetypeRegistry mimetypeRegistry = Framework.getService(MimetypeRegistry.class);
+                            mime = mimetypeRegistry.getMimetypeFromBlob(blob);
+                            if (mime == null) {
+                                mime = "application/pdf";
+                            }
+                        } catch (Exception e) {
+                            mime = "application/pdf";
+                        }
+                        blob.setMimeType(mime);
                         // Clear source after update
                         doc.setPropertyValue("dc:source", "Content from " + source);
                         doc.setPropertyValue("file:content", (Serializable) blob);
