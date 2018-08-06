@@ -8,8 +8,22 @@
 	<artifactSet id="athento-plugins">
 		<artifacts>
 			<artifact group="org.athento.nuxeo" name="athento-nx-query"
-				version="3.0" />
+				version="3.1.10" />
+			<artifact group="org.athento.nuxeo" name="athento-nx-report-api"
+					  version="3.0" />
+			<artifact group="org.athento.nuxeo" name="athento-nx-report-core"
+					  version="3.0" />
+			<artifact group="org.athento.nuxeo" name="athento-nx-report-web"
+					  version="3.0" />
+			<artifact group="org.athento.nuxeo" name="athento-nx-report-jasperreport"
+					  version="3.0" />
 		</artifacts>
 	</artifactSet>
+    <artifactSet id="athento-libs">
+        <artifacts>
+            <artifact group="net.sf.jasperreports" name="jasperreports"
+              version="6.2.0" />
+        </artifacts>
+    </artifactSet>
 </assembly>
 

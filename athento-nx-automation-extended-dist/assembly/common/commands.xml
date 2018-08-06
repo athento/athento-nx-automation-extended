@@ -11,5 +11,9 @@
 		<outputFile>/plugins</outputFile>
 		<set>project-plugins</set>
 	</assemble>
+	<assemble>
+		<outputFile>/lib</outputFile>
+		<set>project-libs</set>
+	</assemble>
 </assembly>
 
