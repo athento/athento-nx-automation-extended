@@ -13,7 +13,7 @@
 	</assemble>
 	<assemble>
 		<outputFile>/lib</outputFile>
-		<set>project-libs</set>
+		<set>athento-libs</set>
 	</assemble>
 </assembly>
 
