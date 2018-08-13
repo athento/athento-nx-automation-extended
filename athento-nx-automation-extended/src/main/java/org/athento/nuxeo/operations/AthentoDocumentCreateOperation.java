@@ -333,6 +333,8 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                         // Add dc:source metadata
                         if (!FTPUtils.hasPassword(externalContent)) {
                             newDoc.setPropertyValue("dc:source", "Content from " + externalContent);
+                        } else {
+                            newDoc.setPropertyValue("dc:source", "Content from sftp");
                         }
                     }
                 } catch (FTPException e) {
