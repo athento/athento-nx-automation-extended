@@ -36,24 +36,31 @@ public class UpdateDocumentExternalContentListener implements EventListener {
         DocumentEventContext ctxt = (DocumentEventContext) event.getContext();
         if (ctxt instanceof DocumentEventContext) {
             DocumentModel doc = ctxt.getSourceDocument();
+            if (doc.isVersion()) {
+                return;
+            }
             if (hasExternalContent(doc)) {
                 CoreSession session = ctxt.getCoreSession();
                 try {
                     String source = (String) doc.getPropertyValue("dc:source");
+                    LOG.info("External content detected for " + doc);
                     boolean removeRemote = FTPUtils.checkRemoveRemoteFile(source);
                     String remoteFilePath = FTPUtils.getRemoteFilePath(source);
                     File remoteFile = FTPUtils.getFile(remoteFilePath, removeRemote);
                     if (remoteFile != null) {
+                        LOG.info("Remote file " + remoteFile.getName());
                         Blob blob = new FileBlob(remoteFile);
                         blob.setFilename(remoteFile.getName());
                         String mime;
                         try {
                             MimetypeRegistry mimetypeRegistry = Framework.getService(MimetypeRegistry.class);
                             mime = mimetypeRegistry.getMimetypeFromBlob(blob);
+                            LOG.info("Mime is " + mime);
                             if (mime == null) {
                                 mime = "application/pdf";
                             }
                         } catch (Exception e) {
+                            LOG.warn("Mimetype problems in external content", e);
                             mime = "application/pdf";
                         }
                         blob.setMimeType(mime);
@@ -61,6 +68,7 @@ public class UpdateDocumentExternalContentListener implements EventListener {
                         doc.setPropertyValue("dc:source", "Content from " + source);
                         doc.setPropertyValue("file:content", (Serializable) blob);
                         session.saveDocument(doc);
+                        session.save();
                     }
                 } catch (FTPException e) {
                     LOG.error("Unable to set blob from external content SFTP", e);
