@@ -143,7 +143,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             if (retValue instanceof RecordSet) {
                 long endTime = System.currentTimeMillis();
                 // Register an entry into queryRequest registry
-                RegisterHelper.registerQuery(modifiedQuery, pageSize, page, startTime, endTime);
+                RegisterHelper.registerQuery(modifiedQuery, session.getPrincipal().getName(), pageSize, page, startTime, endTime);
                 return (RecordSet) retValue;
             } else {
                 LOG.error("Unexpected return type for operation: "

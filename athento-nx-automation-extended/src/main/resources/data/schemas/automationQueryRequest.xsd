@@ -42,5 +42,6 @@
   <xs:element name="start_date" type="xs:long" />
   <xs:element name="end_date" type="xs:long" />
   <xs:element name="hash" type="xs:string" />
+  <xs:element name="user" type="xs:string" />
   
 </xs:schema>
