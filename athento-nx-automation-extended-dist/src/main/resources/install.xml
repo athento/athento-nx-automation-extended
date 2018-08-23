@@ -2,5 +2,6 @@
 <install>
 
   <copy dir="${package.root}/plugins" todir="${env.home}/plugins/" overwrite="true"/>
+  <copy dir="${package.root}/lib" todir="${env.home}/lib/" overwrite="true"/>
 
 </install>
