@@ -35,7 +35,7 @@
     </xs:complexType>
 
     <!-- Extended Config: Automation Extended Config -->
-    <xs:element name="enabledIPs" type="xs:string" />
+    <xs:element name="enabledIPs" type="xs:string" default="*" />
 
     <xs:element name="defaultDestination" type="xs:string" default="/default-domain/workspaces/" />
     <xs:element name="documentCreateOperationIdPre" type="xs:string" default="voidChain" />

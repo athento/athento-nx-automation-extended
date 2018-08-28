@@ -3,6 +3,7 @@
  */
 package org.athento.nuxeo.operations.utils;
 
+import java.io.Serializable;
 import java.util.*;
 
 import org.apache.commons.logging.Log;
@@ -90,7 +91,7 @@ public class AthentoOperationsHelper {
     }
 
     public static Map<String, Object> readConfig(CoreSession session) {
-        Map<String, Object> config = new HashMap<String, Object>();
+        Map<String, Object> config = new HashMap<>();
         DocumentModel conf = session.getDocument(new PathRef(
                 AthentoOperationsHelper.CONFIG_PATH));
         for (String schemaName : conf.getSchemas()) {
@@ -104,18 +105,28 @@ public class AthentoOperationsHelper {
         return config;
     }
 
+    /**
+     * Read config value.
+     *
+     * @param session
+     * @param key
+     * @return
+     */
     public static String readConfigValue(CoreSession session, final String key) {
-        final List<String> value = new ArrayList<>();
+        final List<String> values = new ArrayList<>();
         new UnrestrictedSessionRunner(session) {
             @Override
             public void run() {
                 DocumentModel conf = session.getDocument(new PathRef(
                         AthentoOperationsHelper.CONFIG_PATH));
-                value.add(String.valueOf(conf.getPropertyValue(key)));
+                Serializable value = conf.getPropertyValue(key);
+                if (value != null) {
+                    values.add(String.valueOf(value));
+                }
             }
         }.runUnrestricted();
-        if (!value.isEmpty()) {
-            return value.get(0);
+        if (!values.isEmpty()) {
+            return values.get(0);
         }
         return null;
     }

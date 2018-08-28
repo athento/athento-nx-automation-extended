@@ -52,15 +52,21 @@ public abstract class AbstractAthentoOperation {
         String enabledIpsValue = AthentoOperationsHelper
                 .readConfigValue(ctx.getCoreSession(), "automationExtendedConfig:enabledIPs");
 
+        LOG.info("Enabled IPs " + enabledIpsValue);
+
         // Check ip in list
         if (enabledIpsValue != null && !enabledIpsValue.isEmpty()) {
-            String [] ips = enabledIpsValue.split(",");
-            for (String ipp : ips) {
-                if (ipp.equals(remoteIp)) {
-                    return;
+            if (!"*".equals(enabledIpsValue)) {
+                String[] ips = enabledIpsValue.split(",");
+                if (ips.length > 0) {
+                    for (String ipp : ips) {
+                        if (ipp.trim().equals(remoteIp)) {
+                            return;
+                        }
+                    }
+                    throw new RestrictionException(remoteIp + " has not allowed access.");
                 }
             }
-            throw new RestrictionException(remoteIp + " has not allowed access.");
         }
 
         // Check login for user with loginAs context var
