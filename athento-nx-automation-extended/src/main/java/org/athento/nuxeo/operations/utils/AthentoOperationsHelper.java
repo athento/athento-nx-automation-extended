@@ -1,12 +1,9 @@
-/**
+    /**
  *
  */
 package org.athento.nuxeo.operations.utils;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,12 +18,16 @@ import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.PathRef;
+import org.nuxeo.ecm.core.api.UnrestrictedSessionRunner;
 import org.nuxeo.runtime.api.Framework;
 
 /**
  * @author athento
  */
 public class AthentoOperationsHelper {
+
+    private static final Log _log = LogFactory
+            .getLog(AthentoOperationsHelper.class);
 
     public static final String CONFIG_PATH = "/ExtendedConfig";
 
@@ -103,14 +104,21 @@ public class AthentoOperationsHelper {
         return config;
     }
 
-    public static String readConfigValue(CoreSession session, String key) {
-        DocumentModel conf = session.getDocument(new PathRef(
-                AthentoOperationsHelper.CONFIG_PATH));
-        return String.valueOf(conf.getPropertyValue(key));
+    public static String readConfigValue(CoreSession session, final String key) {
+        final List<String> value = new ArrayList<>();
+        new UnrestrictedSessionRunner(session) {
+            @Override
+            public void run() {
+                DocumentModel conf = session.getDocument(new PathRef(
+                        AthentoOperationsHelper.CONFIG_PATH));
+                value.add(String.valueOf(conf.getPropertyValue(key)));
+            }
+        }.runUnrestricted();
+        if (!value.isEmpty()) {
+            return value.get(0);
+        }
+        return null;
     }
-
-    private static final Log _log = LogFactory
-            .getLog(AthentoOperationsHelper.class);
 
     /**
      * Transform properties to {@link Map} of parameters.

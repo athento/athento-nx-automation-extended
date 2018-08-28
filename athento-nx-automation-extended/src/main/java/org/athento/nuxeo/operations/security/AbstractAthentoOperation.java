@@ -2,6 +2,7 @@ package org.athento.nuxeo.operations.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
 import org.athento.utils.SecurityUtil;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -48,11 +49,8 @@ public abstract class AbstractAthentoOperation {
         String remoteIp = request.getRemoteAddr();
 
         // Get extended config document
-        DocumentModel extendedConfigDoc = ctx.getCoreSession().getDocument(new PathRef("/ExtendedConfig"));
-
-        // Get ips from value
-        String enabledIpsValue =
-                (String) extendedConfigDoc.getPropertyValue("automationExtendedConfig:enabledIPs");
+        String enabledIpsValue = AthentoOperationsHelper
+                .readConfigValue(ctx.getCoreSession(), "automationExtendedConfig:enabledIPs");
 
         // Check ip in list
         if (enabledIpsValue != null && !enabledIpsValue.isEmpty()) {
