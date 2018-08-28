@@ -90,18 +90,29 @@ public class AthentoOperationsHelper {
         return o;
     }
 
+    /**
+     * Read config.
+     *
+     * @param session
+     * @return
+     */
     public static Map<String, Object> readConfig(CoreSession session) {
-        Map<String, Object> config = new HashMap<>();
-        DocumentModel conf = session.getDocument(new PathRef(
-                AthentoOperationsHelper.CONFIG_PATH));
-        for (String schemaName : conf.getSchemas()) {
-            Map<String, Object> metadata = conf.getProperties(schemaName);
-            for (String keyName : metadata.keySet()) {
-                String key = keyName;
-                Object val = conf.getPropertyValue(key);
-                config.put(key, val);
+        final Map<String, Object> config = new HashMap<>();
+        new UnrestrictedSessionRunner(session) {
+            @Override
+            public void run() {
+                DocumentModel conf = session.getDocument(new PathRef(
+                        AthentoOperationsHelper.CONFIG_PATH));
+                for (String schemaName : conf.getSchemas()) {
+                    Map<String, Object> metadata = conf.getProperties(schemaName);
+                    for (String keyName : metadata.keySet()) {
+                        String key = keyName;
+                        Object val = conf.getPropertyValue(key);
+                        config.put(key, val);
+                    }
+                }
             }
-        }
+        }.runUnrestricted();
         return config;
     }
 
