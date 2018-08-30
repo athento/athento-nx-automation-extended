@@ -83,6 +83,9 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     @Param(name = "fieldComplex", required = false)
     protected StringList fieldComplex;
 
+    @Param(name = "showCastingSource", required = false)
+    protected boolean showCastingSource = false;
+
     @OperationMethod
     public RecordSet run() throws Exception {
         // Check access
@@ -131,6 +134,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             params.put("pageSize", pageSize);
             params.put("fieldList", fieldList);
             params.put("fieldComplex", fieldComplex);
+            params.put("showCastingSource", showCastingSource);
             if (!StringUtils.isNullOrEmpty(sortBy)) {
                 params.put("sortBy", sortBy);
                 if (!StringUtils.isNullOrEmpty(sortOrder)) {
