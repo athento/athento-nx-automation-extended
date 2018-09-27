@@ -39,6 +39,7 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
     public static final String ID = "Blob.Attach";
 
     private static final String FILENAME_FIELD = "file:filename";
+    private static final String CONTENT_FIELD = "file:content";
 
     /** Operation context. */
     @Context
@@ -48,7 +49,7 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
     protected CoreSession session;
 
     @Param(name = "xpath", required = false, values = FILENAME_FIELD)
-    protected String xpath = FILENAME_FIELD;
+    protected String xpath = CONTENT_FIELD;
 
     @Param(name = "document")
     protected DocumentModel doc;
