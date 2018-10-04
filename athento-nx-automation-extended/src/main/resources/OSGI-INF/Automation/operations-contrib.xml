@@ -46,5 +46,6 @@
         <operation class="org.athento.nuxeo.operations.AthentoSubscribeUserOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
         <operation class="org.athento.nuxeo.operations.ExportDocumentsToZIPOperation" />
+        <operation class="org.athento.nuxeo.operations.CheckComplexPropertyValueOperation"/>
     </extension>
 </component>
