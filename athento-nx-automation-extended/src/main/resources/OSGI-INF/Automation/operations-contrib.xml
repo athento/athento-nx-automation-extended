@@ -41,5 +41,6 @@
         <operation class="org.athento.nuxeo.operations.AthentoDocumentMutateOperation" />
         <operation class="org.athento.nuxeo.operations.ExportDocumentsToZIPOperation" />
         <operation class="org.athento.nuxeo.operations.AthentoBlobToFileOperation"/>
+        <operation class="org.athento.nuxeo.operations.CheckComplexPropertyValueOperation"/>
     </extension>
 </component>
