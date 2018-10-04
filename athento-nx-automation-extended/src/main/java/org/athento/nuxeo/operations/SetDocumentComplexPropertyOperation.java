@@ -67,6 +67,9 @@ public class SetDocumentComplexPropertyOperation {
             }
         }
         Serializable newValue = addComplexIntoList(array, this.properties, this.position);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Complex List to add " + newValue);
+        }
         p.setValue(newValue);
         if (save) {
             doc = session.saveDocument(doc);
@@ -88,13 +91,17 @@ public class SetDocumentComplexPropertyOperation {
         if (array != null) {
             list.addAll(array);
         }
-        Map<String, String> newComplexItem = new HashMap<String, String>();
-        if (position == null) {
+        Map<String, Object> newComplexItem = new HashMap<>();
+        if (position == null || position >= list.size()) {
             for (Map.Entry<String, String> entry : properties.entrySet()) {
                 String metadata = entry.getKey();
                 String value = entry.getValue();
-                LOG.info(metadata + "=" + value);
-                newComplexItem.put(metadata, value);
+                if (value.startsWith("[") && value.endsWith("]")) {
+                    List<String> li = Arrays.asList(StringUtils.split(value.replace("[","").replace("]", ""), ',', true));
+                    newComplexItem.put(metadata, li);
+                } else {
+                    newComplexItem.put(metadata, value);
+                }
             }
             list.add(newComplexItem);
         } else {

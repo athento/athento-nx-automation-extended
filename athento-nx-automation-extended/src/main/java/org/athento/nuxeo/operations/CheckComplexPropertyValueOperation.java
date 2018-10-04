@@ -47,7 +47,7 @@ public class CheckComplexPropertyValueOperation {
 
     @OperationMethod(collector = DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) throws Exception {
-        LOG.info("Checking complex property...");
+        LOG.info("Checking complex property " + xpath + " " + metadata + " with " + value);
         Property p = doc.getProperty(xpath);
         List<Serializable> array = null;
         if (p.getValue() != null) {
@@ -55,16 +55,20 @@ public class CheckComplexPropertyValueOperation {
                 array = Arrays.asList((Serializable[]) p.getValue());
             } else if (p.getValue() instanceof ArrayList) {
                 array = (ArrayList) p.getValue();
-            } else {
-                throw new OperationException("Value must be a list");
             }
         }
         if (!array.isEmpty()) {
             boolean check = true;
-            for (Serializable v : array) {
-                if (v != null && !v.equals(value)) {
-                    check = false;
-                    break;
+            for (Serializable map : array) {
+                Map<String, Object> values = (Map) map;
+                for (Map.Entry<String, Object> entry : values.entrySet()) {
+                    if (metadata.equals(entry.getKey())) {
+                        Object v = entry.getValue();
+                        if (v != null && !String.valueOf(v).equals(value)) {
+                            check = false;
+                            break;
+                        }
+                    }
                 }
             }
             if (check) {
