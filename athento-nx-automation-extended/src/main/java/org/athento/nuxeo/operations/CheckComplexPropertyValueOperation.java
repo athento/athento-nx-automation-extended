@@ -63,8 +63,13 @@ public class CheckComplexPropertyValueOperation {
                 Map<String, Object> values = (Map) map;
                 for (Map.Entry<String, Object> entry : values.entrySet()) {
                     if (metadata.equals(entry.getKey())) {
+                        LOG.info("Checking " + metadata);
                         Object v = entry.getValue();
-                        if (v != null && !String.valueOf(v).equals(value)) {
+                        LOG.info("Value " + v + ", " + value);
+                        if (v == null && value != null) {
+                            check = false;
+                            break;
+                        } else if (v != null && !String.valueOf(v).equals(value)) {
                             check = false;
                             break;
                         }
