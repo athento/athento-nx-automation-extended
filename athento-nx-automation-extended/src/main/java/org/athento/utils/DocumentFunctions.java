@@ -4,10 +4,15 @@ import org.apache.commons.httpclient.util.DateUtil;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.query.sql.NXQL;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Created by victorsanchez on 18/7/16.
+ * Document functions.
  */
 public final class DocumentFunctions {
 
@@ -59,14 +64,23 @@ public final class DocumentFunctions {
                 return "Unlocked";
             }
         } else if (column.contains(":")) {
-            Object value = doc.getPropertyValue(column);
-            if (value instanceof GregorianCalendar) {
-                return DateUtil.formatDate(((GregorianCalendar) value).getTime(), DATE_FORMAT);
+                Object value = doc.getPropertyValue(column);
+                if (value == null) {
+                    return "";
+                }
+                if (value instanceof GregorianCalendar) {
+                    return DateUtil.formatDate(((GregorianCalendar) value).getTime(), DATE_FORMAT);
+                } else if (value instanceof Collection) {
+                    Collection<Serializable> items = (Collection) value;
+                    return items.stream().map(e -> e.toString()).reduce("|", String::concat);
+                } else if (value.getClass().isArray()) {
+                    List<Serializable> values = Arrays.asList((Serializable[]) value);
+                    return values.stream().map(item -> item.toString()).collect(Collectors.joining("|"));
+                } else {
+                    return value;
+                }
             } else {
-                return value;
+                return "";
             }
-        } else {
-            return "";
-        }
     }
 }
