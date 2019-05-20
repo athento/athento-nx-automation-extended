@@ -63,8 +63,10 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Attaching Blob " + blob.getFilename() + " into " + doc.getId());
             }
-            // #AT-933
-            doc.setPropertyValue("file:filename", blob.getFilename());
+            if (xpath.equals("file:content")) {
+                // #AT-933
+                doc.setPropertyValue("file:filename", blob.getFilename());
+            }
             doc = session.saveDocument(doc);
         }
         return blob;
