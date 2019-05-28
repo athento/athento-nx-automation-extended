@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.DocumentFunctions;
 import org.athento.utils.PropertyUtils;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -139,9 +140,8 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
                     + ". Watched doctypes are: " + watchedDocumentTypes);
                 parentFolder = parentDoc;
             }
-            if (name == null || "".equals(name.trim())) {
-                name = "Untitled";
-            }
+            // Sanitize name
+            name = DocumentFunctions.sanitizeName(name);
             String parentPath = parentFolder.getPathAsString();
             if (_log.isDebugEnabled()) {
                 _log.debug(AthentoDocumentCreateOperation.ID
