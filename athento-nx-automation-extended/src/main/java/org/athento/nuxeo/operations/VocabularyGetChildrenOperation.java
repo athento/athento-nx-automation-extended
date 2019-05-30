@@ -55,6 +55,10 @@ public class VocabularyGetChildrenOperation {
     protected int limit = -1;
     @Param(name = "offset", required = false)
     protected int offset = -1;
+
+    @Param(name = "ignoreObsolete", required = false)
+    protected boolean ignoreObsolete = true;
+
     /** Default order. */
     private boolean asc = true;
 
@@ -175,6 +179,9 @@ public class VocabularyGetChildrenOperation {
         // Prepare filter map
         Map queryFilter = new HashMap();
         queryFilter.put("parent", parentValue);
+        if (ignoreObsolete) {
+            queryFilter.put("obsolete", 0);
+        }
         if (_log.isTraceEnabled()) {
             _log.trace("Querying directory [" + vocabularyName + "] with query: " + queryFilter);
         }
