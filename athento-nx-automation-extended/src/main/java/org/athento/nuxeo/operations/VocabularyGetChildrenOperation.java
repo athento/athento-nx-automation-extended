@@ -174,7 +174,6 @@ public class VocabularyGetChildrenOperation {
      * @return list of JSON objects
      */
     private List<DocumentModel> filterForParentValue(Session directorySession, String parentValue) {
-        List<JSONObject> result = new ArrayList<JSONObject>();
         // Prepare filter map
         Map queryFilter = new HashMap();
         queryFilter.put("parent", parentValue);
@@ -187,7 +186,7 @@ public class VocabularyGetChildrenOperation {
         // Get sort info
         Map<String, String> sortInfo = getSortInfo();
         // Execute query
-        return directorySession.query(queryFilter, new HashSet<String>(0), sortInfo
+        return directorySession.query(queryFilter, new HashSet<>(0), sortInfo
                 , false, limit, offset);
     }
 
