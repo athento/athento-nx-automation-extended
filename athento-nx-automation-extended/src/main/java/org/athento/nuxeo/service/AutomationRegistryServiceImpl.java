@@ -34,6 +34,7 @@ public class AutomationRegistryServiceImpl implements AutomationRegistryService 
     /**
      * Register a new query request.
      *
+     * @param username
      * @param query
      * @param pageSize
      * @param firstPage
@@ -41,7 +42,7 @@ public class AutomationRegistryServiceImpl implements AutomationRegistryService 
      * @param endDateMillis
      */
     @Override
-    public void registerQueryRequest(String query, int pageSize, int firstPage, long startDateMillis, long endDateMillis) {
+    public void registerQueryRequest(String username, String query, int pageSize, int firstPage, long startDateMillis, long endDateMillis) {
         if (query == null) {
             LOG.warn("Unable to register query with no query");
             return;
@@ -59,7 +60,7 @@ public class AutomationRegistryServiceImpl implements AutomationRegistryService 
                 try {
                     final DocumentModel entry = getEntryFromQueryRequest(Framework.getService(DirectoryService.class));
                     entry.setPropertyValue("aqr:name", UUID.randomUUID().toString());
-                    entry.setPropertyValue("aqr:query", query);
+                    entry.setPropertyValue("aqr:query", username + ":" + query);
                     entry.setPropertyValue("aqr:pageSize", pageSize);
                     entry.setPropertyValue("aqr:firstPage", firstPage);
                     entry.setPropertyValue("aqr:start_date", startDateMillis);

@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.athento.nuxeo.operations.exception.AthentoException;
 import org.athento.nuxeo.operations.security.AbstractAthentoOperation;
 import org.athento.nuxeo.operations.utils.AthentoOperationsHelper;
+import org.athento.utils.RegisterHelper;
 import org.athento.utils.StringUtils;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.core.Constants;
@@ -112,6 +113,7 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
 //                    params.put("sortOrder", sortOrder);
 //                }
 //            }
+            long startTime = System.currentTimeMillis();
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
                 input, params, session);
             if (_log.isDebugEnabled()) {
@@ -119,6 +121,9 @@ public class AthentoDocumentQueryOperation extends AbstractAthentoOperation {
                     + " END return value: " + retValue);
             }
             if (retValue instanceof DocumentModelList) {
+                long endTime = System.currentTimeMillis();
+                // Register an entry into queryRequest registry
+                RegisterHelper.registerQuery(session.getPrincipal().getName(), modifiedQuery, pageSize, currentPageIndex, startTime, endTime);
                 return (DocumentModelList) retValue;
             } else {
                 _log.error("Unexpected return type [" + retValue.getClass()

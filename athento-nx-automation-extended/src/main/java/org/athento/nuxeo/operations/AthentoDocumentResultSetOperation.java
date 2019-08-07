@@ -80,6 +80,9 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
     @Param(name = "fieldComplex", required = false)
     protected StringList fieldComplex;
 
+    @Param(name = "removeAccents", required = false)
+    protected boolean removeAccents = true;
+
     @OperationMethod
     public RecordSet run() throws Exception {
         // Check access
@@ -128,6 +131,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             params.put("pageSize", pageSize);
             params.put("fieldList", fieldList);
             params.put("fieldComplex", fieldComplex);
+            params.put("removeAccents", removeAccents);
             if (!StringUtils.isNullOrEmpty(sortBy)) {
                 params.put("sortBy", sortBy);
                 if (!StringUtils.isNullOrEmpty(sortOrder)) {
@@ -140,7 +144,7 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             if (retValue instanceof RecordSet) {
                 long endTime = System.currentTimeMillis();
                 // Register an entry into queryRequest registry
-                RegisterHelper.registerQuery(modifiedQuery, pageSize, page, startTime, endTime);
+                RegisterHelper.registerQuery(session.getPrincipal().getName(), modifiedQuery, pageSize, page, startTime, endTime);
                 return (RecordSet) retValue;
             } else {
                 _log.error("Unexpected return type for operation: "

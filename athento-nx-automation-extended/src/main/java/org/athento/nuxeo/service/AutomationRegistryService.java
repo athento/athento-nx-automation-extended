@@ -11,13 +11,14 @@ public interface AutomationRegistryService extends Serializable {
     /**
      * Register a new query request.
      *
+     * @param user
      * @param query
      * @param pageSize
      * @param firstPage
      * @param startDate
      * @param endDate
      */
-    void registerQueryRequest(String query, int pageSize, int firstPage, long startDate, long endDate);
+    void registerQueryRequest(String user, String query, int pageSize, int firstPage, long startDate, long endDate);
 
     /**
      * Get information about query.
