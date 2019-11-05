@@ -44,7 +44,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
     private static final Log _log = LogFactory
             .getLog(AthentoDocumentCreateOperation.class);
 
-    public static final String ID = "Athento.Document.Create";
+    public static final String ID = "Athento.DocumentCreate";
 
     public static final String CONFIG_DEFAULT_DESTINATION = "automationExtendedConfig:defaultDestination";
     public static final String CONFIG_OPERATION_ID_PRE = "automationExtendedConfig:documentCreateOperationIdPre";
