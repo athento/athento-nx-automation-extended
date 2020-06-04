@@ -37,6 +37,10 @@
 
   <xs:element name="name" type="xs:string" />
   <xs:element name="query" type="xs:string" />
+  <xs:element name="payload" type="xs:string" />
+  <xs:element name="author" type="xs:string" />
+  <xs:element name="ip" type="xs:string" />
+  <xs:element name="response" type="xs:string" />
   <xs:element name="pageSize" type="xs:int" />
   <xs:element name="firstPage" type="xs:int" />
   <xs:element name="start_date" type="xs:long" />

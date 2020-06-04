@@ -1,9 +1,13 @@
 <component name="org.athento.nuxeo.automation.extended.marshallers">
 
+  <require>org.nuxeo.ecm.automation.server.marshallers</require>
+
   <extension target="org.nuxeo.ecm.automation.server.AutomationServer"
     point="marshallers">
 
     <marshaller>
+      <reader>org.nuxeo.ecm.automation.jaxrs.io.operations.JsonRequestReader</reader>
+      <reader>org.athento.nuxeo.api.reader.JsonRequestRegister</reader>
       <writer>org.athento.nuxeo.api.writer.JsonBatchResultWriter</writer>
     </marshaller>
   </extension>

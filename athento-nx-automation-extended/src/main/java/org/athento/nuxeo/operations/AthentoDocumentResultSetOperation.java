@@ -27,6 +27,7 @@ import org.nuxeo.runtime.api.Framework;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -161,7 +162,9 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
             if (retValue instanceof RecordSet) {
                 long endTime = System.currentTimeMillis();
                 // Register an entry into queryRequest registry
-                RegisterHelper.registerQuery(modifiedQuery, pageSize, page, startTime, endTime);
+                RegisterHelper.registerQuery(modifiedQuery, session.getPrincipal().getName(),
+                        ((HttpServletRequest) ctx.get("request")).getRemoteAddr(),
+                        pageSize, page, startTime, endTime);
                 return (RecordSet) retValue;
             } else {
                 LOG.error("Unexpected return type for operation: "
