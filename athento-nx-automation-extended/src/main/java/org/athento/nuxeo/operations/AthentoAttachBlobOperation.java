@@ -58,13 +58,15 @@ public class AthentoAttachBlobOperation extends AbstractAthentoOperation {
     public Blob run(Blob blob) throws Exception {
         // Check access
         checkAllowedAccess(ctx);
+        String filename = new String(blob.getFilename().getBytes("ISO-8859-1"), "UTF-8");
+        blob.setFilename(filename);
         DocumentHelper.addBlob(doc.getProperty(xpath), blob);
         if (save) {
             if (LOG.isInfoEnabled()) {
-                LOG.info("Attaching Blob " + blob.getFilename() + " into " + doc.getId());
+                LOG.info("Attaching Blob Encoded " + filename + " into " + doc.getId());
             }
             // #AT-933
-            doc.setPropertyValue("file:filename", blob.getFilename());
+            doc.setPropertyValue("file:filename", filename);
             doc = session.saveDocument(doc);
         }
         return blob;
