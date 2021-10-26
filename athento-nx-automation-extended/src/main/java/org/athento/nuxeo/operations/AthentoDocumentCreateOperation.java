@@ -88,6 +88,7 @@ public class AthentoDocumentCreateOperation extends AbstractAthentoOperation {
         String parentFolderPath = getDestinationPath();
         // Set blob
         this.blob = blob;
+        blob.setFilename(new String(blob.getFilename().getBytes("ISO-8859-1"), "UTF-8"));
         return run(new PathRef(parentFolderPath));
     }
 
