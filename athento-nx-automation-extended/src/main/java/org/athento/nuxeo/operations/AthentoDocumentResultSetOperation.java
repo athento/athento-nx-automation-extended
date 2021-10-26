@@ -156,15 +156,9 @@ public class AthentoDocumentResultSetOperation extends AbstractAthentoOperation 
                     params.put("sortOrder", sortOrder);
                 }
             }
-            long startTime = System.currentTimeMillis();
             Object retValue = AthentoOperationsHelper.runOperation(operationId,
                     input, params, session);
             if (retValue instanceof RecordSet) {
-                long endTime = System.currentTimeMillis();
-                // Register an entry into queryRequest registry
-                RegisterHelper.registerQuery(modifiedQuery, session.getPrincipal().getName(),
-                        ((HttpServletRequest) ctx.get("request")).getRemoteAddr(),
-                        pageSize, page, startTime, endTime);
                 return (RecordSet) retValue;
             } else {
                 LOG.error("Unexpected return type for operation: "
